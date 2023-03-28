@@ -1,6 +1,7 @@
 # ProStellar
 ProStellar - Software de gestión de proyecto 
 (Proyecto Final Programación Aplicada 1).
+Programadores:{(Kevin Duran Bruno)},{(Cesar José Reynoso Martinez)}
 
 
 
