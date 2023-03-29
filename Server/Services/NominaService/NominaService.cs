@@ -130,7 +130,7 @@ namespace ProStellar.Server.Services.NominaService
             {
                 if (Nomina != null)
                 {
-                    _contexto.Remove(Nomina != null);
+                    _contexto.Remove(Nomina);
                     _contexto.Database.ExecuteSqlRaw($"DELETE FROM Nominas WHERE NominaId={NominaId};");
                     bool guardado = await _contexto.SaveChangesAsync() > 0;
 

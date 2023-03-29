@@ -130,7 +130,7 @@ namespace ProStellar.Server.Services.CantidadService
             {
                 if (Cantidad != null)
                 {
-                    _contexto.Remove(Cantidad != null);
+                    _contexto.Remove(Cantidad);
                     _contexto.Database.ExecuteSqlRaw($"DELETE FROM Cantidads WHERE CantidadId={CantidadId};");
                     bool guardado = await _contexto.SaveChangesAsync() > 0;
 

@@ -130,7 +130,7 @@ namespace ProStellar.Server.Services.EstadoService
             {
                 if (Estado != null)
                 {
-                    _contexto.Remove(Estado != null);
+                    _contexto.Remove(Estado);
                     _contexto.Database.ExecuteSqlRaw($"DELETE FROM Estados WHERE EstadoId={EstadoId};");
                     bool guardado = await _contexto.SaveChangesAsync() > 0;
 

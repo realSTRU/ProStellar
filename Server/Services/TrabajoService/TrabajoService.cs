@@ -93,7 +93,7 @@ namespace ProStellar.Server.Services.TrabajoService
             {
                 if (trabajo != null)
                 {
-                   
+
 
                     _contexto.Update(trabajo);
                     var guardo = await _contexto.SaveChangesAsync() > 0;
@@ -105,11 +105,11 @@ namespace ProStellar.Server.Services.TrabajoService
                     response.Success = guardo;
                 }
                 else
-                 {
+                {
                     response.Success = false;
                     response.Message = "Trabajo not found";
-                 }
-               
+                }
+
             }
             catch (Exception ex)
             {
@@ -128,9 +128,9 @@ namespace ProStellar.Server.Services.TrabajoService
 
             try
             {
-                if(trabajo!=null)
+                if (trabajo != null)
                 {
-                    _contexto.Remove(trabajo != null);
+                    _contexto.Remove(trabajo);
                     _contexto.Database.ExecuteSqlRaw($"DELETE FROM Trabajos WHERE TrabajoId={TrabajoId};");
                     bool guardado = await _contexto.SaveChangesAsync() > 0;
 
