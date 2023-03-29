@@ -1,3 +1,8 @@
+global using ProStellar.Shared;
+global using ProStellar.Shared.Models;
+global using ProStellar.Server.DAL;
+
+
 using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.ResponseCompression;
 using Microsoft.EntityFrameworkCore;
