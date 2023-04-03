@@ -1,4 +1,6 @@
-﻿namespace ProStellar.Server.Services.TipoPagoServices
+﻿using ProStellar.Shared.Models;
+using ProStellar.Shared;
+namespace ProStellar.Server.Services.TipoPagoServices
 {
     public interface ITipoPagoServices
     {

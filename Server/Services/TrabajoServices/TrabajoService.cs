@@ -1,6 +1,8 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using ProStellar.Server.DAL;
 using System.Linq.Expressions;
+using ProStellar.Shared.Models;
+using ProStellar.Shared;
 
 namespace ProStellar.Server.Services.TrabajoServices
 {

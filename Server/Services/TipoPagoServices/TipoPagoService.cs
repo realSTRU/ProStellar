@@ -1,4 +1,7 @@
 ﻿using Microsoft.EntityFrameworkCore;
+using ProStellar.Shared.Models;
+using ProStellar.Shared;
+using ProStellar.Server.DAL;
 
 namespace ProStellar.Server.Services.TipoPagoServices
 {

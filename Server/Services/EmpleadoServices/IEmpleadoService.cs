@@ -1,4 +1,6 @@
-﻿namespace ProStellar.Server.Services.EmpleadoServices
+﻿using ProStellar.Shared.Models;
+using ProStellar.Shared;
+namespace ProStellar.Server.Services.EmpleadoServices
 {
     public interface IEmpleadoService
     {

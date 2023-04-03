@@ -1,18 +1,43 @@
 ﻿@inherits LayoutComponentBase
 
-<div class="page">
-    <div class="sidebar">
-        <NavMenu />
-    </div>
 
-    <main>
-        <div class="top-row px-4 auth">
-            <LoginDisplay />
-            <a href="https://docs.microsoft.com/aspnet/" target="_blank">About</a>
+<AuthorizeView>
+    <Authorized>
+
+<RadzenLayout Style="height: 100vh; background-color:#2B2E30; grid-template-areas: 'rz-sidebar rz-header' 'rz-sidebar rz-body '" >
+
+    <RadzenSidebar @bind-Expanded="sidebar2Expanded" >
+                <RadzenHeader class="rz-background-color-base-900">
+
+        <div Style="padding:10px;">
+                <RadzenGravatar Email="@context.User.Identity?.Name" />
+                <Radzenlink class ="rz-color-warning" >@context.User.Identity?.Name!</Radzenlink>
         </div>
-
-        <article class="content px-4">
+   
+    </RadzenHeader>
+        <RadzenPanelMenu>
+            <RadzenPanelMenuItem class ="rz-color-warning" Text="Proyectos" Icon="construction" />
+            <RadzenPanelMenuItem class ="rz-color-warning" Text="Nominas" Icon="receipt_long" />
+            <RadzenPanelMenuItem class ="rz-color-warning" Text="Pagos" Icon="payments" />
+            <RadzenPanelMenuItem class ="rz-color-warning" Text="Empleados" Icon="badge" />
+            <RadzenPanelMenuItem class ="rz-color-warning" Text="Trabajos" Icon="work" />
+        </RadzenPanelMenu>
+    </RadzenSidebar>
+    <RadzenBody>
+        <div class="rz-p-4" >
             @Body
-        </article>
-    </main>
-</div>
+        </div>
+    </RadzenBody>
+</RadzenLayout>
+
+    </Authorized>
+    <NotAuthorized>
+    asdasdasdasd
+    </NotAuthorized>
+</AuthorizeView>
+
+
+
+@code {
+    bool sidebar2Expanded = true;
+}

@@ -1,6 +1,8 @@
 ﻿using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using ProStellar.Server.DAL;
+using ProStellar.Shared.Models;
+using ProStellar.Shared;
 
 namespace ProStellar.Server.Services.EmpleadoServices
 {
