@@ -3,6 +3,13 @@ using Microsoft.AspNetCore.ResponseCompression;
 using Microsoft.EntityFrameworkCore;
 using ProStellar.Server.Data;
 using ProStellar.Server.Models;
+using ProStellar.Server.Services.CantidadService;
+using ProStellar.Server.Services.EmpleadoServices;
+using ProStellar.Server.Services.NominaService;
+using ProStellar.Server.Services.ProyectoService;
+using ProStellar.Server.Services.TipoPagoServices;
+using ProStellar.Server.Services.TrabajoServices;
+using ProStellar.Server.Services.EstadoService;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -21,10 +28,25 @@ builder.Services.AddIdentityServer()
 builder.Services.AddAuthentication()
     .AddIdentityServerJwt();
 
+
+
+
+
 builder.Services.AddControllersWithViews();
 builder.Services.AddRazorPages();
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
+
+
+
+//servicios del programas//
+// builder.Services.AddScoped<ITrabajoService, TrabajoService>();
+// builder.Services.AddScoped<IEmpleadoService, EmpleadoService>();
+// builder.Services.AddScoped<ICantidadService, CantidadService>();
+// builder.Services.AddScoped<INominaService, NominaService>();
+// builder.Services.AddScoped<IProyectoService, ProyectoService>();
+// builder.Services.AddScoped<ITipoPagoServices, TipoPagoService>();
+// builder.Services.AddScoped<IEstadoService, EstadoService>();
 
 var app = builder.Build();
 app.UseSwaggerUI();
