@@ -10,13 +10,20 @@ using ProStellar.Server.Services.ProyectoService;
 using ProStellar.Server.Services.TipoPagoServices;
 using ProStellar.Server.Services.TrabajoServices;
 using ProStellar.Server.Services.EstadoService;
+using ProStellar.Server.DAL;
 
 var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
+//Login
 var connectionString = builder.Configuration.GetConnectionString("DefaultConnection") ?? throw new InvalidOperationException("Connection string 'DefaultConnection' not found.");
 builder.Services.AddDbContext<ApplicationDbContext>(options =>
     options.UseSqlite(connectionString));
+
+//APP
+var ConStr = builder.Configuration.GetConnectionString("ConStr");
+builder.Services.AddDbContext<Contexto>(options => options.UseSqlite(ConStr));
+
 builder.Services.AddDatabaseDeveloperPageExceptionFilter();
 
 builder.Services.AddDefaultIdentity<ApplicationUser>(options => options.SignIn.RequireConfirmedAccount = true)

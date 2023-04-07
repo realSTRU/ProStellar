@@ -19,7 +19,7 @@ namespace ProStellar.Server.Services.NominaService
         public async Task<ServiceResponse<Nomina>> GetNominaAsync(int Id)
         {
             var response = new ServiceResponse<Nomina>();
-            var Nomina = await _contexto.Nominas.FindAsync(Id);
+            var Nomina = await _contexto.Nominas.Include("NominaDetalle").AsNoTracking().SingleOrDefaultAsync(o => o.NominaId == Id);
             if (Nomina == null)
             {
                 response.Success = false;
@@ -29,7 +29,6 @@ namespace ProStellar.Server.Services.NominaService
             {
                 response.Data = Nomina;
             }
-
             return response;
         }
 
@@ -38,7 +37,6 @@ namespace ProStellar.Server.Services.NominaService
             var response = new ServiceResponse<List<Nomina>>();
             response.Data = await _contexto.Nominas.ToListAsync();
             return response;
-
         }
 
 
@@ -58,7 +56,6 @@ namespace ProStellar.Server.Services.NominaService
         private async Task<ServiceResponse<Nomina>> Insertar(Nomina Nomina)
         {
             var response = new ServiceResponse<Nomina>();
-
             try
             {
                 if (Nomina != null)
@@ -66,7 +63,6 @@ namespace ProStellar.Server.Services.NominaService
                     _contexto.Nominas.Add(Nomina);
                     bool guardado = await _contexto.SaveChangesAsync() > 0;
                     _contexto.Entry(Nomina).State = EntityState.Detached;
-
                     response.Data = Nomina;
                     response.Success = guardado;
                 }
@@ -82,7 +78,6 @@ namespace ProStellar.Server.Services.NominaService
                 response.Message = ex.Message;
                 response.Data = Nomina;
             }
-
             return response;
         }
 
@@ -93,13 +88,18 @@ namespace ProStellar.Server.Services.NominaService
             {
                 if (Nomina != null)
                 {
+                    //eliminamos los detalles de la nomina
+                    _contexto.Database.ExecuteSqlRaw($"DELETE FROM NominaDetalle WHERE NominaId={Nomina.NominaId};");
 
-
+                    //Agregamos los nuevos detalles
+                    foreach (var Detalle in Nomina.Detalles)
+                    {
+                        _contexto.Entry(Detalle).State = EntityState.Added;
+                    }
+                    //actualizamos la nomina
                     _contexto.Update(Nomina);
                     var guardo = await _contexto.SaveChangesAsync() > 0;
                     _contexto.Entry(Nomina).State = EntityState.Detached;
-
-
 
                     response.Data = Nomina;
                     response.Success = guardo;
@@ -109,7 +109,6 @@ namespace ProStellar.Server.Services.NominaService
                     response.Success = false;
                     response.Message = "Nomina not found";
                 }
-
             }
             catch (Exception ex)
             {
@@ -117,15 +116,12 @@ namespace ProStellar.Server.Services.NominaService
                 response.Message = ex.Message;
                 response.Data = Nomina;
             }
-
             return response;
-
         }
         public async Task<ServiceResponse<Nomina>> Eliminar(int NominaId)
         {
             var response = new ServiceResponse<Nomina>();
-            var Nomina = await _contexto.Nominas.FindAsync(NominaId);
-
+            var Nomina = await _contexto.Nominas.Include("NominaDetalle").AsNoTracking().SingleOrDefaultAsync(o => o.NominaId == NominaId);
             try
             {
                 if (Nomina != null)
@@ -133,7 +129,6 @@ namespace ProStellar.Server.Services.NominaService
                     _contexto.Remove(Nomina);
                     _contexto.Database.ExecuteSqlRaw($"DELETE FROM Nominas WHERE NominaId={NominaId};");
                     bool guardado = await _contexto.SaveChangesAsync() > 0;
-
                     response.Data = Nomina;
                     response.Success = guardado;
                 }
@@ -143,17 +138,13 @@ namespace ProStellar.Server.Services.NominaService
                     response.Message = "Nomina not found";
                 }
             }
-
             catch (Exception ex)
             {
                 response.Success = false;
                 response.Message = ex.Message;
                 response.Data = Nomina;
             }
-
             return response;
-
-
         }
     }
 }
