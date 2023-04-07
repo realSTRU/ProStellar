@@ -46,14 +46,14 @@ builder.Services.AddSwaggerGen();
 
 
 
-//servicios del programas//
-// builder.Services.AddScoped<ITrabajoService, TrabajoService>();
-// builder.Services.AddScoped<IEmpleadoService, EmpleadoService>();
-// builder.Services.AddScoped<ICantidadService, CantidadService>();
-// builder.Services.AddScoped<INominaService, NominaService>();
-// builder.Services.AddScoped<IProyectoService, ProyectoService>();
-// builder.Services.AddScoped<ITipoPagoServices, TipoPagoService>();
-// builder.Services.AddScoped<IEstadoService, EstadoService>();
+
+ builder.Services.AddScoped<ITrabajoService, TrabajoService>();
+ builder.Services.AddScoped<IEmpleadoService, EmpleadoService>();
+ builder.Services.AddScoped<ICantidadService, CantidadService>();
+ builder.Services.AddScoped<INominaService, NominaService>();
+ builder.Services.AddScoped<IProyectoService, ProyectoService>();
+ builder.Services.AddScoped<ITipoPagoService, TipoPagoService>();
+ builder.Services.AddScoped<IEstadoService, EstadoService>();
 
 var app = builder.Build();
 app.UseSwaggerUI();
