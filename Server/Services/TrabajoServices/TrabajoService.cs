@@ -1,6 +1,8 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using ProStellar.Server.DAL;
 using System.Linq.Expressions;
+using ProStellar.Shared.Models;
+using ProStellar.Shared;
 
 namespace ProStellar.Server.Services.TrabajoServices
 {
@@ -19,7 +21,7 @@ namespace ProStellar.Server.Services.TrabajoServices
 
             try
             {
-                if(_contexto.Trabajos != null)
+                if (_contexto.Trabajos != null)
                 {
                     _contexto.Trabajos.Add(trabajo);
                     await _contexto.SaveChangesAsync();
@@ -31,7 +33,7 @@ namespace ProStellar.Server.Services.TrabajoServices
                     response.Success = false;
                 }
             }
-            catch(Exception ex) 
+            catch (Exception ex)
             {
                 response.Success = false;
                 response.Message = ex.Message;
@@ -45,11 +47,20 @@ namespace ProStellar.Server.Services.TrabajoServices
 
             try
             {
-                if(_contexto.Trabajos != null)
+                if (_contexto.Trabajos != null)
                 {
                     var trabajo = await _contexto.Trabajos.FindAsync(id);
-                    await _contexto.SaveChangesAsync();
-                    response.Data = trabajo;
+                    if (trabajo != null)
+                    {
+                        _contexto.Trabajos.Remove(trabajo);
+                        await _contexto.SaveChangesAsync();
+                        response.Data = trabajo;
+                    }
+                    else
+                    {
+                        response.Success = false;
+                        response.Message = "error en el saveChanges De eliminar un trabajo";
+                    }
                 }
                 else
                 {
@@ -57,14 +68,17 @@ namespace ProStellar.Server.Services.TrabajoServices
                     response.Message = $"Error al eliminar el trabajo con el id:{id}";
                 }
             }
-            catch(Exception ex)
+            catch (Exception ex)
             {
                 response.Success = false;
                 response.Message = ex.Message;
             }
             return response;
         }
-
+        public async Task<bool> Existe(int Id)
+        {
+            return await _contexto.Trabajos.AnyAsync(t => t.TrabajoId == Id);
+        }
         public async Task<ServiceResponse<Trabajo>> GetTrabajo(int id)
         {
             var response = new ServiceResponse<Trabajo>();
@@ -86,7 +100,7 @@ namespace ProStellar.Server.Services.TrabajoServices
                     }
                 }
             }
-            catch(Exception ex)
+            catch (Exception ex)
             {
                 response.Success = false;
                 response.Message = ex.Message;
@@ -99,8 +113,8 @@ namespace ProStellar.Server.Services.TrabajoServices
             var response = new ServiceResponse<List<Trabajo>>();
 
             try
-            { 
-                if(_contexto.Trabajos != null)
+            {
+                if (_contexto.Trabajos != null)
                 {
                     response = new ServiceResponse<List<Trabajo>>()
                     {
@@ -113,7 +127,7 @@ namespace ProStellar.Server.Services.TrabajoServices
                     response.Message = $"Error al buscar la lista de trabajos";
                 }
             }
-            catch(Exception ex )
+            catch (Exception ex)
             {
                 response.Success = false;
                 response.Message = ex.Message;
@@ -129,7 +143,7 @@ namespace ProStellar.Server.Services.TrabajoServices
 
             try
             {
-                if(_contexto.Trabajos != null)
+                if (_contexto.Trabajos != null)
                 {
                     _contexto.Entry(trabajo).State = EntityState.Modified;
                     await _contexto.SaveChangesAsync();
@@ -142,12 +156,24 @@ namespace ProStellar.Server.Services.TrabajoServices
 
                 }
             }
-            catch(Exception ex)
+            catch (Exception ex)
             {
                 response.Success = false;
                 response.Message = ex.Message;
             }
             return response;
+        }
+        public async Task<ServiceResponse<Trabajo>> SaveTrabajo(Trabajo trabajo)
+        {
+            if (await Existe(trabajo.TrabajoId))
+            {
+                return await ModifyTrabajo(trabajo);
+
+            }
+            else
+            {
+                return await AddTrabajo(trabajo);
+            }
         }
     }
 }

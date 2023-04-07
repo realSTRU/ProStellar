@@ -13,4 +13,5 @@ namespace ProStellar.Shared
 
         public string Message { get; set; } = string.Empty;
     }
+
 }

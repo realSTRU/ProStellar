@@ -1,17 +1,16 @@
-﻿using Duende.IdentityServer.EntityFramework.Options;
-using Microsoft.AspNetCore.ApiAuthorization.IdentityServer;
+﻿using Microsoft.AspNetCore.ApiAuthorization.IdentityServer;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Options;
+using Duende.IdentityServer.EntityFramework.Options;
 using ProStellar.Server.Models;
 
-namespace ProStellar.Server.Data
+namespace ProStellar.Server.Data;
+
+public class ApplicationDbContext : ApiAuthorizationDbContext<ApplicationUser>
 {
-    public class ApplicationDbContext : ApiAuthorizationDbContext<ApplicationUser>
+    public ApplicationDbContext(
+        DbContextOptions options,
+        IOptions<OperationalStoreOptions> operationalStoreOptions) : base(options, operationalStoreOptions)
     {
-        public ApplicationDbContext(
-            DbContextOptions options,
-            IOptions<OperationalStoreOptions> operationalStoreOptions) : base(options, operationalStoreOptions)
-        {
-        }
     }
 }
