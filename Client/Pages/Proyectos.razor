@@ -1,0 +1,18 @@
+﻿@page "/"
+<br>
+<RadzenTextBox class="rz-border-color-base-900 rz-background-color-base-900 w-100 " Icon="search" @oninput=@(args => OnChange(args.Value.ToString())) Placeholder="Buscar Proyecto" />
+<br><br>
+<RadzenText class="rz-color-warning" TextAlign="TextAlign.Center" TextStyle="TextStyle.DisplayH5">Proyectos</RadzenText> 
+<hr class="rz-color-warning" >
+@Search
+
+
+
+@code{
+    public string Search {get;set;}
+
+    void OnChange(string value)
+    {
+        Search=value;
+    }
+}
