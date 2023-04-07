@@ -1,6 +1,7 @@
 ﻿
 using Microsoft.EntityFrameworkCore;
 using ProStellar.Shared.Models;
+using System.Linq.Expressions;
 
 namespace ProStellar.Server.DAL
 {
@@ -16,5 +17,21 @@ namespace ProStellar.Server.DAL
         public DbSet<Proyecto> Proyectos { get; set; }
         public DbSet<TipoPago> TiposPagos { get; set; }
         public DbSet<Trabajo> Trabajos { get; set; }
+
+
+        protected override void OnModelCreating(ModelBuilder modelBuilder)
+        {
+            modelBuilder.Entity<Empleado>().HasData(
+                new Empleado
+                {
+                    EmpleadoId = 1,
+                    PrimerNombre = "Kevin",
+                    SegundoNombre ="Duran",
+                    PrimerApellido ="De la cruz",
+                    SegundoApellido ="Amparo",
+                    Telefono ="829-863-5599"
+                }
+                );
+        }
     }
 }
