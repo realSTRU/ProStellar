@@ -66,11 +66,19 @@ namespace ProStellar.Server.Migrations
                         new
                         {
                             EmpleadoId = 1,
+<<<<<<< HEAD
                             PrimerApellido = "De la cruz",
                             PrimerNombre = "Kevin",
                             SegundoApellido = "Amparo",
                             SegundoNombre = "Duran",
                             Telefono = "829-863-5599"
+=======
+                            PrimerApellido = "Duran",
+                            PrimerNombre = "Kevin",
+                            SegundoApellido = "Bruno",
+                            SegundoNombre = "",
+                            Telefono = "809-396-8457"
+>>>>>>> 4948d0df6a7fac8a9cf5c133acf3279542175db0
                         });
                 });
 

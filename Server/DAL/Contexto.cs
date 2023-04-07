@@ -26,10 +26,10 @@ namespace ProStellar.Server.DAL
                 {
                     EmpleadoId = 1,
                     PrimerNombre = "Kevin",
-                    SegundoNombre ="Duran",
-                    PrimerApellido ="De la cruz",
-                    SegundoApellido ="Amparo",
-                    Telefono ="829-863-5599"
+                    SegundoNombre = "",
+                    PrimerApellido = "Duran",
+                    SegundoApellido = "Bruno",
+                    Telefono = "809-396-8457"
                 }
                 );
         }
