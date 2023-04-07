@@ -1,29 +1,57 @@
-﻿using ProStellar.Shared.Models;
-using ProStellar.Shared;
+﻿using ProStellar.Shared;
+using ProStellar.Shared.Models;
+
 namespace ProStellar.Client.Services.EmpleadoServices
 {
     public class EmpleadoService : IEmpleadoService
     {
-        public List<Empleado> ListEmpleado { get; set; }
+        private readonly HttpClient _http;
 
-        public Task<ServiceResponse<string>> Delete(int Id)
+        public EmpleadoService( HttpClient http)
         {
-            throw new NotImplementedException();
+            _http = http;
         }
 
-        public Task<Empleado> Find(int Id)
+        public List<Empleado> ListEmpleado { get; set; } = new List<Empleado>();
+
+
+        public async Task<ServiceResponse<string>> Delete(int Id)
         {
-            throw new NotImplementedException();
+            var response = await _http.DeleteAsync($"api/Empleado/{Id}");
+            response.EnsureSuccessStatusCode();
+
+            var result = await response.Content.ReadAsStringAsync();
+            return new ServiceResponse<string> { Success = true, Data = result };
         }
 
-        public Task GetList()
+        public async Task<Empleado> Find(int Id)
         {
-            throw new NotImplementedException();
+            var result = await _http.GetFromJsonAsync<ServiceResponse<Empleado>>($"api/Empleado/{Id}");
+
+            return result.Data;
+
         }
 
-        public Task<ServiceResponse<Empleado>> Save(Empleado empleado)
+        public async Task GetList()
         {
-            throw new NotImplementedException();
+            var result = await _http.GetFromJsonAsync<ServiceResponse<List<Empleado>>>($"api/Empleado");
+
+            if(result!= null && result.Data != null)
+            {
+                ListEmpleado = result.Data;
+            }
+
+        }
+
+
+        public async Task<ServiceResponse<Empleado>> Save(Empleado empleado)
+        {
+            var post = await _http.PostAsJsonAsync("api/Empleado", empleado);
+            var result = await post.Content.ReadFromJsonAsync<Empleado>();
+            var response = new ServiceResponse<Empleado>();
+            response.Data = result;
+
+            return response;
         }
     }
 }

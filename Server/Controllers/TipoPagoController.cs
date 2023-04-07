@@ -42,7 +42,7 @@ namespace ProStellar.Server.Controllers
         }
 
         [HttpPost]
-        public async Task<ActionResult<ServiceResponse<TipoPago>>> InsertTipoPago(TipoPago tipoPago)
+        public async Task<ActionResult<ServiceResponse<TipoPago>>> SaveTipoPago(TipoPago tipoPago)
         {
             var result = await _tipoPagoService.SaveTipoPago(tipoPago);
 

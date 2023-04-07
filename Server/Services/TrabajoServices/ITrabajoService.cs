@@ -11,5 +11,9 @@ namespace ProStellar.Server.Services.TrabajoServices
         Task<ServiceResponse<Trabajo>> ModifyTrabajo(Trabajo trabajo);
         Task<ServiceResponse<Trabajo>> DeleteTrabajo(int id);
         Task<ServiceResponse<Trabajo>> GetTrabajo(int id);
+
+        Task<bool> Existe(int Id);
+
+        Task<ServiceResponse<Trabajo>> SaveTrabajo(Trabajo trabajo);
     }
 }

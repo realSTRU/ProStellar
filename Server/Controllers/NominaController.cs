@@ -19,8 +19,8 @@ namespace ProStellar.Server.Controllers
         [HttpGet]
         public async Task<ActionResult<ServiceResponse<List<Nomina>>>> GetAllNominas()
         {
-            var productos = await NominaServices.GetAllNominasAsync();
-            return Ok(productos);
+            var nominas = await NominaServices.GetAllNominasAsync();
+            return Ok(nominas);
         }
 
         [HttpGet("{ID}")]

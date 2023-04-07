@@ -14,5 +14,9 @@ namespace ProStellar.Server.Services.EmpleadoServices
 
         Task<ServiceResponse<Empleado>> DeleteEmpleado(int id);
 
+        Task<ServiceResponse<Empleado>> SaveEmpleado(Empleado empleado);
+
+        Task<bool> Existe(int Id);
+
     }
 }

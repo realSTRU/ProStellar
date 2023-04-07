@@ -19,8 +19,8 @@ namespace ProStellar.Server.Controllers
         [HttpGet]
         public async Task<ActionResult<ServiceResponse<List<Proyecto>>>> GetAllProyectos()
         {
-            var productos = await ProyectoServices.GetAllProyectosAsync();
-            return Ok(productos);
+            var proyectos = await ProyectoServices.GetAllProyectosAsync();
+            return Ok(proyectos);
         }
 
         [HttpGet("{ID}")]

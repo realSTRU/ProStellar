@@ -50,8 +50,18 @@ namespace ProStellar.Server.Services.TrabajoServices
                 if(_contexto.Trabajos != null)
                 {
                     var trabajo = await _contexto.Trabajos.FindAsync(id);
-                    await _contexto.SaveChangesAsync();
-                    response.Data = trabajo;
+                    if(trabajo != null)
+                    {
+                        _contexto.Trabajos.Remove(trabajo);
+                        await _contexto.SaveChangesAsync();
+                        response.Data = trabajo;
+                    }
+                    else
+                    {
+                        response.Success = false;
+                        response.Message = "error en el saveChanges De eliminar un trabajo";
+                    }
+                    
                 }
                 else
                 {
@@ -65,6 +75,11 @@ namespace ProStellar.Server.Services.TrabajoServices
                 response.Message = ex.Message;
             }
             return response;
+        }
+
+        public async Task<bool> Existe(int Id)
+        {
+            return await _contexto.Trabajos.AnyAsync(t => t.TrabajoId == Id);
         }
 
         public async Task<ServiceResponse<Trabajo>> GetTrabajo(int id)
@@ -150,6 +165,19 @@ namespace ProStellar.Server.Services.TrabajoServices
                 response.Message = ex.Message;
             }
             return response;
+        }
+
+        public async Task<ServiceResponse<Trabajo>> SaveTrabajo(Trabajo trabajo)
+        {
+            if(await Existe(trabajo.TrabajoId))
+            {
+                return await ModifyTrabajo(trabajo);
+
+            }
+            else
+            {
+                return await AddTrabajo(trabajo);
+            }
         }
     }
 }

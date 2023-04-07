@@ -5,7 +5,7 @@ using ProStellar.Server.DAL;
 
 namespace ProStellar.Server.Services.TipoPagoServices
 {
-    public class TipoPagoService : ITipoPagoServices
+    public class TipoPagoService : ITipoPagoService
     {
         private readonly Contexto _contexto;
 
@@ -165,6 +165,24 @@ namespace ProStellar.Server.Services.TipoPagoServices
                 response.Message = ex.Message;
             }
             return response;
+        }
+
+        public async Task<bool> Existe(int Id)
+        {
+            return await _contexto.TiposPagos.AnyAsync(t => t.TipoPagoId == Id);
+        }
+
+        public async Task<ServiceResponse<TipoPago>> SaveTipoPago(TipoPago tipoPago)
+        {
+            if(await Existe(tipoPago.TipoPagoId))
+            {
+                return await ModifyTipoPago(tipoPago);
+
+            }
+            else
+            {
+                return await AddTipoPago(tipoPago);
+            }
         }
     }
 }

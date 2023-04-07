@@ -41,9 +41,9 @@ namespace ProStellar.Server.Controllers
         }
 
         [HttpPost]
-        public async Task<ActionResult<ServiceResponse<Empleado>>> InsertEmpleado(Empleado empleado)
+        public async Task<ActionResult<ServiceResponse<Empleado>>> SaveEmpleado(Empleado empleado)
         {
-            var result = await _empleadoService.AddEmpleado(empleado);
+            var result = await _empleadoService.SaveEmpleado(empleado);
 
             if (result.Success != false)
             {

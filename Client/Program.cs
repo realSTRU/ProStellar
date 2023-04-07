@@ -1,3 +1,8 @@
+global using System.Net.Http.Json;
+global using ProStellar.Shared.Models;
+global using ProStellar.Shared;
+
+
 using Microsoft.AspNetCore.Components.Web;
 using Microsoft.AspNetCore.Components.WebAssembly.Authentication;
 using Microsoft.AspNetCore.Components.WebAssembly.Hosting;

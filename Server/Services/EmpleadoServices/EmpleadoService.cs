@@ -73,6 +73,11 @@ namespace ProStellar.Server.Services.EmpleadoServices
             return response;
         }
 
+        public async Task<bool> Existe(int Id)
+        {
+            return  await _contexto.Empleados.AnyAsync(e => e.EmpleadoId == Id);
+        }
+
         public async Task<ServiceResponse<Empleado>> GetEmpleado(int id)
         {
             var response = new ServiceResponse<Empleado>();
@@ -156,6 +161,18 @@ namespace ProStellar.Server.Services.EmpleadoServices
             }
             return response;
 
+        }
+
+        public async Task<ServiceResponse<Empleado>> SaveEmpleado(Empleado empleado)
+        {
+            if(await Existe(empleado.EmpleadoId))
+            {
+                return await ModifyEmpleado(empleado);
+            }
+            else
+            {
+                return await AddEmpleado(empleado);
+            }
         }
     }
 }

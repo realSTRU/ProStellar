@@ -33,7 +33,7 @@ namespace ProStellar.Server.Controllers
         [HttpPost]
         public async Task<ActionResult<ServiceResponse<Trabajo>>> Guardar(Trabajo Trabajo)
         {
-            var result = await TrabajoServices.AddTrabajo(Trabajo);
+            var result = await TrabajoServices.SaveTrabajo(Trabajo);
             return Ok(result);
         }
 
