@@ -60,9 +60,8 @@ namespace ProStellar.Server.Services.PagoService
             {
                 if (Pago != null)
                 {
-                    foreach(var Detalles in Pago.Detalles)
+                    foreach (var Detalles in Pago.Detalles)
                     {
-                        
                     }
 
                     _contexto.Pagos.Add(Pago);
@@ -100,8 +99,6 @@ namespace ProStellar.Server.Services.PagoService
                     foreach (var Detalle in Pago.Detalles)
                     {
                         _contexto.Entry(Detalle).State = EntityState.Added;
-
-
                     }
                     //actualizamos la Pago
                     _contexto.Update(Pago);

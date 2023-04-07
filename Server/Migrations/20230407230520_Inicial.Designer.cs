@@ -11,8 +11,8 @@ using ProStellar.Server.DAL;
 namespace ProStellar.Server.Migrations
 {
     [DbContext(typeof(Contexto))]
-    [Migration("20230407141242_CreateInicial")]
-    partial class CreateInicial
+    [Migration("20230407230520_Inicial")]
+    partial class Inicial
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -64,6 +64,17 @@ namespace ProStellar.Server.Migrations
                     b.HasKey("EmpleadoId");
 
                     b.ToTable("Empleados");
+
+                    b.HasData(
+                        new
+                        {
+                            EmpleadoId = 1,
+                            PrimerApellido = "Duran",
+                            PrimerNombre = "Kevin",
+                            SegundoApellido = "Bruno",
+                            SegundoNombre = "",
+                            Telefono = "809-396-8457"
+                        });
                 });
 
             modelBuilder.Entity("ProStellar.Shared.Models.Estado", b =>

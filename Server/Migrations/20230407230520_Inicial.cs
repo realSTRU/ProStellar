@@ -6,7 +6,7 @@ using Microsoft.EntityFrameworkCore.Migrations;
 namespace ProStellar.Server.Migrations
 {
     /// <inheritdoc />
-    public partial class CreateInicial : Migration
+    public partial class Inicial : Migration
     {
         /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)
@@ -171,6 +171,11 @@ namespace ProStellar.Server.Migrations
                         principalColumn: "PagoId",
                         onDelete: ReferentialAction.Cascade);
                 });
+
+            migrationBuilder.InsertData(
+                table: "Empleados",
+                columns: new[] { "EmpleadoId", "PrimerApellido", "PrimerNombre", "SegundoApellido", "SegundoNombre", "Telefono" },
+                values: new object[] { 1, "Duran", "Kevin", "Bruno", "", "809-396-8457" });
 
             migrationBuilder.CreateIndex(
                 name: "IX_NominaDetalle_NominaId",

@@ -61,6 +61,17 @@ namespace ProStellar.Server.Migrations
                     b.HasKey("EmpleadoId");
 
                     b.ToTable("Empleados");
+
+                    b.HasData(
+                        new
+                        {
+                            EmpleadoId = 1,
+                            PrimerApellido = "Duran",
+                            PrimerNombre = "Kevin",
+                            SegundoApellido = "Bruno",
+                            SegundoNombre = "",
+                            Telefono = "809-396-8457"
+                        });
                 });
 
             modelBuilder.Entity("ProStellar.Shared.Models.Estado", b =>

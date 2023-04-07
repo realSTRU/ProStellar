@@ -10,6 +10,7 @@ using ProStellar.Server.Services.ProyectoService;
 using ProStellar.Server.Services.TipoPagoServices;
 using ProStellar.Server.Services.TrabajoServices;
 using ProStellar.Server.Services.EstadoService;
+using ProStellar.Server.Services.PagoService;
 using ProStellar.Server.DAL;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -35,6 +36,14 @@ builder.Services.AddIdentityServer()
 builder.Services.AddAuthentication()
     .AddIdentityServerJwt();
 
+builder.Services.AddScoped<IEmpleadoService, EmpleadoService>();
+builder.Services.AddScoped<ICantidadService, CantidadService>();
+builder.Services.AddScoped<IEstadoService, EstadoService>();
+builder.Services.AddScoped<INominaService, NominaService>();
+builder.Services.AddScoped<IPagoService, PagoService>();
+builder.Services.AddScoped<IProyectoService, ProyectoService>();
+builder.Services.AddScoped<ITipoPagoService, TipoPagoService>();
+builder.Services.AddScoped<ITrabajoService, TrabajoService>();
 
 
 
