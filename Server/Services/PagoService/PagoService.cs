@@ -19,7 +19,7 @@ namespace ProStellar.Server.Services.PagoService
         public async Task<ServiceResponse<Pago>> GetPagoAsync(int Id)
         {
             var response = new ServiceResponse<Pago>();
-            var Pago = await _contexto.Pagos.Include("PagoDetalle").AsNoTracking().SingleOrDefaultAsync(o => o.PagoId == Id);
+            var Pago = await _contexto.Pagos.Include("Detalles").AsNoTracking().SingleOrDefaultAsync(o => o.PagoId == Id);
             if (Pago == null)
             {
                 response.Success = false;
@@ -58,12 +58,22 @@ namespace ProStellar.Server.Services.PagoService
             var response = new ServiceResponse<Pago>();
             try
             {
-                if (Pago != null)
+                var Nomina = await _contexto.Nominas.Include("Detalles").AsNoTracking().SingleOrDefaultAsync(o => o.NominaId == Pago.NominaId);
+                if (Pago != null && Nomina != null)
                 {
-                    foreach (var Detalles in Pago.Detalles)
+                    foreach (var Detalle in Pago.Detalles)
                     {
+                        foreach (var DNomina in Nomina.Detalles)
+                        {
+                            if (DNomina.NominaDetalleId == Detalle.NominaDetalleId)
+                            {
+                                DNomina.Balance -= Detalle.ValorPagado;
+                            }
+                        }
                     }
-
+                    //actualizamos la nomina con su nuevo balance
+                    _contexto.Nominas.Update(Nomina);
+                    //Agregamos el pago
                     _contexto.Pagos.Add(Pago);
                     bool guardado = await _contexto.SaveChangesAsync() > 0;
                     _contexto.Entry(Pago).State = EntityState.Detached;
@@ -92,19 +102,42 @@ namespace ProStellar.Server.Services.PagoService
             {
                 if (Pago != null)
                 {
-                    //eliminamos los detalles de la Pago
-                    _contexto.Database.ExecuteSqlRaw($"DELETE FROM PagoDetalle WHERE PagoId={Pago.PagoId};");
-
-                    //Agregamos los nuevos detalles
-                    foreach (var Detalle in Pago.Detalles)
+                    //eliminamos  los detalles de la Pago y aumentamos el balance
+                    var Nomina = await _contexto.Nominas.Include("Detalles").AsNoTracking().SingleOrDefaultAsync(o => o.NominaId == Pago.NominaId);
+                    var Anterior = await _contexto.Pagos.Include("Detalles").AsNoTracking().SingleOrDefaultAsync(o => o.PagoId == Pago.PagoId);
+                    if (Nomina != null && Anterior != null)
                     {
-                        _contexto.Entry(Detalle).State = EntityState.Added;
+                        foreach (var Detalle in Anterior.Detalles)
+                        {
+                            foreach (var DNomina in Nomina.Detalles)
+                            {
+                                if (DNomina.NominaDetalleId == Detalle.NominaDetalleId)
+                                {
+                                    DNomina.Balance += Detalle.ValorPagado;
+                                }
+                            }
+                        }
+                        _contexto.Nominas.Update(Nomina);
+                        _contexto.Database.ExecuteSqlRaw($"DELETE FROM PagoDetalle WHERE PagoId={Pago.PagoId};");
+                        //Agregamos los nuevos detalles y disminuimos el balance
+                        foreach (var Detalle in Pago.Detalles)
+                        {
+                            foreach (var DNomina in Nomina.Detalles)
+                            {
+                                if (DNomina.NominaDetalleId == Detalle.NominaDetalleId)
+                                {
+                                    DNomina.Balance -= Detalle.ValorPagado;
+                                }
+                            }
+                            _contexto.Entry(Detalle).State = EntityState.Added;
+                        }
+
+                        //actualizamos la Nomina
+                        _contexto.Nominas.Update(Nomina);
                     }
-                    //actualizamos la Pago
-                    _contexto.Update(Pago);
+                    //actualizamos el pago
                     var guardo = await _contexto.SaveChangesAsync() > 0;
                     _contexto.Entry(Pago).State = EntityState.Detached;
-
                     response.Data = Pago;
                     response.Success = guardo;
                 }
@@ -125,13 +158,29 @@ namespace ProStellar.Server.Services.PagoService
         public async Task<ServiceResponse<Pago>> Eliminar(int PagoId)
         {
             var response = new ServiceResponse<Pago>();
-            var Pago = await _contexto.Pagos.Include("PagoDetalle").AsNoTracking().SingleOrDefaultAsync(o => o.PagoId == PagoId);
             try
             {
+                var Pago = await _contexto.Pagos.Include("PagoDetalle").AsNoTracking().SingleOrDefaultAsync(o => o.PagoId == PagoId);
                 if (Pago != null)
                 {
-                    _contexto.Remove(Pago);
-                    _contexto.Database.ExecuteSqlRaw($"DELETE FROM Pagos WHERE PagoId={PagoId};");
+                    var Nomina = await _contexto.Nominas.Include("Detalles").AsNoTracking().SingleOrDefaultAsync(o => o.NominaId == Pago.NominaId);
+                    if (Nomina != null)
+                    {
+                        foreach (var Detalle in Pago.Detalles)
+                        {
+                            foreach (var DNomina in Nomina.Detalles)
+                            {
+                                if (DNomina.NominaDetalleId == Detalle.NominaDetalleId)
+                                {
+                                    DNomina.Balance += Detalle.ValorPagado;
+                                }
+                            }
+                        }
+                        _contexto.Nominas.Update(Nomina);
+                        _contexto.Database.ExecuteSqlRaw($"DELETE FROM PagoDetalle WHERE PagoId={Pago.PagoId};");
+                        _contexto.Remove(Pago);
+                        _contexto.Database.ExecuteSqlRaw($"DELETE FROM Pagos WHERE PagoId={PagoId};");
+                    }
                     bool guardado = await _contexto.SaveChangesAsync() > 0;
                     response.Data = Pago;
                     response.Success = guardado;
@@ -146,7 +195,6 @@ namespace ProStellar.Server.Services.PagoService
             {
                 response.Success = false;
                 response.Message = ex.Message;
-                response.Data = Pago;
             }
             return response;
         }
