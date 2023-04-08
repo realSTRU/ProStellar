@@ -13,7 +13,7 @@ namespace ProStellar.Shared.Models
         [Key]
         public int PagoId { get; set; }
         public DateTime Fecha { get; set; }
-        public int PersonaId { get; set; }
+        public int NominaId { get; set; }
         public double Monto { get; set; }
         public double Total { get; set; }
 
