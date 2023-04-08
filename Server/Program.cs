@@ -12,6 +12,7 @@ using ProStellar.Server.Services.TrabajoServices;
 using ProStellar.Server.Services.EstadoService;
 using ProStellar.Server.Services.PagoService;
 using ProStellar.Server.DAL;
+using ProStellar.Shared;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -52,17 +53,6 @@ builder.Services.AddControllersWithViews();
 builder.Services.AddRazorPages();
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
-
-
-
-
- builder.Services.AddScoped<ITrabajoService, TrabajoService>();
- builder.Services.AddScoped<IEmpleadoService, EmpleadoService>();
- builder.Services.AddScoped<ICantidadService, CantidadService>();
- builder.Services.AddScoped<INominaService, NominaService>();
- builder.Services.AddScoped<IProyectoService, ProyectoService>();
- builder.Services.AddScoped<ITipoPagoService, TipoPagoService>();
- builder.Services.AddScoped<IEstadoService, EstadoService>();
 
 var app = builder.Build();
 app.UseSwaggerUI();

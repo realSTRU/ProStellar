@@ -8,6 +8,8 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <PackageReference Include="BlazorStrap" Version="5.1.101" />
+    <PackageReference Include="BlazorStrap.V5" Version="5.1.101" />
     <PackageReference Include="Microsoft.AspNetCore.Components.WebAssembly.Server" Version="7.0.4" />
     <PackageReference Include="Microsoft.AspNetCore.Identity" Version="2.2.0" />
     <PackageReference Include="Microsoft.EntityFrameworkCore" Version="8.0.0-preview.2.23128.3" />
