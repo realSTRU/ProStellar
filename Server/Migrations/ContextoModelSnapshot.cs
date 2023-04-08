@@ -27,6 +27,9 @@ namespace ProStellar.Server.Migrations
                         .IsRequired()
                         .HasColumnType("TEXT");
 
+                    b.Property<double>("Valor")
+                        .HasColumnType("REAL");
+
                     b.HasKey("CantidadId");
 
                     b.ToTable("Cantidades");
@@ -163,8 +166,8 @@ namespace ProStellar.Server.Migrations
                     b.Property<double>("Monto")
                         .HasColumnType("REAL");
 
-                    b.Property<int>("PersonaId")
-                        .HasColumnType("INTEGER");
+                    b.Property<double>("NominaId")
+                        .HasColumnType("REAL");
 
                     b.Property<double>("Total")
                         .HasColumnType("REAL");

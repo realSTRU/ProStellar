@@ -29,7 +29,6 @@ namespace ProStellar.Server.Services.CantidadService
             {
                 response.Data = Cantidad;
             }
-
             return response;
         }
 

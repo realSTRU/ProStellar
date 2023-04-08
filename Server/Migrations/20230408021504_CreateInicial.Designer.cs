@@ -11,8 +11,8 @@ using ProStellar.Server.DAL;
 namespace ProStellar.Server.Migrations
 {
     [DbContext(typeof(Contexto))]
-    [Migration("20230407230520_Inicial")]
-    partial class Inicial
+    [Migration("20230408021504_CreateInicial")]
+    partial class CreateInicial
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -29,6 +29,9 @@ namespace ProStellar.Server.Migrations
                     b.Property<string>("Descripcion")
                         .IsRequired()
                         .HasColumnType("TEXT");
+
+                    b.Property<double>("Valor")
+                        .HasColumnType("REAL");
 
                     b.HasKey("CantidadId");
 
@@ -158,8 +161,8 @@ namespace ProStellar.Server.Migrations
                     b.Property<double>("Monto")
                         .HasColumnType("REAL");
 
-                    b.Property<int>("PersonaId")
-                        .HasColumnType("INTEGER");
+                    b.Property<double>("NominaId")
+                        .HasColumnType("REAL");
 
                     b.Property<double>("Total")
                         .HasColumnType("REAL");
