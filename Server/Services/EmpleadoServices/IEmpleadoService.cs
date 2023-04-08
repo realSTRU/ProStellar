@@ -1,5 +1,4 @@
-
-using ProStellar.Shared.Models;
+﻿using ProStellar.Shared.Models;
 using ProStellar.Shared;
 namespace ProStellar.Server.Services.EmpleadoServices
 {
@@ -14,8 +13,10 @@ namespace ProStellar.Server.Services.EmpleadoServices
         Task<ServiceResponse<Empleado>> GetEmpleado(int id);
 
         Task<ServiceResponse<Empleado>> DeleteEmpleado(int id);
+
         Task<ServiceResponse<Empleado>> SaveEmpleado(Empleado empleado);
 
         Task<bool> Existe(int Id);
+
     }
 }

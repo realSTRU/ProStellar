@@ -11,7 +11,7 @@ using ProStellar.Server.DAL;
 namespace ProStellar.Server.Migrations
 {
     [DbContext(typeof(Contexto))]
-    [Migration("20230407230520_Inicial")]
+    [Migration("20230408000412_Inicial")]
     partial class Inicial
     {
         /// <inheritdoc />

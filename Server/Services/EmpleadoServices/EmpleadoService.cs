@@ -4,7 +4,6 @@ using ProStellar.Server.DAL;
 using ProStellar.Shared.Models;
 using ProStellar.Shared;
 
-
 namespace ProStellar.Server.Services.EmpleadoServices
 {
     public class EmpleadoService : IEmpleadoService
@@ -34,7 +33,7 @@ namespace ProStellar.Server.Services.EmpleadoServices
                     response.Message = $"Error al insertar el empleado {empleado.EmpleadoId}";
                 }
             }
-            catch (Exception ex)
+            catch (Exception ex) 
             {
                 response.Success = false;
                 response.Message = ex.Message;
@@ -49,11 +48,11 @@ namespace ProStellar.Server.Services.EmpleadoServices
 
             try
             {
-                if (_contexto.Empleados != null)
+                if(_contexto.Empleados != null)
                 {
                     var empleado = await _contexto.Empleados.FindAsync(id);
 
-                    if (empleado != null)
+                    if(empleado != null)
                     {
                         _contexto.Empleados.Remove(empleado);
                         await _contexto.SaveChangesAsync();
@@ -66,16 +65,17 @@ namespace ProStellar.Server.Services.EmpleadoServices
                     }
                 }
             }
-            catch (Exception ex)
+            catch(Exception ex) 
             {
                 response.Success = false;
                 response.Message = ex.Message;
             }
             return response;
         }
+
         public async Task<bool> Existe(int Id)
         {
-            return await _contexto.Empleados.AnyAsync(e => e.EmpleadoId == Id);
+            return  await _contexto.Empleados.AnyAsync(e => e.EmpleadoId == Id);
         }
 
         public async Task<ServiceResponse<Empleado>> GetEmpleado(int id)
@@ -88,7 +88,7 @@ namespace ProStellar.Server.Services.EmpleadoServices
                 {
                     var empleado = await _contexto.Empleados.FindAsync(id);
 
-                    if (empleado == null)
+                    if(empleado == null)
                     {
                         response.Success = false;
                         response.Message = $"Error, Persona no encontrada con el id:{id}";
@@ -98,8 +98,9 @@ namespace ProStellar.Server.Services.EmpleadoServices
                         response.Data = empleado;
                     }
                 }
+              
             }
-            catch (Exception ex)
+            catch(Exception ex)
             {
                 response.Success = false;
                 response.Message = ex.Message;
@@ -126,7 +127,7 @@ namespace ProStellar.Server.Services.EmpleadoServices
                     response.Success = false;
                 }
             }
-            catch (Exception ex)
+            catch(Exception ex)
             {
                 response.Success = false;
                 response.Message = ex.Message;
@@ -141,7 +142,7 @@ namespace ProStellar.Server.Services.EmpleadoServices
 
             try
             {
-                if (_contexto.Empleados != null)
+                if(_contexto.Empleados != null)
                 {
                     _contexto.Entry(empleado).State = EntityState.Modified;
                     await _contexto.SaveChangesAsync();
@@ -153,7 +154,7 @@ namespace ProStellar.Server.Services.EmpleadoServices
                     response.Message = $"Error al modificar la persona con el id{empleado.EmpleadoId}";
                 }
             }
-            catch (Exception ex)
+            catch(Exception ex)
             {
                 response.Success = false;
                 response.Message = ex.Message;
@@ -162,10 +163,9 @@ namespace ProStellar.Server.Services.EmpleadoServices
 
         }
 
-
         public async Task<ServiceResponse<Empleado>> SaveEmpleado(Empleado empleado)
         {
-            if (await Existe(empleado.EmpleadoId))
+            if(await Existe(empleado.EmpleadoId))
             {
                 return await ModifyEmpleado(empleado);
             }
