@@ -17,7 +17,7 @@ var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
 //Login
-var connectionString = builder.Configuration.GetConnectionString("DefaultConnection") ?? throw new InvalidOperationException("Connection string 'DefaultConnection' not found.");
+var connectionString = builder.Configuration.GetConnectionString("Constr") ?? throw new InvalidOperationException("Connection string 'DefaultConnection' not found.");
 builder.Services.AddDbContext<ApplicationDbContext>(options =>
     options.UseSqlite(connectionString));
 
@@ -56,13 +56,13 @@ builder.Services.AddSwaggerGen();
 
 
 
- builder.Services.AddScoped<ITrabajoService, TrabajoService>();
- builder.Services.AddScoped<IEmpleadoService, EmpleadoService>();
- builder.Services.AddScoped<ICantidadService, CantidadService>();
- builder.Services.AddScoped<INominaService, NominaService>();
- builder.Services.AddScoped<IProyectoService, ProyectoService>();
- builder.Services.AddScoped<ITipoPagoService, TipoPagoService>();
- builder.Services.AddScoped<IEstadoService, EstadoService>();
+builder.Services.AddScoped<ITrabajoService, TrabajoService>();
+builder.Services.AddScoped<IEmpleadoService, EmpleadoService>();
+builder.Services.AddScoped<ICantidadService, CantidadService>();
+builder.Services.AddScoped<INominaService, NominaService>();
+builder.Services.AddScoped<IProyectoService, ProyectoService>();
+builder.Services.AddScoped<ITipoPagoService, TipoPagoService>();
+builder.Services.AddScoped<IEstadoService, EstadoService>();
 
 var app = builder.Build();
 app.UseSwaggerUI();
