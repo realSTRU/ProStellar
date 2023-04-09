@@ -1,0 +1,140 @@
+@page "/Empleado"
+@page "/Empleado/{EmpleadoId:int}"
+@inject IEmpleadoService EmpleadoService
+@inject NotificationService notify
+
+@try
+{
+    <div class="container">
+        <RadzenTemplateForm TItem="Empleado" Data="Emp" Submit="Validar">
+            <RadzenFieldset>
+                <HeaderTemplate>
+                <span class="d-inline-flex align-items-center align-middle">
+                    <RadzenIcon Icon="account_box" class="me-1" /><b>Empleado</b>
+                </span>
+                </HeaderTemplate>
+                <ChildContent>
+
+                    <div class="row">
+                        <div class="col-md-4 align-items-center d-flex">
+                            <RadzenLabel Text="Primer Nombre" />
+                        </div>
+                        <div class="col-md-8">
+                            <RadzenTextBox style="width: 100%;" Name="PrimerNombre" @bind-Value="Emp.PrimerNombre" />
+                            <RadzenRequiredValidator Component="PrimerNombre" Text="Campo requerido" Popup="true" Style="position: absolute"/>
+                        </div>
+                    </div>
+
+                    <div class="row">
+                        <div class="col-md-4 align-items-center d-flex">
+                            <RadzenLabel Text="Segundo Nombre" />
+                        </div>
+                        <div class="col-md-8">
+                            <RadzenTextBox style="width: 100%;" Name="SegundoNombre" @bind-Value="Emp.SegundoNombre" />
+                            <RadzenRequiredValidator Component="SegundoNombre" Text="Campo requerido" Popup="true" Style="position: absolute"/>
+                        </div>
+                    </div>
+
+                    <div class="row">
+                        <div class="col-md-4 align-items-center d-flex">
+                            <RadzenLabel Text="Primer Apellido" />
+                        </div>
+                        <div class="col-md-8">
+                            <RadzenTextBox style="width: 100%;" Name="PrimerApellido" @bind-Value="Emp.PrimerApellido" />
+                            <RadzenRequiredValidator Component="PrimerApellido" Text="Campo requerido" Popup="true" Style="position: absolute"/>
+                        </div>
+                    </div>
+
+                    <div class="row">
+                        <div class="col-md-4 align-items-center d-flex">
+                            <RadzenLabel Text="Segundo Apellido" />
+                        </div>
+                        <div class="col-md-8">
+                            <RadzenTextBox style="width: 100%;" Name="SegundoApellido" @bind-Value="Emp.SegundoApellido" />
+                            <RadzenRequiredValidator Component="SegundoApellido" Text="Campo requerido" Popup="true" Style="position: absolute"/>
+                        </div>
+                    </div>
+
+                    <div class="row">
+                        <div class="col-md-4 align-items-center d-flex">
+                            <RadzenLabel Text="Telefono" />
+                        </div>
+                        <div class="col-md-8">
+                            <RadzenTextBox style="width: 100%;" Name="Telefono" @bind-Value="Emp.Telefono" />
+                            <RadzenRequiredValidator Component="Telefono" Text="Campo requerido" Popup="true" Style="position: absolute"/>
+                        </div>
+                    </div>
+
+                </ChildContent>
+            </RadzenFieldset>
+            <div class="w3-margin  d-flex justify-content-center">
+                <RadzenButton Text="Agregar" ButtonType="ButtonType.Submit" ButtonStyle="ButtonStyle.Success" />
+                @if(EmpleadoId>0)
+                {
+                    <RadzenButton Text="Eliminar" Click="Eliminar" ButtonStyle="ButtonStyle.Danger" />
+                }
+            </div>
+        </RadzenTemplateForm>
+    </div>
+
+    @foreach(var item in EmpleadoService.ListEmpleado)
+    {
+        <p>item.Descipcion</p>
+    }
+
+}
+catch(Exception e)
+{
+    <p>@e.Message</p>
+}
+
+@code {
+    [Parameter]
+    public int EmpleadoId {get;set;}
+    public Empleado Emp {get;set;} = new Empleado();
+
+    protected override async Task  OnInitializedAsync()
+    {
+        if(EmpleadoId >0)
+        {
+            Buscar();
+            EmpleadoService.GetList();
+        }
+    }
+
+    async Task Buscar()
+    {
+        var Encontrado = await EmpleadoService.Find(EmpleadoId);
+        if(Encontrado!=null)
+        {
+            Emp=Encontrado;
+
+        }
+    }
+
+    async Task Guardar()
+    {
+        EmpleadoService.Save(this.Emp);
+        Nuevo();
+        notify.ShowNotification("Se a agregado correctamente","Actualizacion de Registro", NotificationSeverity.Success);
+    }
+    void Nuevo()
+    {
+        this.Emp = new Empleado();
+    }
+    async Task Eliminar()
+    {
+        var Encontrado = await EmpleadoService.Find(EmpleadoId);
+        if(Encontrado!=null)
+        {
+            EmpleadoService.Delete(this.Emp.EmpleadoId);
+            notify.ShowNotification("Se a Eliminado correctamente","Actualizacion de Registro", NotificationSeverity.Error);
+        }
+    }
+
+    void Validar()
+    {
+        Guardar();
+    }
+
+}

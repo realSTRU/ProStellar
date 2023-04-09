@@ -1,0 +1,124 @@
+@page "/Trabajo"
+@page "/Trabajo/{TrabajoId:int}"
+@inject ITrabajoService TrabajoService
+@inject NotificationService notify
+
+@try
+{
+    <div class="container">
+        <RadzenTemplateForm TItem="Trabajo" Data="Trab" Submit="Validar">
+            <RadzenFieldset>
+                <HeaderTemplate>
+                <span class="d-inline-flex align-items-center align-middle">
+                    <RadzenIcon Icon="account_box" class="me-1" /><b>Trabajo</b>
+                </span>
+                </HeaderTemplate>
+                <ChildContent>
+
+                    <div class="row">
+                        <div class="col-md-4 align-items-center d-flex">
+                            <RadzenLabel Text="Descripcion" />
+                        </div>
+                        <div class="col-md-8">
+                            <RadzenTextBox style="width: 100%;" Name="Descipcion" @bind-Value="Trab.Descripcion" />
+                            <RadzenRequiredValidator Component="Descripcion" Text="Campo requerido" Popup="true" Style="position: absolute"/>
+                        </div>
+                    </div>
+
+                    <div class="row">
+                        <div class="col-md-4 align-items-center d-flex">
+                            <RadzenLabel Text="Precio" />
+                        </div>
+                        <div class="col-md-8">
+                            <RadzenNumeric style="width: 100%;" Name="Precio" @bind-Value="Trab.Precio" />
+                            <RadzenRequiredValidator Component="Precio" Text="Campo requerido" Popup="true" Style="position: absolute"/>
+                        </div>
+                    </div>
+
+                </ChildContent>
+            </RadzenFieldset>
+            <div class="w3-margin  d-flex justify-content-center">
+                <RadzenButton Text="Agregar" ButtonType="ButtonType.Submit" ButtonStyle="ButtonStyle.Success" />
+                @if(TrabajoId>0)
+                {
+                    <RadzenButton Text="Eliminar" Click="Eliminar" ButtonStyle="ButtonStyle.Danger" />
+                }
+            </div>
+        </RadzenTemplateForm>
+    </div>
+
+    @foreach(var item in TrabajoService.ListTrabajo)
+    {
+        <p>item.Descipcion</p>
+    }
+
+}
+catch(Exception e)
+{
+    <p>@e.Message</p>
+}
+
+@code {
+    [Parameter]
+    public int TrabajoId {get;set;}
+    public Trabajo Trab {get;set;} = new Trabajo();
+
+    protected override async Task  OnInitializedAsync()
+    {
+        if(TrabajoId >0)
+        {
+            Buscar();
+            TrabajoService.GetList();
+        }
+    }
+
+    async Task Buscar()
+    {
+        var Encontrado = await TrabajoService.Find(TrabajoId);
+        if(Encontrado!=null)
+        {
+            Trab=Encontrado;
+
+        }
+    }
+
+    async Task Guardar()
+    {
+        TrabajoService.Save(this.Trab);
+        Nuevo();
+        notify.ShowNotification("Se a agregado correctamente","Actualizacion de Registro", NotificationSeverity.Success);
+    }
+    void Nuevo()
+    {
+        this.Trab = new Trabajo();
+    }
+    async Task Eliminar()
+    {
+        var Encontrado = await TrabajoService.Find(TrabajoId);
+        if(Encontrado!=null)
+        {
+            TrabajoService.Delete(this.Trab.TrabajoId);
+            notify.ShowNotification("Se a Eliminado correctamente","Actualizacion de Registro", NotificationSeverity.Error);
+        }
+    }
+
+    void Validar()
+    {
+        if(Trab.Descripcion != null)
+        {
+            if(Trab.Precio >0)
+            {
+                Guardar();
+            }
+            else
+            {
+                notify.ShowNotification("Precio de registro invalido","Error de Registro", NotificationSeverity.Error);
+            }
+        }
+        else
+        {
+            notify.ShowNotification("Descripcion de registro invalido","Error de Registro", NotificationSeverity.Error);
+        }
+    }
+
+}

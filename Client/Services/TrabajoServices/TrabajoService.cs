@@ -28,16 +28,12 @@ namespace ProStellar.Client.Services.TrabajoServices
                 Data
             = result
             };
-
-
-
-
         }
 
         public async Task<Trabajo> Find(int Id)
         {
             var result = await _http.GetFromJsonAsync<ServiceResponse<Trabajo>>($"api/Trabajo/{Id}");
-
+            
             return result.Data;
         }
 

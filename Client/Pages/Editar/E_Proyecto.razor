@@ -16,7 +16,7 @@
     <RadzenText class="rz-color-warning-darka" TextAlign="TextAlign.Center" TextStyle="TextStyle.DisplayH5">Nominas</RadzenText> 
     <span style="display:flex;">
         <RadzenButton class="w3-button w3-xlarge w3-circle w3-orange  stiky-btn w3-animate-zoom" Click=@ShowInlineDialog >+</RadzenButton>
-        <RadzenButton class="w3-button w3-xlarge w3-circle w3-red stiky-btn w3-animate-zoom" Click=@Eliminar ><i class="material-icons w3-large ">delete</i></RadzenButton>
+        <RadzenButton class="w3-button w3-xlarge w3-circle w3-red stiky-btn w3-animate-zoom" Click=@DeleteResponse ><i class="material-icons w3-large ">delete</i></RadzenButton>
     </span>
     </div>
     <hr class="rz-color-warning" >
@@ -84,7 +84,7 @@ catch (Exception e)
                     <RadzenTemplateForm TItem="Nomina" Data="@Nom" Submit="Validar">
                     <div class="w3-margin row">
                         <div class="align-items-center d-flex">
-                            <RadzenLabel Text="Desea crear una nueva nomina?" />
+                            <RadzenLabel class="rz-color-white" Text="Desea crear una nueva nomina?" />
                         </div>
                     </div>
                     <div class="w3-margin align-content-center ">
@@ -92,6 +92,24 @@ catch (Exception e)
                         <RadzenButton Text="Cancel" Click="() => ds.Close(false)" ButtonStyle="ButtonStyle.Light" />
                     </div>
                     </RadzenTemplateForm>
+            </RadzenStack>
+        </RadzenStack>);
+    }
+
+    async Task DeleteResponse()
+    {
+        var result = await DialogService.OpenAsync("Confirmar Accion", ds =>
+        @<RadzenStack Gap="1.5rem">
+            <RadzenStack Orientation="Orientation.Horizontal" Gap="0.5rem" AlignItems="AlignItems.Center" JustifyContent="JustifyContent.SpaceBetween">
+                    <div class="w3-margin row rz-color-white">
+                        <div class="align-items-center d-flex">
+                            <RadzenLabel Text="Desea eliminar el Proyecto actual?" />
+                        </div>
+                    </div>
+                    <div class="w3-margin align-content-center ">
+                        <RadzenButton Text="Eliminar" Click="Eliminar" ButtonStyle="ButtonStyle.Danger" />
+                        <RadzenButton Text="Cancel" Click="() => ds.Close(false)" ButtonStyle="ButtonStyle.Light" />
+                    </div>
             </RadzenStack>
         </RadzenStack>);
     }
