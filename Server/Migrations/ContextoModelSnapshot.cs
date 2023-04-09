@@ -39,13 +39,13 @@ namespace ProStellar.Server.Migrations
                         {
                             CantidadId = 1,
                             Descripcion = "Día completo",
-                            Valor = 0.5
+                            Valor = 1.0
                         },
                         new
                         {
                             CantidadId = 2,
                             Descripcion = "Medio Día",
-                            Valor = 1.0
+                            Valor = 0.5
                         });
                 });
 
@@ -68,7 +68,6 @@ namespace ProStellar.Server.Migrations
                         .HasColumnType("TEXT");
 
                     b.Property<string>("SegundoNombre")
-                        .IsRequired()
                         .HasColumnType("TEXT");
 
                     b.Property<string>("Telefono")

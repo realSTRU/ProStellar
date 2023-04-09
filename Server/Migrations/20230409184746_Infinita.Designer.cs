@@ -11,8 +11,8 @@ using ProStellar.Server.DAL;
 namespace ProStellar.Server.Migrations
 {
     [DbContext(typeof(Contexto))]
-    [Migration("20230408035136_Inicial")]
-    partial class Inicial
+    [Migration("20230409184746_Infinita")]
+    partial class Infinita
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -42,13 +42,13 @@ namespace ProStellar.Server.Migrations
                         {
                             CantidadId = 1,
                             Descripcion = "Día completo",
-                            Valor = 0.5
+                            Valor = 1.0
                         },
                         new
                         {
                             CantidadId = 2,
                             Descripcion = "Medio Día",
-                            Valor = 1.0
+                            Valor = 0.5
                         });
                 });
 
@@ -71,7 +71,6 @@ namespace ProStellar.Server.Migrations
                         .HasColumnType("TEXT");
 
                     b.Property<string>("SegundoNombre")
-                        .IsRequired()
                         .HasColumnType("TEXT");
 
                     b.Property<string>("Telefono")

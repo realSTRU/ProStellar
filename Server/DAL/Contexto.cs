@@ -131,13 +131,13 @@ namespace ProStellar.Server.DAL
                     {
                         CantidadId = 1,
                         Descripcion = "Día completo",
-                        Valor = 0.5
+                        Valor = 1
                     },
                     new Cantidad
                     {
                         CantidadId = 2,
                         Descripcion = "Medio Día",
-                        Valor = 1
+                        Valor = 0.5
                     }
                 
                 );
