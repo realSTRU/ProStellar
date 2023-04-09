@@ -128,8 +128,7 @@ namespace ProStellar.Server.Services.ProyectoService
             {
                 if (Proyecto != null)
                 {
-                    _contexto.Remove(Proyecto != null);
-                    _contexto.Database.ExecuteSqlRaw($"DELETE FROM Proyectos WHERE ProyectoId={ProyectoId};");
+                    _contexto.Remove(Proyecto);
                     bool guardado = await _contexto.SaveChangesAsync() > 0;
 
                     response.Data = Proyecto;
@@ -148,10 +147,7 @@ namespace ProStellar.Server.Services.ProyectoService
                 response.Message = ex.Message;
                 response.Data = Proyecto;
             }
-
             return response;
-
-
         }
     }
 }
