@@ -27,7 +27,7 @@ namespace ProStellar.Shared.Models
         public int NominaId { get; set; }
         public int PersonaId { get; set; }
         public int TrabajoId { get; set; }
-        public DateTime Fecha { get; set; }
+        public DateTime Fecha { get; set; } = DateTime.Now;
         public int CantidadId { get; set; }
         public double Precio { get; set; }
         public double Balance { get; set; }
