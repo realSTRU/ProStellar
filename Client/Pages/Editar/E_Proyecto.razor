@@ -1,0 +1,131 @@
+@page "/proyecto/{ProyectoId:int}"
+
+@inject IProyectoService ProyectoService
+@inject IEstadoService EstadoService
+@inject INominaService NominaService
+@inject DialogService DialogService
+@inject NotificationService notify
+@inject NavigationManager NavigationManager
+
+@try{
+<div class="container">
+    <p><a href="/" class="w3-hover-orange btn btn-primary bg-transparent w3-border-0">Proyecto</a> / @Pro.Descripcion</p>
+    <br><br>
+    <div style="display:flex; justify-content:space-between; width:100%;">
+    <p></p>
+    <RadzenText class="rz-color-warning-darka" TextAlign="TextAlign.Center" TextStyle="TextStyle.DisplayH5">Nominas</RadzenText> 
+    <span style="display:flex;">
+        <RadzenButton class="w3-button w3-xlarge w3-circle w3-orange  stiky-btn w3-animate-zoom" Click=@ShowInlineDialog >+</RadzenButton>
+        <RadzenButton class="w3-button w3-xlarge w3-circle w3-red stiky-btn w3-animate-zoom" Click=@Eliminar ><i class="material-icons w3-large ">delete</i></RadzenButton>
+    </span>
+    </div>
+    <hr class="rz-color-warning" >
+    <div class=" w3-row-padding w3-section w3-stretch " >
+    </div>
+    <RadzenDataGrid AllowFiltering="true" AllowColumnResize="true" AllowAlternatingRows="false"
+        FilterMode="FilterMode.Advanced" AllowGrouping="true" AllowSorting="true" AllowPaging="true"
+        PagerHorizontalAlign="HorizontalAlign.Left" Data="NominaService.ListNomina.Where(o=>o.ProyectoId==ProyectoId)" TItem="Nomina" ColumnWidth="200px"
+        LogicalFilterOperator="LogicalFilterOperator.Or" ShowPagingSummary="true" >
+
+        <Columns >
+            <RadzenDataGridColumn TItem="Nomina" Width="40px" Filterable="false" Sortable="false"  Frozen="true" Title="Acciones">
+                <Template Context="Item">
+                    <RadzenLink Path=@($"/proyecto/{ProyectoId}/{Item.NominaId}")><RadzenBadge Shade="Shade.Dark" BadgeStyle="BadgeStyle.Warning" Text="Ver" ><i class="material-icons w3-large ">edit</i></RadzenBadge></RadzenLink>
+                </Template>
+            </RadzenDataGridColumn>
+            <RadzenDataGridColumn TItem="Nomina" Property="Fecha" Title="Fecha"/>
+
+            <RadzenDataGridColumn TItem="Nomina" Frozen="true" Title="Estado">
+                <Template Context="Item">
+                    @if(Item.EstadoId==1)
+                    {
+                        <RadzenBadge BadgeStyle="BadgeStyle.Danger">Con Deuda</RadzenBadge>
+                    }
+                    else
+                    {
+                        <RadzenBadge BadgeStyle="BadgeStyle.Success">Paga</RadzenBadge>
+                    }
+                </Template>
+            </RadzenDataGridColumn>
+        </Columns>
+    </RadzenDataGrid>
+</div>
+}
+catch (Exception e)
+{
+    <p>@e.Message</p>
+}
+
+@code{
+    [Parameter]
+    public int ProyectoId {get;set;}
+    public Proyecto Pro = new Proyecto();
+    public Nomina Nom = new Nomina();
+
+    protected override async Task  OnInitializedAsync()
+    {
+        if(ProyectoId >0)
+        {
+            var Encontrado = await ProyectoService.Find(ProyectoId);
+            if(Encontrado != null)
+            {
+                Pro=Encontrado;
+                
+            }
+        }
+        await NominaService.GetList();
+    }
+
+    async Task ShowInlineDialog()
+    {
+        var result = await DialogService.OpenAsync("Nueva Nomina", ds =>
+        @<RadzenStack Gap="1.5rem">
+            <RadzenStack Orientation="Orientation.Horizontal" Gap="0.5rem" AlignItems="AlignItems.Center" JustifyContent="JustifyContent.SpaceBetween">
+                    <RadzenTemplateForm TItem="Nomina" Data="@Nom" Submit="Validar">
+                    <div class="w3-margin row">
+                        <div class="align-items-center d-flex">
+                            <RadzenLabel Text="Desea crear una nueva nomina?" />
+                        </div>
+                    </div>
+                    <div class="w3-margin align-content-center ">
+                        <RadzenButton Text="Agregar" ButtonType="ButtonType.Submit" ButtonStyle="ButtonStyle.Success" />
+                        <RadzenButton Text="Cancel" Click="() => ds.Close(false)" ButtonStyle="ButtonStyle.Light" />
+                    </div>
+                    </RadzenTemplateForm>
+            </RadzenStack>
+        </RadzenStack>);
+    }
+
+    async Task Guardar()
+    {
+        this.Nom.ProyectoId=Pro.ProyectoId;
+        await NominaService.Save(this.Nom);
+        NavigationManager.NavigateTo("/");
+        NavigationManager.NavigateTo($"proyecto/{Pro.ProyectoId}");
+    }
+
+    async Task Eliminar()
+    {
+        ProyectoService.Delete(this.ProyectoId);
+        NavigationManager.NavigateTo("/");
+    }
+
+    void Nuevo()
+    {
+        this.Nom=new Nomina();
+    }
+
+    void Validar()
+    {
+        if(Pro.ProyectoId!=null)
+        {
+            Guardar();
+            notify.ShowNotification("Se a agregado correctamente","Actualizacion de Registro", NotificationSeverity.Success);
+            Nuevo();
+        }
+        else
+        {
+            notify.ShowNotification("Nombre del proyecto invalido","Error de Registro", NotificationSeverity.Error);
+        }
+    }
+}

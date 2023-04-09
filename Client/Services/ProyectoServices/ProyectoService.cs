@@ -1,4 +1,5 @@
 ﻿using Microsoft.JSInterop;
+using ProStellar.Shared;
 
 namespace ProStellar.Client.Services.ProyectoServices
 {
@@ -34,7 +35,7 @@ namespace ProStellar.Client.Services.ProyectoServices
         {
             var result = await _http.GetFromJsonAsync<ServiceResponse<List<Proyecto>>>($"api/Proyecto");
 
-            if(result != null && result.Data != null)
+            if (result != null && result.Data != null)
             {
                 ListProyecto = result.Data;
             }

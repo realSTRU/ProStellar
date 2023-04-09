@@ -1,0 +1,82 @@
+@page "/proyecto/{ProyectoId:int}/{NominaId:int}"
+@inject IProyectoService ProyectoService
+@inject IEstadoService EstadoService
+@inject INominaService NominaService
+@inject DialogService DialogService
+@inject NotificationService notify
+@inject IEmpleadoService EmpleadoService
+@inject NavigationManager NavigationManager
+
+
+@try{
+    <div class="container">
+    <p><a href="/" class="w3-hover-orange btn btn-primary bg-transparent w3-border-0">Proyecto</a> / <a href=@($"/proyecto/{ProyectoId}") class="w3-hover-orange btn btn-primary bg-transparent w3-border-0" >@Pro.Descripcion</a> / nomina</p>
+    </div>
+
+     <RadzenDataGrid AllowFiltering="true" AllowColumnResize="true" AllowAlternatingRows="false"
+        FilterMode="FilterMode.Advanced" AllowGrouping="true" AllowSorting="true" AllowPaging="true"
+        PagerHorizontalAlign="HorizontalAlign.Left" Data="NominaService.ListNomina.Where(o=>o.ProyectoId==ProyectoId)" TItem="Nomina" ColumnWidth="200px"
+        LogicalFilterOperator="LogicalFilterOperator.Or" ShowPagingSummary="true" >
+
+        <Columns >
+            <RadzenDataGridColumn TItem="NominaDetalle" Width="40px" Filterable="false" Sortable="false"  Frozen="true" Title="Acciones">
+                <Template Context="Item">
+                    <RadzenLink Path=@($"/proyecto/{ProyectoId}/{Item.NominaId}")><RadzenBadge Shade="Shade.Dark" BadgeStyle="BadgeStyle.Warning" Text="Ver" ><i class="material-icons w3-large ">edit</i></RadzenBadge></RadzenLink>
+                </Template>
+            </RadzenDataGridColumn>
+            <RadzenDataGridColumn TItem="NominaDetalle" Property="Fecha" Title="Fecha" />
+            <RadzenDataGridColumn TItem="NominaDetalle" Property="PersonaId" Title="Persona" />
+            <RadzenDataGridColumn TItem="NominaDetalle" Property="Fecha" Title="Fecha" />
+            <RadzenDataGridColumn TItem="NominaDetalle" Property="TrabajoId" Title="Trabajo" />
+            <RadzenDataGridColumn TItem="NominaDetalle" Property="Precio" Title="Precio" />
+            <RadzenDataGridColumn TItem="NominaDetalle" Property="Balance" Title="Balance" />
+            <RadzenDataGridColumn TItem="NominaDetalle" Frozen="true" Title="Estado">
+                <Template Context="Item">
+                    @if(Item.Balance!=0)
+                    {
+                        <RadzenBadge BadgeStyle="BadgeStyle.Danger">Con Deuda</RadzenBadge>
+                    }
+                    else
+                    {
+                        <RadzenBadge BadgeStyle="BadgeStyle.Success">Paga</RadzenBadge>
+                    }
+                </Template>
+            </RadzenDataGridColumn>
+        </Columns>
+    </RadzenDataGrid>
+}
+catch (Exception e)
+{
+    <p>@e.Message</p>
+}
+@code{
+    [Parameter]
+    public int ProyectoId {get;set;}
+
+    [Parameter]
+    public int NominaId {get;set;}
+
+    public Proyecto Pro{get;set;} = new Proyecto();
+    public Nomina Nom {get;set;} = new Nomina();
+    protected override async Task  OnInitializedAsync()
+    {
+        if(ProyectoId >0)
+        {
+            if(NominaId > 0)
+            {
+                Buscar();
+            }
+        }
+    }
+    
+    async Task Buscar()
+    {
+        var Encontrado = await NominaService.Find(this.NominaId);
+        if(Encontrado!=null)
+        {
+            this.Nom=Encontrado;
+        }
+    }
+
+
+}
