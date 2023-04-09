@@ -129,10 +129,9 @@ namespace ProStellar.Server.Services.NominaService
                     //eliminamos los detalles de pagos 
                     foreach (var Detalle in Nomina.Detalles)
                     {
-                        _contexto.Database.ExecuteSqlRaw($"DELETE FROM PagoDetalle WHERE NominaDetalleId={Detalle.NominaDetalleId};");
+                        
                     }
                     //eliminamos la nomina in DB
-                    _contexto.Database.ExecuteSqlRaw($"DELETE FROM Nominas WHERE NominaId={NominaId};");
                     bool guardado = await _contexto.SaveChangesAsync() > 0;
                     response.Data = Nomina;
                     response.Success = guardado;
