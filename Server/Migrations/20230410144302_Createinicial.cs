@@ -8,7 +8,7 @@ using Microsoft.EntityFrameworkCore.Migrations;
 namespace ProStellar.Server.Migrations
 {
     /// <inheritdoc />
-    public partial class Inicial : Migration
+    public partial class Createinicial : Migration
     {
         /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)
@@ -66,7 +66,8 @@ namespace ProStellar.Server.Migrations
                     Fecha = table.Column<DateTime>(type: "TEXT", nullable: false),
                     Concepto = table.Column<string>(type: "TEXT", nullable: false),
                     ProyectoId = table.Column<int>(type: "INTEGER", nullable: false),
-                    EstadoId = table.Column<int>(type: "INTEGER", nullable: false)
+                    EstadoId = table.Column<int>(type: "INTEGER", nullable: false),
+                    Balance = table.Column<int>(type: "INTEGER", nullable: false)
                 },
                 constraints: table =>
                 {

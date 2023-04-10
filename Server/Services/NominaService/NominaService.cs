@@ -95,13 +95,32 @@ namespace ProStellar.Server.Services.NominaService
                     foreach (var Detalle in Nomina.Detalles)
                     {
                         _contexto.Entry(Detalle).State = EntityState.Added;
-                        if(Detalle.Balance > 0)
+                        if (Detalle.Balance > 0)
                         {
                             Nomina.EstadoId = 1;
                         }
-                        
+
                     }
-                    
+
+                    // Actualizamos el estado y balance
+                    Nomina.Balance = Nomina.Detalles.Select(p => p.Balance).Sum();
+                    //verficamos que no este vacia la lista
+                    if (Nomina.Detalles.Count > 0)
+                    {
+                        if (Nomina.Balance <= 0)
+                        {
+                            Nomina.EstadoId = 2;
+                        }
+                        else
+                        {
+                            Nomina.EstadoId = 1;
+                        }
+                    }
+                    else
+                    {
+                        Nomina.EstadoId = 3;
+                    }
+
                     //actualizamos la nomina
                     _contexto.Update(Nomina);
                     var guardo = await _contexto.SaveChangesAsync() > 0;
@@ -136,7 +155,7 @@ namespace ProStellar.Server.Services.NominaService
                     //eliminamos los detalles de pagos 
                     foreach (var Detalle in Nomina.Detalles)
                     {
-                        
+
                     }
                     //eliminamos la nomina in DB
                     bool guardado = await _contexto.SaveChangesAsync() > 0;

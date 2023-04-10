@@ -81,7 +81,7 @@ namespace ProStellar.Server.DAL
                 new Trabajo
                 {
                     TrabajoId = 2,
-                    Descripcion =  "Peon de construcción",
+                    Descripcion = "Peon de construcción",
                     Precio = 700.00
                 },
                 new Trabajo
@@ -98,19 +98,24 @@ namespace ProStellar.Server.DAL
                 new Estado
                 {
                     EstadoId = 1,
-                    Descripcion = "Con deuda pendiente"
+                    Descripcion = "Con deuda"
                 },
                 new Estado
                 {
                     EstadoId = 2,
-                    Descripcion = "Saldada/Pagada"
+                    Descripcion = "Paga"
+                },
+                new Estado
+                {
+                    EstadoId = 3,
+                    Descripcion = "Vacia"
                 }
 
 
 
                 );
             modelBuilder.Entity<Proyecto>().HasData(
-                new  Proyecto
+                new Proyecto
                 {
                     ProyectoId = 1,
                     Descripcion = "Enel´s new house"
@@ -119,14 +124,14 @@ namespace ProStellar.Server.DAL
                 new Proyecto
                 {
                     ProyectoId = 2,
-                    Descripcion  = "DURE Interprise BUILD"
+                    Descripcion = "DURE Interprise BUILD"
                 }
-                
-                
+
+
                 );
 
             modelBuilder.Entity<Cantidad>().HasData(
-                
+
                     new Cantidad
                     {
                         CantidadId = 1,
@@ -139,10 +144,10 @@ namespace ProStellar.Server.DAL
                         Descripcion = "Medio Día",
                         Valor = 0.5
                     }
-                
+
                 );
             modelBuilder.Entity<TipoPago>().HasData(
-                
+
                 new TipoPago
                 {
                     TipoPagoId = 1,
@@ -155,12 +160,12 @@ namespace ProStellar.Server.DAL
                 }
 
 
-                
-                
+
+
                 );
 
-            
-            
+
+
         }
     }
 }

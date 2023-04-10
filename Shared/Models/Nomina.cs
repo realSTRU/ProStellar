@@ -16,6 +16,7 @@ namespace ProStellar.Shared.Models
         public string Concepto { get; set; }
         public int ProyectoId { get; set; }
         public int EstadoId { get; set; }
+        public double Balance { get; set; }
 
         [ForeignKey("NominaId")]
         public List<NominaDetalle> Detalles { get; set; } = new List<NominaDetalle>();
@@ -33,6 +34,6 @@ namespace ProStellar.Shared.Models
         public double Precio { get; set; }
         public double Balance { get; set; }
 
-        
+
     }
 }

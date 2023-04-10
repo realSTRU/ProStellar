@@ -9,16 +9,16 @@
 
 @try{
 <div class="container">
-    <p><a href="/" class="w3-hover-orange btn btn-primary bg-transparent w3-border-0">Proyecto</a> / @Pro.Descripcion</p>
+    <p><a href="/" class="w3-hover-orange btn btn-primary bg-transparent w3-border-0">Proyectos</a> / @Pro.Descripcion</p>
     <br><br>
     </div>
     <div style="display:flex; justify-content:space-between; width:100%;">
     <p></p>
     
-    <RadzenText class="rz-color-warning-darka" TextAlign="TextAlign.Center" TextStyle="TextStyle.DisplayH5">Nominas</RadzenText> 
+    <RadzenText class="rz-color-warning-dark" TextAlign="TextAlign.Center" TextStyle="TextStyle.DisplayH5">Nominas - @Pro.Descripcion</RadzenText> 
     <span style="display:flex;">
-        <RadzenButton class="w3-button w3-xlarge w3-circle w3-orange  stiky-btn w3-animate-zoom" Click=@ShowInlineDialog >+</RadzenButton>
-        <RadzenButton class="w3-button w3-xlarge w3-circle w3-red stiky-btn w3-animate-zoom" Click=@DeleteResponse ><i class="material-icons w3-large ">delete</i></RadzenButton>
+        <RadzenButton class="w3-button w3-xlarge w3-circle bg-transparent stiky-btn w3-animate-zoom" Click=@ShowInlineDialog >+</RadzenButton>
+        <RadzenButton class="w3-button w3-xlarge w3-circle bg-transparent stiky-btn w3-animate-zoom" Click=@DeleteResponse ><i class="material-icons w3-large ">delete</i></RadzenButton>
     </span>
     </div>
     <hr class="rz-color-warning" >
@@ -33,9 +33,15 @@
             <RadzenDataGridColumn TItem="Nomina" Width="40px" Filterable="false" Sortable="false"  Frozen="true" Title="Acciones">
                 <Template Context="Item">
                     <RadzenLink Path=@($"/proyecto/{ProyectoId}/{Item.NominaId}")><RadzenBadge Shade="Shade.Dark" BadgeStyle="BadgeStyle.Warning" Text="Ver" ><i class="material-icons w3-large ">edit</i></RadzenBadge></RadzenLink>
+                    <a href=@($"/Print/{ProyectoId}/{Item.NominaId}") target="_blank"><RadzenBadge Shade="Shade.Dark" BadgeStyle="BadgeStyle.Info" Text="Ver"><i class="material-icons w3-large ">print</i></RadzenBadge></a>
                 </Template>
             </RadzenDataGridColumn>
-            <RadzenDataGridColumn TItem="Nomina" Property="Fecha" Title="Fecha"/>
+            <RadzenDataGridColumn TItem="Nomina" Property="Concepto" Title="Concepto"/>
+            <RadzenDataGridColumn TItem="Nomina"  Title="Fecha">
+                <Template Context="Item">
+                    <RadzenText>@Item.Fecha.ToString("MM/dd/yyyy")</RadzenText>
+                </Template>
+            </RadzenDataGridColumn>
 
             <RadzenDataGridColumn TItem="Nomina" Frozen="true" Title="Estado">
                 <Template Context="Item">
@@ -43,9 +49,17 @@
                     {
                         <RadzenBadge BadgeStyle="BadgeStyle.Danger">Con Deuda</RadzenBadge>
                     }
-                    else
+                    else if (Item.EstadoId==2)
                     {
                         <RadzenBadge BadgeStyle="BadgeStyle.Success">Paga</RadzenBadge>
+                    }
+                    else
+                    {
+                        <RadzenBadge BadgeStyle="BadgeStyle.Light">Vacia</RadzenBadge>
+                    }
+                    @if(Item.Balance >0)
+                    {
+                        <RadzenBadge BadgeStyle="BadgeStyle.Info">Balance : @Item.Balance </RadzenBadge>
                     }
                 </Template>
             </RadzenDataGridColumn>
@@ -86,10 +100,10 @@ catch (Exception e)
                 <RadzenTemplateForm TItem="Nomina" Data="@Nom" Submit="Validar">
                     <div class="row">
                         <div class="col-md-3 align-items-center d-flex">
-                            <RadzenLabel Text="Concepto" />
+                            <RadzenLabel class="text-white"  Text="Concepto" />
                         </div>
                         <div class="col-md-8">
-                            <RadzenTextBox style="width: 100%;" Name="Concepto" @bind-Value="Nom.Concepto" />
+                            <RadzenTextBox style="width: 100%;" class="text-white" Name="Concepto" @bind-Value="Nom.Concepto" />
                             <RadzenRequiredValidator Component="Concepto" Text="Campo requerido" Popup="true" Style="position: absolute" />
                         </div>
                     </div>

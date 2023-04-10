@@ -75,8 +75,6 @@
             </div>
         </RadzenTemplateForm>
     </div>
-
-
 }
 catch(Exception e)
 {
@@ -88,6 +86,7 @@ catch(Exception e)
     public int EmpleadoId {get;set;}
     public Empleado Emp {get;set;} = new Empleado();
     public string rootpath {get;set;}
+    private string currentUrl;
     protected override async Task  OnInitializedAsync()
     {
         if(EmpleadoId >0)
@@ -95,6 +94,7 @@ catch(Exception e)
             Buscar();
             EmpleadoService.GetList();
         }
+        currentUrl = NavigationManager.Uri;
     }
 
     async Task Buscar()
@@ -110,6 +110,8 @@ catch(Exception e)
     {
         await EmpleadoService.Save(this.Emp);
         Nuevo();
+        NavigationManager.NavigateTo("/");
+        NavigationManager.NavigateTo($"{currentUrl}");
         notify.ShowNotification("cambios agregados correctamente","Actualizacion de Registro", NotificationSeverity.Success);
     }
 
@@ -123,6 +125,8 @@ catch(Exception e)
         if(Encontrado!=null)
         {
             EmpleadoService.Delete(this.Emp.EmpleadoId);
+            NavigationManager.NavigateTo("/");
+            NavigationManager.NavigateTo($"{currentUrl}");
             notify.ShowNotification("Se a Eliminado correctamente","Actualizacion de Registro", NotificationSeverity.Error);
         }
     }

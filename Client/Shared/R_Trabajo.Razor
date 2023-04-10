@@ -58,7 +58,8 @@ catch(Exception e)
     [Parameter]
     public int TrabajoId {get;set;}
     public Trabajo Trab {get;set;} = new Trabajo();
-
+    private string currentUrl;
+    
     protected override async Task  OnInitializedAsync()
     {
         if(TrabajoId >0)
@@ -66,6 +67,7 @@ catch(Exception e)
             Buscar();
             TrabajoService.GetList();
         }
+        currentUrl = NavigationManager.Uri;
     }
 
     async Task Buscar()
@@ -82,6 +84,8 @@ catch(Exception e)
     {
         await TrabajoService.Save(this.Trab);
         Nuevo();
+        NavigationManager.NavigateTo("/");
+        NavigationManager.NavigateTo($"{currentUrl}");
         notify.ShowNotification("Se a agregado correctamente","Actualizacion de Registro", NotificationSeverity.Success);
     }
 
@@ -96,6 +100,8 @@ catch(Exception e)
         if(Encontrado!=null)
         {
             TrabajoService.Delete(this.Trab.TrabajoId);
+            NavigationManager.NavigateTo("/");
+            NavigationManager.NavigateTo($"{currentUrl}");
             notify.ShowNotification("Se a Eliminado correctamente","Actualizacion de Registro", NotificationSeverity.Error);
         }
     }
