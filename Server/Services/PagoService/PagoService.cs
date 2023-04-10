@@ -68,7 +68,7 @@ namespace ProStellar.Server.Services.PagoService
                             if (DNomina.NominaDetalleId == Detalle.NominaDetalleId)
                             {
                                 DNomina.Balance -= Detalle.ValorPagado;
-                                
+
                             }
                         }
                     }
@@ -133,6 +133,9 @@ namespace ProStellar.Server.Services.PagoService
                             _contexto.Entry(Detalle).State = EntityState.Added;
                         }
 
+                        //actualizamos el monto
+                        Pago.Monto = Pago.Detalles.Select(o => o.ValorPagado).Sum();
+
                         //actualizamos la Nomina
                         _contexto.Nominas.Update(Nomina);
                     }
@@ -161,7 +164,7 @@ namespace ProStellar.Server.Services.PagoService
             var response = new ServiceResponse<Pago>();
             try
             {
-                var Pago = await _contexto.Pagos.Include("PagoDetalle").AsNoTracking().SingleOrDefaultAsync(o => o.PagoId == PagoId);
+                var Pago = await _contexto.Pagos.Include("Detalles").AsNoTracking().SingleOrDefaultAsync(o => o.PagoId == PagoId);
                 if (Pago != null)
                 {
                     var Nomina = await _contexto.Nominas.Include("Detalles").AsNoTracking().SingleOrDefaultAsync(o => o.NominaId == Pago.NominaId);
@@ -180,11 +183,11 @@ namespace ProStellar.Server.Services.PagoService
                         _contexto.Nominas.Update(Nomina);
                         _contexto.Database.ExecuteSqlRaw($"DELETE FROM PagoDetalle WHERE PagoId={Pago.PagoId};");
                         _contexto.Remove(Pago);
-                        _contexto.Database.ExecuteSqlRaw($"DELETE FROM Pagos WHERE PagoId={PagoId};");
                     }
                     bool guardado = await _contexto.SaveChangesAsync() > 0;
                     response.Data = Pago;
                     response.Success = guardado;
+                    _contexto.Entry(Pago).State = EntityState.Detached;
                 }
                 else
                 {
