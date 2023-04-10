@@ -6,7 +6,7 @@
   
   USUARIO PARA PRUEBAS:
 User@Prostellar.com
-Pr@Stellar1
+Pr@stellar1
   
   <p style="font-family; monospace">
       # ProStellar
