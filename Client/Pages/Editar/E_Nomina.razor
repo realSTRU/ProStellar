@@ -26,27 +26,40 @@
     </div>
     <hr class="rz-color-warning" >
         <br>
-    <RadzenDataGrid AllowFiltering="true"  AllowColumnResize="true" AllowAlternatingRows="false"
-        FilterMode="FilterMode.Advanced" AllowSorting="true" AllowPaging="true"
-        PagerHorizontalAlign="HorizontalAlign.Left" Data="Nom.Detalles" TItem="NominaDetalle" ColumnWidth="200px"
-        LogicalFilterOperator="LogicalFilterOperator.Or" ShowPagingSummary="true" >
+    <RadzenDataGrid AllowFiltering="true" AllowColumnResize="true" AllowAlternatingRows="false"
+                FilterMode="FilterMode.Advanced" AllowSorting="true" AllowPaging="true"
+                PagerHorizontalAlign="HorizontalAlign.Left" Data="Nom.Detalles" TItem="NominaDetalle" ColumnWidth="200px"
+                LogicalFilterOperator="LogicalFilterOperator.Or" ShowPagingSummary="true">
 
-        <Columns >
-            <RadzenDataGridColumn TItem="NominaDetalle" Width="100px" Filterable="false" Sortable="false"  Frozen="true" Title="Acciones">
+        <Columns>
+            <RadzenDataGridColumn TItem="NominaDetalle" Width="100px" Filterable="false" Sortable="false" Frozen="true" Title="Acciones">
                 <Template Context="Item">
-                    <RadzenLink Path=@($"/proyecto/{ProyectoId}/{Item.NominaId}")><RadzenBadge Shade="Shade.Dark" BadgeStyle="BadgeStyle.Warning" Text="Ver" ><i class="material-icons w3-large ">edit</i></RadzenBadge></RadzenLink>
-                    <button @onclick="() => EliminarDetalle(Item.NominaDetalleId)" class ="bg-transparent w3-margin-left w3-border-0" ><RadzenBadge Shade="Shade.Dark" BadgeStyle="BadgeStyle.Danger" Text="Ver" ><i class="material-icons w3-large ">delete</i></RadzenBadge></button>
+                    <RadzenLink Path=@($"/proyecto/{ProyectoId}/{Item.NominaId}")><RadzenBadge Shade="Shade.Dark" BadgeStyle="BadgeStyle.Warning" Text="Ver"><i class="material-icons w3-large ">edit</i></RadzenBadge></RadzenLink>
+                    <button @onclick="() => EliminarDetalle(Item.NominaDetalleId)" class="bg-transparent w3-margin-left w3-border-0"><RadzenBadge Shade="Shade.Dark" BadgeStyle="BadgeStyle.Danger" Text="Ver"><i class="material-icons w3-large ">delete</i></RadzenBadge></button>
                 </Template>
             </RadzenDataGridColumn>
-            <RadzenDataGridColumn TItem="NominaDetalle"Width="100%" Property="Fecha" Title="Fecha" />
-            <RadzenDataGridColumn TItem="NominaDetalle"Width="100%" Title="Persona" />
-            <RadzenDataGridColumn TItem="NominaDetalle" Width="100%"Property="TrabajoId" Title="Trabajo" />
-            <RadzenDataGridColumn TItem="NominaDetalle"Width="100%" Property="Precio" Title="Precio" />
-             <RadzenDataGridColumn TItem="NominaDetalle"Width="100%" Property="CantidadId" Title="Cantidad" />
-            <RadzenDataGridColumn TItem="NominaDetalle"Width="100%" Property="Balance" Title="Balance" />
-            <RadzenDataGridColumn TItem="NominaDetalle"Width="100%" Frozen="true" Title="Estado">
+            <RadzenDataGridColumn TItem="NominaDetalle" Width="100%" Property="Fecha" Title="Fecha" />
+
+            <RadzenDataGridColumn TItem="NominaDetalle" Filterable="true" Sortable="true" Frozen="false" Title="Nombre">
                 <Template Context="Item">
-                    @if(Item.Balance!=0)
+                    <RadzenText>@ReturnNombre(Item.PersonaId)</RadzenText>
+                </Template>
+            </RadzenDataGridColumn>
+            <RadzenDataGridColumn TItem="NominaDetalle" Filterable="true" Sortable="true" Frozen="false" Title="Trabajo">
+                <Template Context="Item">
+                    <RadzenText>@TrabajoService.ListTrabajo.SingleOrDefault(t => t.TrabajoId == Item.TrabajoId).Descripcion</RadzenText>
+                </Template>
+            </RadzenDataGridColumn>
+            <RadzenDataGridColumn TItem="NominaDetalle" Width="100%" Property="Precio" Title="Precio" />
+            <RadzenDataGridColumn TItem="NominaDetalle" Filterable="true" Sortable="true" Frozen="false" Title="Trabajo">
+                <Template Context="Item">
+                    <RadzenText>@CantidadService.ListCantidad.SingleOrDefault(t => t.CantidadId == Item.CantidadId).Descripcion</RadzenText>
+                </Template>
+            </RadzenDataGridColumn>
+            <RadzenDataGridColumn TItem="NominaDetalle" Width="100%" Property="Balance" Title="Balance" />
+            <RadzenDataGridColumn TItem="NominaDetalle" Width="100%" Frozen="true" Title="Estado">
+                <Template Context="Item">
+                    @if (Item.Balance != 0)
                     {
                         <RadzenBadge BadgeStyle="BadgeStyle.Danger">Con Deuda</RadzenBadge>
                     }
@@ -75,6 +88,9 @@ catch (Exception e)
     public NominaDetalle Detail = new NominaDetalle();
     protected override async Task  OnInitializedAsync()
     {
+        await TrabajoService.GetList();
+        await EmpleadoService.GetList();
+        await CantidadService.GetList();
         if(ProyectoId >0)
         {
             if(NominaId > 0)
@@ -96,6 +112,13 @@ catch (Exception e)
         Guardar();
         NavigationManager.NavigateTo("/");
         NavigationManager.NavigateTo($"/proyecto/{ProyectoId}/{NominaId}");
+    }
+
+    string ReturnNombre(int Id)
+    {
+        var persona = EmpleadoService.ListEmpleado.SingleOrDefault(e => e.EmpleadoId == Id);
+
+        return $"{persona.PrimerNombre} {persona.SegundoNombre} {persona.PrimerApellido} {persona.SegundoApellido}";
     }
 
     

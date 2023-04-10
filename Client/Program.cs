@@ -1,5 +1,6 @@
 global using System.Net.Http.Json;
 global using ProStellar.Shared.Models;
+
 using ProStellar.Client.Services.CantidadServices;
 using ProStellar.Client.Services.EmpleadoServices;
 using ProStellar.Client.Services.NominaServices;
@@ -42,7 +43,6 @@ builder.Services.AddScoped<ITrabajoService, TrabajoService>();
 builder.Services.AddScoped<NotificationService>();
 builder.Services.AddScoped<DialogService>();
 builder.Services.AddScoped<TooltipService>();
-
 
 //agregamos BlazorStrap
 builder.Services.AddBlazorStrap();

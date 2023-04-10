@@ -68,6 +68,7 @@ namespace ProStellar.Server.Services.PagoService
                             if (DNomina.NominaDetalleId == Detalle.NominaDetalleId)
                             {
                                 DNomina.Balance -= Detalle.ValorPagado;
+                                
                             }
                         }
                     }

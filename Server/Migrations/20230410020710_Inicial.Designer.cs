@@ -11,8 +11,8 @@ using ProStellar.Server.DAL;
 namespace ProStellar.Server.Migrations
 {
     [DbContext(typeof(Contexto))]
-    [Migration("20230409184746_Infinita")]
-    partial class Infinita
+    [Migration("20230410020710_Inicial")]
+    partial class Inicial
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -161,6 +161,10 @@ namespace ProStellar.Server.Migrations
                     b.Property<int>("NominaId")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("INTEGER");
+
+                    b.Property<string>("Concepto")
+                        .IsRequired()
+                        .HasColumnType("TEXT");
 
                     b.Property<int>("EstadoId")
                         .HasColumnType("INTEGER");

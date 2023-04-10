@@ -13,6 +13,7 @@ namespace ProStellar.Shared.Models
         [Key]
         public int NominaId { get; set; }
         public DateTime Fecha { get; set; } = DateTime.Now;
+        public string Concepto { get; set; }
         public int ProyectoId { get; set; }
         public int EstadoId { get; set; }
 
@@ -31,5 +32,7 @@ namespace ProStellar.Shared.Models
         public int CantidadId { get; set; }
         public double Precio { get; set; }
         public double Balance { get; set; }
+
+        
     }
 }

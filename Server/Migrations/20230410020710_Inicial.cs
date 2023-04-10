@@ -8,7 +8,7 @@ using Microsoft.EntityFrameworkCore.Migrations;
 namespace ProStellar.Server.Migrations
 {
     /// <inheritdoc />
-    public partial class Infinita : Migration
+    public partial class Inicial : Migration
     {
         /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)
@@ -64,6 +64,7 @@ namespace ProStellar.Server.Migrations
                     NominaId = table.Column<int>(type: "INTEGER", nullable: false)
                         .Annotation("Sqlite:Autoincrement", true),
                     Fecha = table.Column<DateTime>(type: "TEXT", nullable: false),
+                    Concepto = table.Column<string>(type: "TEXT", nullable: false),
                     ProyectoId = table.Column<int>(type: "INTEGER", nullable: false),
                     EstadoId = table.Column<int>(type: "INTEGER", nullable: false)
                 },

@@ -91,10 +91,17 @@ namespace ProStellar.Server.Services.NominaService
                     //eliminamos los detalles de la nomina
                     _contexto.Database.ExecuteSqlRaw($"DELETE FROM NominaDetalle WHERE NominaId={Nomina.NominaId};");
                     //Agregamos los nuevos detalles
+                    Nomina.EstadoId = 2;
                     foreach (var Detalle in Nomina.Detalles)
                     {
                         _contexto.Entry(Detalle).State = EntityState.Added;
+                        if(Detalle.Balance > 0)
+                        {
+                            Nomina.EstadoId = 1;
+                        }
+                        
                     }
+                    
                     //actualizamos la nomina
                     _contexto.Update(Nomina);
                     var guardo = await _contexto.SaveChangesAsync() > 0;

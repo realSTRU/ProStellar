@@ -159,6 +159,10 @@ namespace ProStellar.Server.Migrations
                         .ValueGeneratedOnAdd()
                         .HasColumnType("INTEGER");
 
+                    b.Property<string>("Concepto")
+                        .IsRequired()
+                        .HasColumnType("TEXT");
+
                     b.Property<int>("EstadoId")
                         .HasColumnType("INTEGER");
 

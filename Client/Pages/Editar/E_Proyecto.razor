@@ -83,17 +83,21 @@ catch (Exception e)
         var result = await DialogService.OpenAsync("Nueva Nomina", ds =>
         @<RadzenStack Gap="1.5rem">
             <RadzenStack Orientation="Orientation.Horizontal" Gap="0.5rem" AlignItems="AlignItems.Center" JustifyContent="JustifyContent.SpaceBetween">
-                    <RadzenTemplateForm TItem="Nomina" Data="@Nom" Submit="Validar">
-                    <div class="w3-margin row">
-                        <div class="align-items-center d-flex">
-                            <RadzenLabel class="rz-color-white" Text="Desea crear una nueva nomina?" />
+                <RadzenTemplateForm TItem="Nomina" Data="@Nom" Submit="Validar">
+                    <div class="row">
+                        <div class="col-md-3 align-items-center d-flex">
+                            <RadzenLabel Text="Concepto" />
+                        </div>
+                        <div class="col-md-8">
+                            <RadzenTextBox style="width: 100%;" Name="Concepto" @bind-Value="Nom.Concepto" />
+                            <RadzenRequiredValidator Component="Concepto" Text="Campo requerido" Popup="true" Style="position: absolute" />
                         </div>
                     </div>
                     <div class="w3-margin align-content-center ">
                         <RadzenButton Text="Agregar" ButtonType="ButtonType.Submit" ButtonStyle="ButtonStyle.Success" />
                         <RadzenButton Text="Cancel" Click="() => ds.Close(false)" ButtonStyle="ButtonStyle.Light" />
                     </div>
-                    </RadzenTemplateForm>
+                </RadzenTemplateForm>
             </RadzenStack>
         </RadzenStack>);
     }
