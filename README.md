@@ -56,6 +56,35 @@
    <img src="https://i.postimg.cc/MHPFr3Dd/Nominas.png"/>
 </div>
 
+<div>
+  <p style="font-family; monospace">
+       al editar una de estas nominas en el lapiz que se encuentra en la consulta podras construir tu nomina agregando empleados y trabajos en cualquier momento
+       teniendo asi un historial de los Servicios/Trabajos que realmente estas contratando.
+    </p>
+</div>
+<div align = "center">
+   <img src="https://i.postimg.cc/sf43Xzj7/Empleados.png"/>
+</div>
+
+<div>
+  <p style="font-family; monospace">
+       Lo mas importante es la posibilidad de administrar modales los cuales nos permitan registrar y modificar informacion en las diferentes partes de nuestra 
+   experiencia en ProStellar y como estamos en el punto de las nominas Es el primer modal que se mostrarar y a continuacion de ello estaran los demas que podras 
+   Utilizar.
+    </p>
+</div>
+<div align = "center">
+   <img src="https://i.postimg.cc/Y9J8KZVS/Modal-1.png">
+   <img src="https://i.postimg.cc/3xVkBhDW/Eliminar.png">
+   <img src="https://i.postimg.cc/SsJqtYFh/Opciones.png">
+   <img src="https://i.postimg.cc/kXxCZdZB/Modal-Trabajo.png">
+   <img src="https://i.postimg.cc/P5tgRvYR/Modal-Empleado.png">
+
+   
+   
+ 
+</div>
+
 
 
 
