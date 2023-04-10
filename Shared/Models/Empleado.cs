@@ -16,5 +16,10 @@ namespace ProStellar.Shared.Models
         public string PrimerApellido { get; set; }
         public string SegundoApellido { get; set; }
         public string Telefono { get; set; }
+
+        public string NombreCompleto 
+        {
+            get { return $"{PrimerNombre} {SegundoNombre} {PrimerApellido} {SegundoApellido}"; }
+        }
     }
 }

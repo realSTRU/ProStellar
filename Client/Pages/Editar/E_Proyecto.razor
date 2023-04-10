@@ -35,6 +35,7 @@
                     <RadzenLink Path=@($"/proyecto/{ProyectoId}/{Item.NominaId}")><RadzenBadge Shade="Shade.Dark" BadgeStyle="BadgeStyle.Warning" Text="Ver" ><i class="material-icons w3-large ">edit</i></RadzenBadge></RadzenLink>
                 </Template>
             </RadzenDataGridColumn>
+                <RadzenDataGridColumn TItem="Nomina" Property="Concepto" Title="Concepto" />
             <RadzenDataGridColumn TItem="Nomina" Property="Fecha" Title="Fecha"/>
 
             <RadzenDataGridColumn TItem="Nomina" Frozen="true" Title="Estado">

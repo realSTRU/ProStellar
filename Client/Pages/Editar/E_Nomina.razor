@@ -16,7 +16,7 @@
     </div>
     <div style="display:flex; justify-content:space-between; width:100%;">
     <span style="display:flex; ">
-    <RadzenButton class="w3-button w3-xlarge w3-circle w3-gray stiky-btn w3-animate-zoom" Click=@DeleteResponse ><i class="material-icons w3-large "><span class="material-symbols-outlined">attach_money</span></i></RadzenButton>
+    <RadzenButton class="w3-button w3-xlarge w3-circle w3-gray stiky-btn w3-animate-zoom" Click=@NavegarPago ><i class="material-icons w3-large "><span class="material-symbols-outlined">attach_money</span></i></RadzenButton>
     </span>
     <RadzenText class="rz-color-warning-dark" TextAlign="TextAlign.Center" TextStyle="TextStyle.DisplayH5">Detalles</RadzenText> 
     <span style="display:flex;">
@@ -99,13 +99,13 @@ catch (Exception e)
             }
         }
         var Encontrado = await ProyectoService.Find(ProyectoId);
-            if(Encontrado != null)
-            {
-                Pro=Encontrado;
-                
-            }
+        if(Encontrado != null)
+        {
+            Pro=Encontrado;
+
+        }
     }
-    
+
     public void EliminarDetalle(int DetalleId)
     {
         this.Nom.Detalles.Remove(Nom.Detalles.Where(o=>o.NominaDetalleId == DetalleId).SingleOrDefault());
@@ -121,7 +121,11 @@ catch (Exception e)
         return $"{persona.PrimerNombre} {persona.SegundoNombre} {persona.PrimerApellido} {persona.SegundoApellido}";
     }
 
-    
+    public void NavegarPago()
+    {
+        NavigationManager.NavigateTo($"/proyecto/{ProyectoId}/{NominaId}/Pagos");
+    }
+
     async Task Buscar()
     {
         var Encontrado = await NominaService.Find(this.NominaId);
@@ -130,7 +134,7 @@ catch (Exception e)
             this.Nom=Encontrado;
         }
     }
-        async Task Eliminar()
+    async Task Eliminar()
     {
         await NominaService.Delete(this.NominaId);
         NavigationManager.NavigateTo($"/proyecto/{ProyectoId}");
@@ -141,9 +145,12 @@ catch (Exception e)
         {
             this.Detail.NominaId = this.Nom.NominaId;
             var Trabajo = await TrabajoService.Find(Detail.TrabajoId);
+            var Persona = await EmpleadoService.Find(Detail.PersonaId);
+            var Cantidad = await CantidadService.Find(Detail.CantidadId);
+            this.Detail.NombrePersona = Persona.NombreCompleto;
             if(Trabajo != null)
             {
-                this.Detail.Balance=this.Detail.Precio=Trabajo.Precio;
+                this.Detail.Balance=this.Detail.Precio=Trabajo.Precio*Cantidad.Valor;
             }
             this.Nom.Detalles.Add(this.Detail);
             this.Detail=new NominaDetalle();
@@ -188,7 +195,7 @@ catch (Exception e)
                                             </div>
                                             <div class="col-md-8">
                                                 <RadzenDropDown style="width: 100%;" FilterCaseSensitivity="FilterCaseSensitivity.CaseInsensitive" FilterOperator="StringFilterOperator.StartsWith" AllowFiltering="true"
-                                                    Data=@EmpleadoService.ListEmpleado  Name="Empleado" TextProperty="PrimerNombre" ValueProperty="EmpleadoId" AllowClear="true" @bind-Value=@Detail.PersonaId />
+                                                    Data=@EmpleadoService.ListEmpleado  Name="Empleado" TextProperty="NombreCompleto" ValueProperty="EmpleadoId" AllowClear="true" @bind-Value=@Detail.PersonaId />
                                                 <RadzenRequiredValidator Component="Empleado" Text="Campo requerido" Popup="true" Style="position: absolute"/>
                                             </div>
                                         </div>

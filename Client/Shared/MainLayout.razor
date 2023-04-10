@@ -69,6 +69,7 @@
                 <RadzenMenuItem Text="Consultar trabajo" Path="Trabajos" Icon="search"></RadzenMenuItem>
                 <RadzenMenuItem Click="NewTrabajo" Text="Agregar"  Icon="add"></RadzenMenuItem>
             </RadzenMenuItem>
+            
         </RadzenMenu>
         
         <RadzenCard style="height:80vh;" class="rz-shadow-1 bg-dark">
@@ -95,7 +96,7 @@
             new Dictionary<string, object>(),
             new DialogOptions() { Width = "50vw", Height = "45vh", Resizable = false, Draggable = true });
     }
-        public async Task NewTrabajo()
+    public async Task NewTrabajo()
     {
         await DialogService.OpenAsync<R_Trabajo>($"Nuevo trabajo",
             new Dictionary<string, object>(),
