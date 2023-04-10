@@ -1,14 +1,16 @@
 ﻿@inherits LayoutComponentBase
 @inject DialogService DialogService
+@inject ITrabajoService TrabajoService
+@inject IEmpleadoService EmpleadoService
 
 
 <AuthorizeView>
     <Authorized>
 <RadzenNotification></RadzenNotification>
  <RadzenDialog />
-<RadzenLayout Style="height: 100vh; background-color:#2B2E30; grid-template-areas: 'rz-sidebar rz-header' 'rz-sidebar rz-body " >
-     <RadzenHeader class="bg-dark">
-        <RadzenStack Orientation="Orientation.Horizontal" AlignItems="AlignItems.Center" Gap="0">
+<RadzenLayout height="100vh" width="100vw" Style=" background-color:#2B2E30; grid-template-areas: 'rz-sidebar rz-header' 'rz-sidebar rz-body " >
+     <RadzenHeader >
+        <RadzenStack Orientation="Orientation.Horizontal" class="rz-shadow-4 bg-dark w3-padding-16" AlignItems="AlignItems.Center" Gap="0">
     <div style="display:flex; justify-content:space-between; width:100%;">
         <div>
             <a href="/"><div style="display:flex; padding:10px;">
@@ -53,12 +55,25 @@
         </ChildContent>
     </RadzenProfileMenu>
     </div>
-        </RadzenStack>
- 
-  </RadzenHeader>
+        </RadzenStack >
+</RadzenHeader>
+
     <RadzenBody class="rz-color-white">
         <div class="rz-p-4" >
+         <RadzenMenu class=" bg-transparent" >
+            <RadzenMenuItem Text="Empleado" Icon="badge">
+                <RadzenMenuItem Text="Consultar Empleado" Path="Empleados" Icon="search"></RadzenMenuItem>
+                <RadzenMenuItem Click="NewEmpleado" Text="Agregar"  Icon="add"></RadzenMenuItem>
+            </RadzenMenuItem>
+            <RadzenMenuItem Text="Trabajo" Icon="work">
+                <RadzenMenuItem Text="Consultar trabajo" Path="Trabajos" Icon="search"></RadzenMenuItem>
+                <RadzenMenuItem Click="NewTrabajo" Text="Agregar"  Icon="add"></RadzenMenuItem>
+            </RadzenMenuItem>
+        </RadzenMenu>
+        
+        <RadzenCard style="height:80vh;" class="rz-shadow-1 bg-dark">
             @Body
+        </RadzenCard>
         </div>
     </RadzenBody>
 </RadzenLayout>
@@ -72,4 +87,18 @@
 
 @code {
     bool sidebar2Expanded = true;
+
+    public async Task NewEmpleado()
+    {
+        await DialogService.OpenAsync<
+            R_Empleado>($"Nuevo Empleado",
+            new Dictionary<string, object>(),
+            new DialogOptions() { Width = "50vw", Height = "45vh", Resizable = false, Draggable = true });
+    }
+        public async Task NewTrabajo()
+    {
+        await DialogService.OpenAsync<R_Trabajo>($"Nuevo trabajo",
+            new Dictionary<string, object>(),
+            new DialogOptions() { Width = "50vw", Height = "40vh", Resizable = false, Draggable = true });
+    }
 }

@@ -1,5 +1,4 @@
-@page "/Empleado"
-@page "/Empleado/{EmpleadoId:int}"
+@inject NavigationManager NavigationManager
 @inject IEmpleadoService EmpleadoService
 @inject NotificationService notify
 
@@ -77,10 +76,6 @@
         </RadzenTemplateForm>
     </div>
 
-    @foreach(var item in EmpleadoService.ListEmpleado)
-    {
-        <p>item.Descipcion</p>
-    }
 
 }
 catch(Exception e)
@@ -92,7 +87,7 @@ catch(Exception e)
     [Parameter]
     public int EmpleadoId {get;set;}
     public Empleado Emp {get;set;} = new Empleado();
-
+    public string rootpath {get;set;}
     protected override async Task  OnInitializedAsync()
     {
         if(EmpleadoId >0)
@@ -104,20 +99,20 @@ catch(Exception e)
 
     async Task Buscar()
     {
-        var Encontrado = await EmpleadoService.Find(EmpleadoId);
+        var Encontrado = EmpleadoService.ListEmpleado.SingleOrDefault(o=>o.EmpleadoId==this.EmpleadoId);
         if(Encontrado!=null)
         {
             Emp=Encontrado;
-
         }
     }
 
     async Task Guardar()
     {
-        EmpleadoService.Save(this.Emp);
+        await EmpleadoService.Save(this.Emp);
         Nuevo();
-        notify.ShowNotification("Se a agregado correctamente","Actualizacion de Registro", NotificationSeverity.Success);
+        notify.ShowNotification("cambios agregados correctamente","Actualizacion de Registro", NotificationSeverity.Success);
     }
+
     void Nuevo()
     {
         this.Emp = new Empleado();

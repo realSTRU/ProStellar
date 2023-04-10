@@ -2,6 +2,7 @@
 @page "/Trabajo/{TrabajoId:int}"
 @inject ITrabajoService TrabajoService
 @inject NotificationService notify
+@inject NavigationManager NavigationManager
 
 @try
 {
@@ -17,10 +18,10 @@
 
                     <div class="row">
                         <div class="col-md-4 align-items-center d-flex">
-                            <RadzenLabel Text="Descripcion" />
+                            <RadzenLabel Text="Segundo Apellido" />
                         </div>
                         <div class="col-md-8">
-                            <RadzenTextBox style="width: 100%;" Name="Descipcion" @bind-Value="Trab.Descripcion" />
+                            <RadzenTextBox style="width: 100%;" Name="Descripcion" @bind-Value="Trab.Descripcion" />
                             <RadzenRequiredValidator Component="Descripcion" Text="Campo requerido" Popup="true" Style="position: absolute"/>
                         </div>
                     </div>
@@ -47,11 +48,6 @@
         </RadzenTemplateForm>
     </div>
 
-    @foreach(var item in TrabajoService.ListTrabajo)
-    {
-        <p>item.Descipcion</p>
-    }
-
 }
 catch(Exception e)
 {
@@ -74,7 +70,7 @@ catch(Exception e)
 
     async Task Buscar()
     {
-        var Encontrado = await TrabajoService.Find(TrabajoId);
+        var Encontrado = TrabajoService.ListTrabajo.SingleOrDefault(o=>o.TrabajoId==this.TrabajoId);
         if(Encontrado!=null)
         {
             Trab=Encontrado;
@@ -84,14 +80,16 @@ catch(Exception e)
 
     async Task Guardar()
     {
-        TrabajoService.Save(this.Trab);
+        await TrabajoService.Save(this.Trab);
         Nuevo();
         notify.ShowNotification("Se a agregado correctamente","Actualizacion de Registro", NotificationSeverity.Success);
     }
+
     void Nuevo()
     {
         this.Trab = new Trabajo();
     }
+
     async Task Eliminar()
     {
         var Encontrado = await TrabajoService.Find(TrabajoId);

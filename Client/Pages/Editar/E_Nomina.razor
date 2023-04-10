@@ -18,13 +18,14 @@
     <span style="display:flex; ">
     <RadzenButton class="w3-button w3-xlarge w3-circle w3-gray stiky-btn w3-animate-zoom" Click=@DeleteResponse ><i class="material-icons w3-large "><span class="material-symbols-outlined">attach_money</span></i></RadzenButton>
     </span>
-    <RadzenText class="rz-color-warning-darka" TextAlign="TextAlign.Center" TextStyle="TextStyle.DisplayH5">Detalles</RadzenText> 
+    <RadzenText class="rz-color-warning-dark" TextAlign="TextAlign.Center" TextStyle="TextStyle.DisplayH5">Detalles</RadzenText> 
     <span style="display:flex;">
         <RadzenButton class="w3-button w3-xlarge w3-circle w3-orange  stiky-btn w3-animate-zoom" Click=@ShowInlineDialog >+</RadzenButton>
         <RadzenButton class="w3-button w3-xlarge w3-circle w3-red stiky-btn w3-animate-zoom" Click=@DeleteResponse ><i class="material-icons w3-large ">delete</i></RadzenButton>
     </span>
     </div>
-    <br><br>
+    <hr class="rz-color-warning" >
+        <br>
     <RadzenDataGrid AllowFiltering="true"  AllowColumnResize="true" AllowAlternatingRows="false"
         FilterMode="FilterMode.Advanced" AllowSorting="true" AllowPaging="true"
         PagerHorizontalAlign="HorizontalAlign.Left" Data="Nom.Detalles" TItem="NominaDetalle" ColumnWidth="200px"
@@ -38,7 +39,7 @@
                 </Template>
             </RadzenDataGridColumn>
             <RadzenDataGridColumn TItem="NominaDetalle"Width="100%" Property="Fecha" Title="Fecha" />
-            <RadzenDataGridColumn TItem="NominaDetalle"Width="100%" Property="PersonaId" Title="Persona" />
+            <RadzenDataGridColumn TItem="NominaDetalle"Width="100%" Title="Persona" />
             <RadzenDataGridColumn TItem="NominaDetalle" Width="100%"Property="TrabajoId" Title="Trabajo" />
             <RadzenDataGridColumn TItem="NominaDetalle"Width="100%" Property="Precio" Title="Precio" />
              <RadzenDataGridColumn TItem="NominaDetalle"Width="100%" Property="CantidadId" Title="Cantidad" />

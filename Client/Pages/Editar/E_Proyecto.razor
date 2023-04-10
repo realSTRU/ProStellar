@@ -11,8 +11,10 @@
 <div class="container">
     <p><a href="/" class="w3-hover-orange btn btn-primary bg-transparent w3-border-0">Proyecto</a> / @Pro.Descripcion</p>
     <br><br>
+    </div>
     <div style="display:flex; justify-content:space-between; width:100%;">
     <p></p>
+    
     <RadzenText class="rz-color-warning-darka" TextAlign="TextAlign.Center" TextStyle="TextStyle.DisplayH5">Nominas</RadzenText> 
     <span style="display:flex;">
         <RadzenButton class="w3-button w3-xlarge w3-circle w3-orange  stiky-btn w3-animate-zoom" Click=@ShowInlineDialog >+</RadzenButton>
@@ -21,7 +23,7 @@
     </div>
     <hr class="rz-color-warning" >
     <div class=" w3-row-padding w3-section w3-stretch " >
-    </div>
+    
     <RadzenDataGrid AllowFiltering="true" AllowColumnResize="true" AllowAlternatingRows="false"
         FilterMode="FilterMode.Advanced" AllowGrouping="true" AllowSorting="true" AllowPaging="true"
         PagerHorizontalAlign="HorizontalAlign.Left" Data="NominaService.ListNomina.Where(o=>o.ProyectoId==ProyectoId)" TItem="Nomina" ColumnWidth="200px"

@@ -1,0 +1,51 @@
+@page "/Trabajos"
+@inject IProyectoService ProyectoService
+@inject IEstadoService EstadoService
+@inject INominaService NominaService
+@inject ITrabajoService TrabajoService
+@inject DialogService DialogService
+@inject NotificationService notify
+@inject IEmpleadoService EmpleadoService
+@inject ICantidadService CantidadService
+@inject NavigationManager NavigationManager
+
+
+@try{
+    <div class="container">
+    <p><a href="/" class="w3-hover-orange btn btn-primary bg-transparent w3-border-0">/ Proyecto</a></p>
+    <RadzenText class="rz-color-warning-darka" TextAlign="TextAlign.Center" TextStyle="TextStyle.DisplayH5">Trabajos</RadzenText> 
+    <br><br>
+    </div>
+    <RadzenDataGrid AllowFiltering="true"  AllowColumnResize="true" AllowAlternatingRows="false"
+        FilterMode="FilterMode.Advanced" AllowSorting="true" AllowPaging="true"
+        PagerHorizontalAlign="HorizontalAlign.Left" Data="TrabajoService.ListTrabajo" TItem="Trabajo" ColumnWidth="100%"
+        LogicalFilterOperator="LogicalFilterOperator.Or" ShowPagingSummary="true" >
+
+        <Columns >
+            <RadzenDataGridColumn TItem="Trabajo" Width="100px" Filterable="false" Sortable="false"  Frozen="true" Title="Acciones">
+                <Template Context="Item">
+                    <button class ="bg-transparent w3-margin-left w3-border-0" @onclick="() => NewTrabajo(Item.TrabajoId)" ><RadzenBadge Shade="Shade.Dark" BadgeStyle="BadgeStyle.Warning" Text="Ver" ><i class="material-icons w3-large ">edit</i></RadzenBadge></button>
+
+                </Template>
+            </RadzenDataGridColumn>
+            <RadzenDataGridColumn TItem="Trabajo"Width="100%" Property="Descripcion" Title="Descripcion" />
+            <RadzenDataGridColumn TItem="Trabajo"Width="100%" Property="Precio" Title="Precio" />
+        </Columns>
+    </RadzenDataGrid>
+}
+catch (Exception e)
+{
+
+}
+@code{
+    protected override async Task  OnInitializedAsync()
+    {
+        await TrabajoService.GetList();
+    }
+    public async Task NewTrabajo(int Id)
+    {
+        await DialogService.OpenAsync<R_Trabajo>($"Nuevo trabajo",
+            new Dictionary<string, object>(){{"TrabajoId",Id}},
+            new DialogOptions() { Width = "50vw", Height = "40vh", Resizable = false, Draggable = true });
+    }
+}
