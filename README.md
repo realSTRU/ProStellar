@@ -75,9 +75,13 @@
 </div>
 <div align = "center">
    <img src="https://i.postimg.cc/Y9J8KZVS/Modal-1.png">
+   <br>
    <img src="https://i.postimg.cc/3xVkBhDW/Eliminar.png">
+ <br>
    <img src="https://i.postimg.cc/SsJqtYFh/Opciones.png">
+ <br>
    <img src="https://i.postimg.cc/kXxCZdZB/Modal-Trabajo.png">
+ <br>
    <img src="https://i.postimg.cc/P5tgRvYR/Modal-Empleado.png">
 
    
