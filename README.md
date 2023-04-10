@@ -44,5 +44,19 @@
    <img src="https://i.postimg.cc/cJRfJKVS/Sala-de-proyectos.png"/>
 </div>
 
+<div>
+  <p style="font-family; monospace">
+       En la consulta de nominas a la que se accesa haciendo click en uno de los proyectos de tendras disponible un seguimiento de las nominas que podras
+       administrar con esta solución informatica, con las mismas herramientas de agregar haciendo click en el boton de "+" sin especificar nada solo si 
+       estas seguro de crear un nueva nomina ya has instanciado una nomina vacia, la cual tendra un seguimento completo de tu presupuesto y como vas con esos
+       pagos.
+    </p>
+</div>
+<div align = "center">
+   <img src="https://i.postimg.cc/MHPFr3Dd/Nominas.png"/>
+</div>
+
+
+
 
 
