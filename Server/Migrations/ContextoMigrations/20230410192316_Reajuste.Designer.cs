@@ -8,11 +8,11 @@ using ProStellar.Server.DAL;
 
 #nullable disable
 
-namespace ProStellar.Server.Migrations
+namespace ProStellar.Server.Migrations.ContextoMigrations
 {
     [DbContext(typeof(Contexto))]
-    [Migration("20230410172112_Agregados")]
-    partial class Agregados
+    [Migration("20230410192316_Reajuste")]
+    partial class Reajuste
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)

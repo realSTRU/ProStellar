@@ -30,7 +30,7 @@
         LogicalFilterOperator="LogicalFilterOperator.Or" ShowPagingSummary="true" >
 
         <Columns >
-            <RadzenDataGridColumn TItem="Nomina" Width="40px" Filterable="false" Sortable="false"  Frozen="true" Title="Acciones">
+            <RadzenDataGridColumn TItem="Nomina" Width="90px" Filterable="false" Sortable="false"  Frozen="true" Title="Acciones">
                 <Template Context="Item">
                     <RadzenLink Path=@($"/proyecto/{ProyectoId}/{Item.NominaId}")><RadzenBadge Shade="Shade.Dark" BadgeStyle="BadgeStyle.Warning" Text="Ver" ><i class="material-icons w3-large ">edit</i></RadzenBadge></RadzenLink>
                     <a href=@($"/Print/{ProyectoId}/{Item.NominaId}") target="_blank"><RadzenBadge Shade="Shade.Dark" BadgeStyle="BadgeStyle.Info" Text="Ver"><i class="material-icons w3-large ">print</i></RadzenBadge></a>

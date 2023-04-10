@@ -10,13 +10,12 @@
 @inject ICantidadService CantidadService
 @inject NavigationManager NavigationManager
 
-<RadzenCard class="rz-shadow-7 rz-my-12 rz-mx-auto rz-p-4 rz-p-md-12">
 
-    <RadzenTemplateForm TItem="Pago" Data="@pago" Submit="Guardar">
+    <RadzenTemplateForm TItem="Pago" Data="@pago" Submit="Guardar" class="text-white">
         <RadzenFieldset>
             <HeaderTemplate>
                 <span class="d-inline-flex align-items-center align-middle">
-                    <RadzenIcon Icon="account_box" class="me-1" /><b>Registro de pagos</b>
+                    <RadzenIcon Icon="account_box" class="me-1" /><b>Registro de pagos de @Nom.Concepto</b>
                 </span>
             </HeaderTemplate>
             <ChildContent>
@@ -26,8 +25,8 @@
                         <RadzenLabel Text="Fecha" />
                     </div>
                     <div class="col-md-8">
-                        <RadzenDatePicker style="width: 100%;" Name="Fecha" DateOnly="true" @bind-Value="pago.Fecha" />
-                        <RadzenRequiredValidator Component="Fecha" Text="Campo requerido" Popup="true" Style="position: absolute" />
+                        <RadzenDatePicker style="width: 100%;" DateFormat="MM/dd/yyyy" Name="Fecha" DateOnly="true" @bind-Value="pago.Fecha" />
+                        <RadzenRequiredValidator Component="Fecha"  Text="Campo requerido"  Popup="true" Style="position: absolute" />
                     </div>
                 </div>
                 <div class="row">
@@ -35,12 +34,12 @@
                                 <RadzenLabel Text="Monto" />
                             </div>
                             <div class="col-md-8 align-items-center d-flex">
-                                <RadzenNumeric style="width: 100%;" Name="Cantidad" @bind-Value="@pago.Monto" />
+                                <RadzenNumeric style="width: 100%;" Name="Cantidad" Disabled="true" @bind-Value="@pago.Monto" />
                                 <RadzenRequiredValidator Component="Cantidad" Text="Campo requerido" />
                             </div>
                         </div>
 
-                <RadzenFieldset>
+                <RadzenFieldset  class="text-white">
                     <HeaderTemplate>
                         <span class="d-inline-flex align-items-center align-middle">
                             <RadzenIcon Icon="account_box" class="me-1" /><b>Detalle de pagos.</b>
@@ -48,13 +47,17 @@
                     </HeaderTemplate>
                     <ChildContent>
                         
-                         <div class="row">
+                        <div class="row">
                             <div class="col-md-4 align-items-center d-flex">
-                                <RadzenLabel Text="Empleado" />
+                                <RadzenLabel Text="Trabajo" />
                             </div>
                             <div class="col-md-8">
                                 <RadzenDropDown class="w-100" FilterCaseSensitivity="FilterCaseSensitivity.CaseInsensitive" FilterOperator="StringFilterOperator.StartsWith" AllowFiltering="true"
-                                                Data=@Nom.Detalles TextProperty="NombrePersona" Name="Empleado" ValueProperty="NominaDetalleId" AllowClear="true" @bind-Value=@detalle.NominaDetalleId />
+                                                Data=@Nom.Detalles  Name="Empleado"  ValueProperty="NominaDetalleId" AllowClear="true" @bind-Value=@detalle.NominaDetalleId >
+                                    <Template Context="Item">
+                                        <a>@getlabor(Item.TrabajoId,Item.PersonaId,Item.CantidadId)</a>
+                                    </Template>
+                                </RadzenDropDown>
                                 <RadzenRequiredValidator Component="Empleado" Text="Campo requerido" Popup="true" Style="position: absolute" />
                             </div>
                         </div>
@@ -75,7 +78,7 @@
                             <div class="col-md-8 align-items-center d-flex">
                                 <RadzenNumeric style="width: 100%;" Name="Vpagar" @bind-Value="@detalle.ValorPagado" />
                                 <RadzenRequiredValidator Component="Vpagar" Text="Campo requerido" />
-                                <RadzenButton  Icon="east" />
+                                <RadzenButton Click="Insertar" class="w3-orange" Icon="east" />
                             </div>
                         </div>
                         <hr>
@@ -92,8 +95,7 @@
                                 @foreach (var item in pago.Detalles)
                                 {
                                     <tr>
-                                        <td>@item.PagoDetalleId</td>
-                                        <td>@NominaService.ListNomina.SingleOrDefault(n => n.NominaId ==NominaId).Detalles.SingleOrDefault(e => e.NominaDetalleId == item.NominaDetalleId).NombrePersona</td>
+                                        <td>@EmpleadoService.ListEmpleado.SingleOrDefault(o=>o.EmpleadoId==Nom.Detalles.SingleOrDefault(n => n.NominaDetalleId == item.NominaDetalleId).PersonaId).NombreCompleto</td>
                                         <td>@TipoPagoService.ListTipoPago.SingleOrDefault(t => t.TipoPagoId == item.TipoPagoId).Descripcion</td>
                                         <td>@item.ValorPagado</td>
                                         <td><RadzenButton ButtonStyle="ButtonStyle.Danger" Click="()=>EliminarDetalle(item.PagoDetalleId)" 
@@ -115,10 +117,13 @@
         <div style="display:flex; justify-content:center; padding:30px;">
 
             <RadzenButton ButtonType="ButtonType.Submit" ButtonStyle="ButtonStyle.Light" Icon="save" Text="Guardar" />
-            <RadzenButton ButtonStyle="ButtonStyle.Dark" Click="Eliminar" Icon="delete" Text="Eliminar" />
+                @if(PagoId>0)
+                {
+                    <RadzenButton Text="Eliminar" Click="Eliminar" ButtonStyle="ButtonStyle.Danger" />
+                }
         </div>
     </RadzenTemplateForm>
-</RadzenCard>
+
 
 
 
@@ -145,23 +150,38 @@
         await NominaService.GetList();
         await TipoPagoService.GetList();
         await EmpleadoService.GetList();
-
+        await CantidadService.GetList();
+        TrabajoService.GetList();
         Console.WriteLine($"\n\n\n\n\n\n\n\n\n\n*************************ID nomina{NominaId}");
-        Nom= NominaService.ListNomina.SingleOrDefault(n => n.NominaId == NominaId);
-
-        
-
         currentUrl = NavigationManager.Uri;
-
-
+        if(NominaId>0)
+        {
+            this.Nom = await NominaService.Find(NominaId);
+        }
+        if(PagoId>0)
+        {
+            this.pago= await PagoService.GetPagoById(PagoId);
+        }
     }
 
     async Task Guardar()
     {
+        this.pago.NominaId=NominaId;
         await PagoService.SavePago(this.pago);
         Nuevo();
         notify.ShowNotification("Se a agregado correctamente", "Actualizacion de Registro", NotificationSeverity.Success);
+        NavigationManager.NavigateTo("/");
+        NavigationManager.NavigateTo($"{currentUrl}");
     }
+
+    string getlabor(int TrabajoId, int EmpleadoId,int CantidadId)
+    {
+        var trabajo =  TrabajoService.ListTrabajo.SingleOrDefault(o=>o.TrabajoId==TrabajoId);
+        var Empleado = EmpleadoService.ListEmpleado.SingleOrDefault(o=>o.EmpleadoId==EmpleadoId);
+        var Cantidad = CantidadService.ListCantidad.SingleOrDefault(o=>o.CantidadId==CantidadId);
+        return $" {Empleado.NombreCompleto} - {trabajo.Descripcion} - {Cantidad.Descripcion}";
+    }
+
 
     public void Nuevo()
     {
@@ -190,8 +210,8 @@
     {
 
         this.pago.Detalles.Add(this.detalle);
+        this.pago.Monto= this.pago.Detalles.Select(o=>o.ValorPagado).Sum();
         this.detalle = new PagoDetalle();
-
 
     }
     public void EliminarDetalle(int DetalleId)

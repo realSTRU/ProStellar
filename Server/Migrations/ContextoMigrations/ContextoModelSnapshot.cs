@@ -7,7 +7,7 @@ using ProStellar.Server.DAL;
 
 #nullable disable
 
-namespace ProStellar.Server.Migrations
+namespace ProStellar.Server.Migrations.ContextoMigrations
 {
     [DbContext(typeof(Contexto))]
     partial class ContextoModelSnapshot : ModelSnapshot

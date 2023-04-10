@@ -5,10 +5,10 @@ using Microsoft.EntityFrameworkCore.Migrations;
 
 #pragma warning disable CA1814 // Prefer jagged arrays over multidimensional
 
-namespace ProStellar.Server.Migrations
+namespace ProStellar.Server.Migrations.ContextoMigrations
 {
     /// <inheritdoc />
-    public partial class Inical : Migration
+    public partial class Reajuste : Migration
     {
         /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)
@@ -64,7 +64,7 @@ namespace ProStellar.Server.Migrations
                     NominaId = table.Column<int>(type: "INTEGER", nullable: false)
                         .Annotation("Sqlite:Autoincrement", true),
                     Fecha = table.Column<DateTime>(type: "TEXT", nullable: false),
-                    Concepto = table.Column<string>(type: "TEXT", nullable: false),
+                    Concepto = table.Column<string>(type: "TEXT", nullable: true),
                     ProyectoId = table.Column<int>(type: "INTEGER", nullable: false),
                     EstadoId = table.Column<int>(type: "INTEGER", nullable: false),
                     Balance = table.Column<double>(type: "REAL", nullable: false)
@@ -121,7 +121,7 @@ namespace ProStellar.Server.Migrations
                 {
                     TrabajoId = table.Column<int>(type: "INTEGER", nullable: false)
                         .Annotation("Sqlite:Autoincrement", true),
-                    Descripcion = table.Column<string>(type: "TEXT", nullable: false),
+                    Descripcion = table.Column<string>(type: "TEXT", nullable: true),
                     Precio = table.Column<double>(type: "REAL", nullable: false)
                 },
                 constraints: table =>
