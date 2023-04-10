@@ -11,8 +11,8 @@ using ProStellar.Server.DAL;
 namespace ProStellar.Server.Migrations
 {
     [DbContext(typeof(Contexto))]
-    [Migration("20230410144302_Createinicial")]
-    partial class Createinicial
+    [Migration("20230410172022_Inical")]
+    partial class Inical
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -147,12 +147,17 @@ namespace ProStellar.Server.Migrations
                         new
                         {
                             EstadoId = 1,
-                            Descripcion = "Con deuda pendiente"
+                            Descripcion = "Con deuda"
                         },
                         new
                         {
                             EstadoId = 2,
-                            Descripcion = "Saldada/Pagada"
+                            Descripcion = "Paga"
+                        },
+                        new
+                        {
+                            EstadoId = 3,
+                            Descripcion = "Vacia"
                         });
                 });
 
@@ -162,8 +167,8 @@ namespace ProStellar.Server.Migrations
                         .ValueGeneratedOnAdd()
                         .HasColumnType("INTEGER");
 
-                    b.Property<int>("Balance")
-                        .HasColumnType("INTEGER");
+                    b.Property<double>("Balance")
+                        .HasColumnType("REAL");
 
                     b.Property<string>("Concepto")
                         .IsRequired()
@@ -196,6 +201,10 @@ namespace ProStellar.Server.Migrations
                         .HasColumnType("INTEGER");
 
                     b.Property<DateTime>("Fecha")
+                        .HasColumnType("TEXT");
+
+                    b.Property<string>("NombrePersona")
+                        .IsRequired()
                         .HasColumnType("TEXT");
 
                     b.Property<int>("NominaId")
@@ -231,9 +240,6 @@ namespace ProStellar.Server.Migrations
 
                     b.Property<int>("NominaId")
                         .HasColumnType("INTEGER");
-
-                    b.Property<double>("Total")
-                        .HasColumnType("REAL");
 
                     b.HasKey("PagoId");
 

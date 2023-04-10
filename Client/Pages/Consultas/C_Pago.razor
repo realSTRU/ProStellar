@@ -18,12 +18,10 @@
         <br><br>
     </div>
     <div style="display:flex; justify-content:space-between; width:100%;">
-        <span style="display:flex; ">
-            <RadzenButton class="w3-button w3-xlarge w3-circle w3-gray stiky-btn w3-animate-zoom" Click=@DeleteResponse><i class="material-icons w3-large "><span class="material-symbols-outlined">attach_money</span></i></RadzenButton>
-        </span>
+        
         <RadzenText class="rz-color-warning-dark" TextAlign="TextAlign.Center" TextStyle="TextStyle.DisplayH5">Pagos</RadzenText>
         <span style="display:flex;">
-            <RadzenButton class="w3-button w3-xlarge w3-circle w3-orange  stiky-btn w3-animate-zoom" >+</RadzenButton>
+            <RadzenButton class="w3-button w3-xlarge w3-circle w3-orange  stiky-btn w3-animate-zoom" Click=@NewPago >+</RadzenButton>
             <RadzenButton class="w3-button w3-xlarge w3-circle w3-red stiky-btn w3-animate-zoom" Click=@DeleteResponse><i class="material-icons w3-large ">delete</i></RadzenButton>
         </span>
     </div>
@@ -128,6 +126,14 @@ catch (Exception e)
             </div>
         </RadzenStack>
     </RadzenStack>);
+    }
+
+    public async Task NewPago()
+    {
+        await DialogService.OpenAsync<
+            R_Pagos>($"Registro de pagos",
+            new Dictionary<string, object>(){{"NominaId",NominaId}},
+            new DialogOptions() { Width = "70vw", Height = "70vh", Resizable = false, Draggable = true });
     }
 
 }
