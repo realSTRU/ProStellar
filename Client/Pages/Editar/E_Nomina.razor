@@ -148,7 +148,7 @@ catch (Exception e)
 
         Balances= from Detalle in Nom.Detalles select Detalle.Balance;
         TBalance = Balances.Sum();
->>>>>>> a014da1e80fecea9a461aa6dd4489c85c2e38363
+
     }
 
     public void EliminarDetalle(int DetalleId)
@@ -175,7 +175,7 @@ catch (Exception e)
         NavigationManager.NavigateTo($"/proyecto/{ProyectoId}/{NominaId}/Pagos");
     }
 
-e80fecea9a461aa6dd4489c85c2e38363
+
     async Task Buscar()
     {
         var Encontrado = await NominaService.Find(this.NominaId);
@@ -246,7 +246,7 @@ e80fecea9a461aa6dd4489c85c2e38363
                                             <div class="col-md-8">
 
                                                 <RadzenDropDown class="rz-color-white" style="width: 100%;" FilterCaseSensitivity="FilterCaseSensitivity.CaseInsensitive" FilterOperator="StringFilterOperator.StartsWith" AllowFiltering="true"
-                                                    Data=@EmpleadoService.ListEmpleado  Name="Empleado" TextProperty="PrimerNombre" ValueProperty="EmpleadoId" AllowClear="true" @bind-Value=@Detail.PersonaId />
+                                                    Data=@EmpleadoService.ListEmpleado  Name="Empleado" TextProperty="NombreCompleto" ValueProperty="EmpleadoId" AllowClear="true" @bind-Value=@Detail.PersonaId />
 
                                                 <RadzenRequiredValidator Component="Empleado" Text="Campo requerido" Popup="true" Style="position: absolute"/>
                                             </div>
