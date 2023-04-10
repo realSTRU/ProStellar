@@ -28,7 +28,7 @@
     <br>
     <RadzenDataGrid AllowFiltering="true" AllowColumnResize="true" AllowAlternatingRows="false"
                 FilterMode="FilterMode.Advanced" AllowSorting="true" AllowPaging="true"
-                PagerHorizontalAlign="HorizontalAlign.Left" Data="PagoService.ListPago" TItem="Pago" ColumnWidth="200px"
+                PagerHorizontalAlign="HorizontalAlign.Left" Data="PagoService.ListPago.Where(o=>o.NominaId==NominaId)" TItem="Pago" ColumnWidth="200px"
                 LogicalFilterOperator="LogicalFilterOperator.Or" ShowPagingSummary="true">
 
         <Columns>

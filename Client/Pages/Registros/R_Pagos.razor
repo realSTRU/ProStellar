@@ -217,6 +217,7 @@
     public void EliminarDetalle(int DetalleId)
     {
         this.pago.Detalles.Remove(pago.Detalles.Where(p => p.PagoDetalleId == DetalleId).SingleOrDefault());
+        this.pago.Monto= this.pago.Detalles.Select(o=>o.ValorPagado).Sum();
     }
 
     
