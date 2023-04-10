@@ -20,16 +20,6 @@
                 </span>
             </HeaderTemplate>
             <ChildContent>
-                <div class="row">
-                    <div class="col-md-4 align-items-center d-flex">
-                        <RadzenLabel Text="Empleado" />
-                    </div>
-                    <div class="col-md-8">
-                        <RadzenDropDown Disabled class="w-100" FilterCaseSensitivity="FilterCaseSensitivity.CaseInsensitive" FilterOperator="StringFilterOperator.StartsWith" AllowFiltering="true"
-                                        Data=@NominaService.ListNomina.Where(n => n.NominaId ==NominaId) TextProperty="Concepto" Name="Nomina" ValueProperty="NominaId" AllowClear="true" @bind-Value=@detalle.NominaDetalleId />
-                        <RadzenRequiredValidator Component="Producto" Text="Campo requerido" Popup="true" Style="position: absolute" />
-                    </div>
-                </div>
 
                 <div class="row">
                     <div class="col-md-4 align-items-center d-flex">
@@ -57,14 +47,15 @@
                         </span>
                     </HeaderTemplate>
                     <ChildContent>
-                        <div class="row">
+                        
+                         <div class="row">
                             <div class="col-md-4 align-items-center d-flex">
                                 <RadzenLabel Text="Empleado" />
                             </div>
                             <div class="col-md-8">
                                 <RadzenDropDown class="w-100" FilterCaseSensitivity="FilterCaseSensitivity.CaseInsensitive" FilterOperator="StringFilterOperator.StartsWith" AllowFiltering="true"
-                                                Data=@NominaService.ListNomina.SingleOrDefault(n => n.NominaId ==NominaId).Detalles TextProperty="NombrePersona" Name="Empleado" ValueProperty="NominaDetalleId" AllowClear="true" @bind-Value=@detalle.NominaDetalleId />
-                                <RadzenRequiredValidator Component="Producto" Text="Campo requerido" Popup="true" Style="position: absolute" />
+                                                Data=@Nom.Detalles TextProperty="NombrePersona" Name="Empleado" ValueProperty="NominaDetalleId" AllowClear="true" @bind-Value=@detalle.NominaDetalleId />
+                                <RadzenRequiredValidator Component="Empleado" Text="Campo requerido" Popup="true" Style="position: absolute" />
                             </div>
                         </div>
                         <div class="row">
@@ -74,7 +65,7 @@
                             <div class="col-md-8">
                                 <RadzenDropDown class="w-100" FilterCaseSensitivity="FilterCaseSensitivity.CaseInsensitive" FilterOperator="StringFilterOperator.StartsWith" AllowFiltering="true"
                                                 Data=@TipoPagoService.ListTipoPago TextProperty="Descripcion" Name="TipoPago" ValueProperty="TipoPagoId" AllowClear="true" @bind-Value=@detalle.TipoPagoId />
-                                <RadzenRequiredValidator Component="Producto" Text="Campo requerido" Popup="true" Style="position: absolute" />
+                                <RadzenRequiredValidator Component="TipoPago" Text="Campo requerido" Popup="true" Style="position: absolute" />
                             </div>
                         </div>
                         <div class="row">
@@ -143,6 +134,8 @@
 
     public Nomina Nom { get; set; } = new Nomina();
 
+    public List<PagoDetalle> ListaDetalles { get; set; } = new List<PagoDetalle>(); 
+
     public PagoDetalle detalle { get; set; } = new PagoDetalle();
     private string currentUrl { get; set; }
 
@@ -152,6 +145,11 @@
         await NominaService.GetList();
         await TipoPagoService.GetList();
         await EmpleadoService.GetList();
+
+        Console.WriteLine($"\n\n\n\n\n\n\n\n\n\n*************************ID nomina{NominaId}");
+        Nom= NominaService.ListNomina.SingleOrDefault(n => n.NominaId == NominaId);
+
+        
 
         currentUrl = NavigationManager.Uri;
 

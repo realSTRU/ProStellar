@@ -8,7 +8,7 @@ using Microsoft.EntityFrameworkCore.Migrations;
 namespace ProStellar.Server.Migrations
 {
     /// <inheritdoc />
-    public partial class Createinicial : Migration
+    public partial class Inical : Migration
     {
         /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)
@@ -67,7 +67,7 @@ namespace ProStellar.Server.Migrations
                     Concepto = table.Column<string>(type: "TEXT", nullable: false),
                     ProyectoId = table.Column<int>(type: "INTEGER", nullable: false),
                     EstadoId = table.Column<int>(type: "INTEGER", nullable: false),
-                    Balance = table.Column<int>(type: "INTEGER", nullable: false)
+                    Balance = table.Column<double>(type: "REAL", nullable: false)
                 },
                 constraints: table =>
                 {
@@ -82,8 +82,7 @@ namespace ProStellar.Server.Migrations
                         .Annotation("Sqlite:Autoincrement", true),
                     Fecha = table.Column<DateTime>(type: "TEXT", nullable: false),
                     NominaId = table.Column<int>(type: "INTEGER", nullable: false),
-                    Monto = table.Column<double>(type: "REAL", nullable: false),
-                    Total = table.Column<double>(type: "REAL", nullable: false)
+                    Monto = table.Column<double>(type: "REAL", nullable: false)
                 },
                 constraints: table =>
                 {
@@ -138,6 +137,7 @@ namespace ProStellar.Server.Migrations
                         .Annotation("Sqlite:Autoincrement", true),
                     NominaId = table.Column<int>(type: "INTEGER", nullable: false),
                     PersonaId = table.Column<int>(type: "INTEGER", nullable: false),
+                    NombrePersona = table.Column<string>(type: "TEXT", nullable: false),
                     TrabajoId = table.Column<int>(type: "INTEGER", nullable: false),
                     Fecha = table.Column<DateTime>(type: "TEXT", nullable: false),
                     CantidadId = table.Column<int>(type: "INTEGER", nullable: false),
@@ -203,8 +203,9 @@ namespace ProStellar.Server.Migrations
                 columns: new[] { "EstadoId", "Descripcion" },
                 values: new object[,]
                 {
-                    { 1, "Con deuda pendiente" },
-                    { 2, "Saldada/Pagada" }
+                    { 1, "Con deuda" },
+                    { 2, "Paga" },
+                    { 3, "Vacia" }
                 });
 
             migrationBuilder.InsertData(
