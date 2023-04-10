@@ -13,6 +13,7 @@ using ProStellar.Server.Services.EstadoService;
 using ProStellar.Server.Services.PagoService;
 using ProStellar.Server.DAL;
 using ProStellar.Shared;
+using Microsoft.AspNetCore.Identity;
 
 var builder = WebApplication.CreateBuilder(args);
 

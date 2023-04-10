@@ -10,7 +10,7 @@
     <div style="display:flex; justify-content:space-between; width:100%;">
     <p></p>
     <RadzenText class="rz-color-warning-dark" TextAlign="TextAlign.Center" TextStyle="TextStyle.DisplayH5">Proyectos</RadzenText> 
-    <RadzenButton class="w3-button w3-xlarge w3-circle w3-orange  stiky-btn w3-animate-zoom" Click=@ShowInlineDialog >+</RadzenButton>
+    <RadzenButton class="w3-button w3-xlarge w3-circle bg-transparent  stiky-btn w3-animate-zoom" Click=@ShowInlineDialog >+</RadzenButton>
     </div>
     <hr class="rz-color-warning" >
         <br>
@@ -21,7 +21,7 @@
     {
         if(Proyecto.Descripcion.Contains(Search))
         {
-            <a href=@($"proyecto/{Proyecto.ProyectoId}")><div class="card w3-col rz-shadow-1  bg-dark text-white w3-hover-orange w3-margin w3-animate-bottom w3-mobile" style="width:400px;">
+            <a href=@($"proyecto/{Proyecto.ProyectoId}")><div class="card w3-col rz-shadow-1  rz-background-color-base-900 text-white w3-hover-orange w3-margin w3-animate-bottom w3-mobile" style="width:400px;">
             <center>
             <i class="material-icons w3-jumbo ">construction</i>
             <div class="card-body bg-dark rz-shadow-7 text-white" >@Proyecto.Descripcion</div>

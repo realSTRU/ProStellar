@@ -1,0 +1,153 @@
+@page "/Print/{ProyectoId:int}/{NominaId:int}"
+@inject IProyectoService ProyectoService
+@inject IEstadoService EstadoService
+@inject INominaService NominaService
+@inject ITrabajoService TrabajoService
+@inject DialogService DialogService
+@inject NotificationService notify
+@inject IEmpleadoService EmpleadoService
+@inject ICantidadService CantidadService
+@inject NavigationManager NavigationManager
+@layout EmptyLayout
+
+<body>
+<H1>@Nom.Concepto</H1>
+<hr>
+    <RadzenFieldset>
+        <HeaderTemplate>
+            <span class="d-inline-flex align-items-center align-middle">
+                <RadzenIcon  class="me-1" /><b>Detalle</b>
+            </span>
+        </HeaderTemplate>
+        <ChildContent>
+               <table class="table table-striped" style="backgroud-color:white">
+                <thead>
+                    <tr class="font-size">
+                        <th scope="col">Nombre</th>
+                        <th scope="col">Trabajo</th>
+                        <th scope="col">Lunes</th>
+                        <th scope="col">Martes</th>
+                        <th scope="col">Miercoles</th>
+                        <th scope="col">jueves</th>
+                        <th scope="col">Viernes</th>
+                        <th scope="col">Sabado</th>
+                        <th scope="col">Domingo</th>
+                        <th scope="col">Precio</th>
+                        <th scope="col">Balance</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    
+                        @foreach(var item in this.Nom.Detalles)
+                        {
+                            <tr>
+                            <td>@NombreCompleto(item.PersonaId)</td>
+                            <td>@TrabajoService.ListTrabajo.SingleOrDefault(o=>o.TrabajoId==item.TrabajoId).Descripcion</td>
+                            @foreach(var Dia in DiasSemana)
+                            {
+                                if(item.Fecha.DayOfWeek.ToString().Contains(Dia))
+                                {
+                                    <td>@CantidadService.ListCantidad.SingleOrDefault(o=>o.CantidadId==item.CantidadId).Descripcion</td>
+                                }
+                                else
+                                {
+                                    <td>No asistio</td>
+                                }
+                            }
+                            <td>@TrabajoService.ListTrabajo.SingleOrDefault(o=>o.TrabajoId==item.TrabajoId).Precio</td>
+                            <td>@item.Balance</td>
+                            </tr>
+                        }
+                
+                </tbody>
+            </table>
+
+            <div  class="d-flex justify-content-between">
+                <div class="Entrada">
+                    <div class="input-group">
+                        <RadzenLabel>Total de Empleados: @TEmpleado</RadzenLabel>
+                    </div>
+                </div>
+                <div class="Entrada">
+                    <div class="input-group">
+                        <RadzenLabel>Monto Total:$ @TMonto</RadzenLabel>
+                    </div>
+                </div>
+                <div class="Entrada">
+                    <div class="input-group">
+                        <RadzenLabel>Monto Total actual:$ @TBalance</RadzenLabel>
+                    </div>
+                </div>
+            </div>
+
+        </ChildContent>
+    </RadzenFieldset>
+
+</body>
+
+@code{
+
+        [Parameter]
+    public int ProyectoId {get;set;}
+
+    [Parameter]
+    public int NominaId {get;set;}
+
+    public Proyecto Pro{get;set;} = new Proyecto();
+    public Nomina Nom {get;set;} = new Nomina();
+
+    IEnumerable<int> Empleados{get;set;} 
+    public int? TEmpleado {get;set;}
+
+    IEnumerable<double> Montos{get;set;} 
+    public double? TMonto {get;set;}
+
+    IEnumerable<double> Balances{get;set;} 
+    public double? TBalance {get;set;}
+
+    string[] DiasSemana {get;set;} = {"Monday","Tuesday","Wednesday","Thursday","Friday","Saturday","Sunday"};
+
+    protected override async Task  OnInitializedAsync()
+    {
+        TrabajoService.GetList();
+        EmpleadoService.GetList();
+        CantidadService.GetList();
+        if(ProyectoId >0)
+        {
+            if(NominaId > 0)
+            {
+                Buscar();
+            }
+        }
+        var Encontrado = await ProyectoService.Find(ProyectoId);
+            if(Encontrado != null)
+            {
+                Pro=Encontrado;
+                
+            }
+
+        Empleados= from Detalle in Nom.Detalles select Detalle.PersonaId;
+        TEmpleado = Empleados.Count();
+
+        Montos= from Detalle in Nom.Detalles select Detalle.Precio;
+        TMonto = Montos.Sum();
+
+        Balances= from Detalle in Nom.Detalles select Detalle.Balance;
+        TBalance = Balances.Sum();
+    }
+    async Task Buscar()
+    {
+        var Encontrado = await NominaService.Find(this.NominaId);
+        if(Encontrado!=null)
+        {
+            this.Nom=Encontrado;
+        }
+    }
+    string NombreCompleto(int id)
+    {
+        var Empleado = EmpleadoService.ListEmpleado.SingleOrDefault(o=>o.EmpleadoId==id);
+        return $"{Empleado.PrimerNombre} {Empleado.SegundoNombre} {Empleado.PrimerApellido} {Empleado.SegundoApellido}";
+    }
+    
+
+}
