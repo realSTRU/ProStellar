@@ -35,6 +35,10 @@ namespace ProStellar.Server.Services.NominaService
         public async Task<ServiceResponse<List<Nomina>>> GetAllNominasAsync()
         {
             var response = new ServiceResponse<List<Nomina>>();
+            foreach (var nomina in _contexto.Nominas.Include("Detalles").AsNoTracking())
+            {
+                await Modificar(nomina);
+            }
             response.Data = await _contexto.Nominas.ToListAsync();
             return response;
         }
@@ -89,7 +93,6 @@ namespace ProStellar.Server.Services.NominaService
                 if (Nomina != null)
                 {
                     //eliminamos los detalles de la nomina
-
                     var anterior = await _contexto.Nominas.Include("Detalles").AsNoTracking().SingleOrDefaultAsync(o => o.NominaId == Nomina.NominaId);
                     if (anterior != null)
                     {
@@ -102,7 +105,6 @@ namespace ProStellar.Server.Services.NominaService
                         }
                     }
                     _contexto.Database.ExecuteSqlRaw($"DELETE FROM NominaDetalle WHERE NominaId={Nomina.NominaId};");
-
                     //Agregamos los nuevos detalles
                     Nomina.EstadoId = 2;
                     foreach (var Detalle in Nomina.Detalles)
@@ -112,9 +114,7 @@ namespace ProStellar.Server.Services.NominaService
                         {
                             Nomina.EstadoId = 1;
                         }
-
                     }
-
                     // Actualizamos el estado y balance
                     Nomina.Balance = Nomina.Detalles.Select(p => p.Balance).Sum();
                     //verficamos que no este vacia la lista
@@ -133,7 +133,6 @@ namespace ProStellar.Server.Services.NominaService
                     {
                         Nomina.EstadoId = 3;
                     }
-
                     //actualizamos la nomina
                     _contexto.Update(Nomina);
                     var guardo = await _contexto.SaveChangesAsync() > 0;
@@ -165,13 +164,7 @@ namespace ProStellar.Server.Services.NominaService
                 if (Nomina != null)
                 {
                     _contexto.Remove(Nomina);
-
                     //eliminamos los detalles de pagos 
-                    foreach (var Detalle in Nomina.Detalles)
-                    {
-
-                    }
-                    //eliminamos la nomina in DB
                     bool guardado = await _contexto.SaveChangesAsync() > 0;
                     response.Data = Nomina;
                     response.Success = guardado;
