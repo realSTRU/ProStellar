@@ -10,7 +10,6 @@
 @inject ICantidadService CantidadService
 @inject NavigationManager NavigationManager
 
-
 @try
 {
     <div class="container">
@@ -30,7 +29,6 @@
                 FilterMode="FilterMode.Advanced" AllowSorting="true" AllowPaging="true"
                 PagerHorizontalAlign="HorizontalAlign.Left" Data="PagoService.ListPago.Where(o=>o.NominaId==NominaId)" TItem="Pago" ColumnWidth="200px"
                 LogicalFilterOperator="LogicalFilterOperator.Or" ShowPagingSummary="true">
-
         <Columns>
             <RadzenDataGridColumn TItem="Pago" Width="120px" Filterable="false" Sortable="false" Frozen="true" Title="Acciones">
                 <Template Context="Item">
@@ -50,7 +48,6 @@
                 </Template>
             </RadzenDataGridColumn>
             <RadzenDataGridColumn TItem="Pago" Width="100%" Property="Monto" Title="Monto" />
-
         </Columns>
     </RadzenDataGrid>
     
@@ -62,13 +59,10 @@ catch (Exception e)
 @code {
     [Parameter]
     public int ProyectoId { get; set; }
-
     [Parameter]
     public int NominaId { get; set; }
-
     [Parameter]
     public int PagoId { get; set; }
-
     public Pago pago { get; set; } = new Pago();
     public Proyecto Pro { get; set; } = new Proyecto();
     public Nomina Nom { get; set; } = new Nomina();
@@ -82,7 +76,6 @@ catch (Exception e)
         if (Encontrado != null)
         {
             Pro = Encontrado;
-
         }
         if(NominaId>0)
         {
@@ -104,9 +97,6 @@ catch (Exception e)
         NavigationManager.NavigateTo($"/proyecto/{ProyectoId}/{NominaId}/");
     }
     
-
-
-
     public async Task NewEmpleado(int Id)
     {
         await DialogService.OpenAsync<
@@ -140,12 +130,12 @@ catch (Exception e)
             new Dictionary<string, object>(){{"NominaId",NominaId},{"PagoId",PagoId}},
             new DialogOptions() { Width = "70vw", Height = "70vh", Resizable = false, Draggable =false });
     }
-        public async Task NewPago()
+
+    public async Task NewPago()
     {
         await DialogService.OpenAsync<
             R_Pagos>($"Registro de pagos",
             new Dictionary<string, object>(){{"NominaId",NominaId}},
             new DialogOptions() { Width = "70vw", Height = "70vh", Resizable = false, Draggable =false });
     }
-
 }

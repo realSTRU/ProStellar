@@ -33,7 +33,7 @@ namespace ProStellar.Client.Services.TrabajoServices
         public async Task<Trabajo> Find(int Id)
         {
             var result = await _http.GetFromJsonAsync<ServiceResponse<Trabajo>>($"api/Trabajo/{Id}");
-            
+
             return result.Data;
         }
 
@@ -53,7 +53,6 @@ namespace ProStellar.Client.Services.TrabajoServices
             var result = await post.Content.ReadFromJsonAsync<Trabajo>();
             var response = new ServiceResponse<Trabajo>();
             response.Data = result;
-
             return response;
         }
     }

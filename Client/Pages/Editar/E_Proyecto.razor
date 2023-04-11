@@ -17,6 +17,7 @@
     
     <RadzenText class="rz-color-warning-dark" TextAlign="TextAlign.Center" TextStyle="TextStyle.DisplayH5">Nominas - @Pro.Descripcion</RadzenText> 
     <span style="display:flex;">
+        <RadzenButton class="w3-button w3-xlarge w3-circle bg-transparent stiky-btn w3-animate-zoom" Click=@GuardarTitulo ><i class="material-icons w3-large ">edit</i></RadzenButton>
         <RadzenButton class="w3-button w3-xlarge w3-circle bg-transparent stiky-btn w3-animate-zoom" Click=@ShowInlineDialog >+</RadzenButton>
         <RadzenButton class="w3-button w3-xlarge w3-circle bg-transparent stiky-btn w3-animate-zoom" Click=@DeleteResponse ><i class="material-icons w3-large ">delete</i></RadzenButton>
     </span>
@@ -28,7 +29,6 @@
         FilterMode="FilterMode.Advanced" AllowGrouping="true" AllowSorting="true" AllowPaging="true"
         PagerHorizontalAlign="HorizontalAlign.Left" Data="NominaService.ListNomina.Where(o=>o.ProyectoId==ProyectoId)" TItem="Nomina" ColumnWidth="200px"
         LogicalFilterOperator="LogicalFilterOperator.Or" ShowPagingSummary="true" >
-
         <Columns >
             <RadzenDataGridColumn TItem="Nomina" Width="90px" Filterable="false" Sortable="false"  Frozen="true" Title="Acciones">
                 <Template Context="Item">
@@ -148,7 +148,7 @@ catch (Exception e)
         }
         else
         {
-           notify.ShowNotification("Porfabor indique un concepto","Error: No puede guardar una nomina sin conceptos", NotificationSeverity.Error); 
+            notify.ShowNotification("Porfabor indique un concepto","Error: No puede guardar una nomina sin conceptos", NotificationSeverity.Error); 
         }
         
     }
@@ -181,5 +181,36 @@ catch (Exception e)
         {
             notify.ShowNotification("Nombre del proyecto invalido","Error de Registro", NotificationSeverity.Error);
         }
+    }
+
+        async Task GuardarTitulo()
+    {
+        var result = await DialogService.OpenAsync("Nueva Nomina", ds =>
+        @<RadzenStack Gap="1.5rem">
+            <RadzenStack Orientation="Orientation.Horizontal" Gap="0.5rem" AlignItems="AlignItems.Center" JustifyContent="JustifyContent.SpaceBetween">
+                <RadzenTemplateForm TItem="Nomina" Data="@Nom" Submit="GuardarNomina">
+                    <div class="row">
+                        <div class="col-md-3 align-items-center d-flex">
+                            <RadzenLabel class="text-white"  Text="Descripcion" />
+                        </div>
+                        <div class="col-md-8">
+                            <RadzenTextBox style="width: 100%;" class="text-white" Name="Concepto" @bind-Value="Pro.Descripcion" />
+                            <RadzenRequiredValidator Component="Concepto" Text="Campo requerido" Popup="true" Style="position: absolute" />
+                        </div>
+                    </div>
+                    <div class="w3-margin align-content-center ">
+                        <RadzenButton Text="Agregar" ButtonType="ButtonType.Submit" ButtonStyle="ButtonStyle.Success" />
+                        <RadzenButton Text="Cancel" Click="() => ds.Close(false)" ButtonStyle="ButtonStyle.Light" />
+                    </div>
+                </RadzenTemplateForm>
+            </RadzenStack>
+        </RadzenStack>);
+    }
+
+    async Task GuardarNomina()
+    {
+        await ProyectoService.Save(Pro);
+        NavigationManager.NavigateTo($"/");
+        NavigationManager.NavigateTo($"/proyecto/{ProyectoId}");
     }
 }

@@ -8,6 +8,7 @@
 @inject IEmpleadoService EmpleadoService
 @inject ICantidadService CantidadService
 @inject NavigationManager NavigationManager
+@inject IPagoService PagoSevice 
 
 
 @try{
@@ -23,6 +24,7 @@
     </span>
     <RadzenText class="rz-color-warning-dark" TextAlign="TextAlign.Center" TextStyle="TextStyle.DisplayH5">Detalles - @Nom.Concepto</RadzenText> 
     <span style="display:flex;">
+        <RadzenButton class="w3-button w3-xlarge w3-circle bg-transparent stiky-btn w3-animate-zoom" Click=@GuardarTitulo ><i class="material-icons w3-large ">edit</i></RadzenButton>
         <RadzenButton class="w3-button w3-xlarge w3-circle  bg-transparent stiky-btn w3-animate-zoom" Click=@ShowInlineDialog >+</RadzenButton>
         <RadzenButton class="w3-button w3-xlarge w3-circle bg-transparent stiky-btn w3-animate-zoom" Click=@DeleteResponse ><i class="material-icons w3-large ">delete</i></RadzenButton>
         <a href=@($"/Print/{ProyectoId}/{Nom.NominaId}") class="w3-button w3-xlarge w3-circle bg-transparent stiky-btn w3-animate-zoom" target="_blank"><i class="material-icons w3-large ">print</i></a>
@@ -38,7 +40,7 @@
         <Columns>
             <RadzenDataGridColumn TItem="NominaDetalle" Width="100px" Filterable="false" Sortable="false" Frozen="true" Title="Acciones">
                 <Template Context="Item">
-                    <button @onclick="() => EliminarDetalle(Item.NominaDetalleId)" class="bg-transparent w3-margin-left w3-border-0"><RadzenBadge Shade="Shade.Dark" BadgeStyle="BadgeStyle.Danger" Text="Ver"><i class="material-icons w3-large ">delete</i></RadzenBadge></button>
+                    <button @onclick="() => Tienepagos(Item.NominaDetalleId)" class="bg-transparent w3-margin-left w3-border-0"><RadzenBadge Shade="Shade.Dark" BadgeStyle="BadgeStyle.Danger" Text="Ver"><i class="material-icons w3-large ">delete</i></RadzenBadge></button>
                 </Template>
             </RadzenDataGridColumn>
             <RadzenDataGridColumn TItem="NominaDetalle" Width="100%"  Title="Fecha" >
@@ -120,6 +122,7 @@ catch (Exception e)
         TrabajoService.GetList();
         EmpleadoService.GetList();
         CantidadService.GetList();
+        PagoSevice.GetList();
         if(ProyectoId >0)
         {
             if(NominaId > 0)
@@ -339,9 +342,71 @@ catch (Exception e)
         return Detail.PersonaId >0 && Detail.TrabajoId > 0 && Detail.CantidadId > 0;
     }
 
-    bool Tienepagos(int id)
+    void Tienepagos(int id)
     {
-        
-        return true;
+        var detalle = Nom.Detalles.SingleOrDefault(o=>o.NominaDetalleId==id);
+        if(detalle!=null)
+        {
+            if(detalle.Balance!=detalle.Precio)
+            {
+                DeleteDetalle(id);
+            }
+            else
+            {
+                EliminarDetalle(id);
+            }
+        }
+        else{
+            EliminarDetalle(id);
+        }
+    }
+
+    async Task DeleteDetalle(int DetalleId)
+    {
+        var result = await DialogService.OpenAsync("Confirmar Accion", ds =>
+        @<RadzenStack Gap="1.5rem">
+            <RadzenStack Orientation="Orientation.Horizontal" Gap="0.5rem" AlignItems="AlignItems.Center" JustifyContent="JustifyContent.SpaceBetween">
+                    <div class="w3-margin row rz-color-white">
+                        <div class="align-items-center d-flex">
+                            <RadzenLabel Text="Este registro posee pagos, ¿Desea eliminarlo de todas formas?" />
+                        </div>
+                    </div>
+                    <div class="w3-margin align-content-center ">
+                        <RadzenButton Text="Eliminar" Click="()=> EliminarDetalle(DetalleId)" ButtonStyle="ButtonStyle.Danger" />
+                        <RadzenButton Text="Cancel" Click="() => ds.Close(false)" ButtonStyle="ButtonStyle.Light" />
+                    </div>
+            </RadzenStack>
+        </RadzenStack>);
+    }
+
+    async Task GuardarTitulo()
+    {
+        var result = await DialogService.OpenAsync("Nueva Nomina", ds =>
+        @<RadzenStack Gap="1.5rem">
+            <RadzenStack Orientation="Orientation.Horizontal" Gap="0.5rem" AlignItems="AlignItems.Center" JustifyContent="JustifyContent.SpaceBetween">
+                <RadzenTemplateForm TItem="Nomina" Data="@Nom" Submit="GuardarNomina">
+                    <div class="row">
+                        <div class="col-md-3 align-items-center d-flex">
+                            <RadzenLabel class="text-white"  Text="Concepto" />
+                        </div>
+                        <div class="col-md-8">
+                            <RadzenTextBox style="width: 100%;" class="text-white" Name="Concepto" @bind-Value="Nom.Concepto" />
+                            <RadzenRequiredValidator Component="Concepto" Text="Campo requerido" Popup="true" Style="position: absolute" />
+                        </div>
+                    </div>
+                    <div class="w3-margin align-content-center ">
+                        <RadzenButton Text="Agregar" ButtonType="ButtonType.Submit" ButtonStyle="ButtonStyle.Success" />
+                        <RadzenButton Text="Cancel" Click="() => ds.Close(false)" ButtonStyle="ButtonStyle.Light" />
+                    </div>
+                </RadzenTemplateForm>
+            </RadzenStack>
+        </RadzenStack>);
+    }
+
+    async Task GuardarNomina()
+    {
+        await NominaService.Save(Nom);
+        NavigationManager.NavigateTo($"/");
+        NavigationManager.NavigateTo($"/proyecto/{ProyectoId}/{NominaId}");
     }
 }

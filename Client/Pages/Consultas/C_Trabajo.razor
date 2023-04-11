@@ -25,7 +25,6 @@
             <RadzenDataGridColumn TItem="Trabajo" Width="100px" Filterable="false" Sortable="false"  Frozen="true" Title="Acciones">
                 <Template Context="Item">
                     <button class ="bg-transparent w3-margin-left w3-border-0" @onclick="() => NewTrabajo(Item.TrabajoId)" ><RadzenBadge Shade="Shade.Dark" BadgeStyle="BadgeStyle.Warning" Text="Ver" ><i class="material-icons w3-large ">edit</i></RadzenBadge></button>
-
                 </Template>
             </RadzenDataGridColumn>
             <RadzenDataGridColumn TItem="Trabajo"Width="100%" Property="Descripcion" Title="Descripcion" />
