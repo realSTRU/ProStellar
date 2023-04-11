@@ -1,12 +1,14 @@
 <div id="header" align="center">
+ <img src="https://avatars.githubusercontent.com/u/91565711?v=4" width=115><br>[<sub>Kevin Duran</sub>]<br>| (https://github.com/SUNXOUL) |
+ <BR>
+  <img src="https://avatars.githubusercontent.com/u/122837710?v=4" width=115><br>[<sub>Cesar Reynoso</sub>]<br>| (https://github.com/realSTRU) |
  
   <h1>(Proyecto Final Programación Aplicada 1).</h1>
-  <h2>Kevin Duran 2020-0398<br>Cesar Reynoso 2020-0516</h2>
-  
-  
-  USUARIO PARA PRUEBAS:
+  <h2>Kevin Duran 2020-0398<br>Cesar Reynoso 2020-0516<br></h2>
+  <h3> USUARIO PARA PRUEBAS:
 User@Prostellar.com
-Pr@stellar1
+Pr@stellar1</h3>
+  
   
   <p style="font-family; monospace">
       # ProStellar
@@ -88,9 +90,10 @@ Pr@stellar1
  <br>
    <img src="https://i.postimg.cc/P5tgRvYR/Modal-Empleado.png">
 
-   
-   
- 
+<br>
+<h3>**Video de youtube**</h3>
+  
+ [![Alt text](https://img.youtube.com/vi/Z05MwMvEyWQ/0.jpg)](https://www.youtube.com/watch?v=Z05MwMvEyWQ)
 </div>
 
 
