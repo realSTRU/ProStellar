@@ -22,8 +22,8 @@ namespace ProStellar.Server.Controllers
         public async Task<ActionResult<ServiceResponse<List<Pago>>>> GetAllPays()
         {
             var result = await _pagoService.GetAllPagosAsync();
-            
-            if(result != null && result.Data != null)
+
+            if (result != null && result.Data != null)
             {
                 return Ok(result);
             }
@@ -37,8 +37,7 @@ namespace ProStellar.Server.Controllers
         public async Task<ActionResult<ServiceResponse<Pago>>> GetPay(int PagoId)
         {
             var result = await _pagoService.GetPagoAsync(PagoId);
-            
-            if(result != null)
+            if (result != null)
             {
                 return Ok(result);
             }
@@ -52,7 +51,7 @@ namespace ProStellar.Server.Controllers
         {
             var result = await _pagoService.Guardar(pago);
 
-            if(result.Success != false)
+            if (result.Success != false)
             {
                 return Ok(result);
             }

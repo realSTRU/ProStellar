@@ -89,7 +89,20 @@ namespace ProStellar.Server.Services.NominaService
                 if (Nomina != null)
                 {
                     //eliminamos los detalles de la nomina
+
+                    var anterior = await _contexto.Nominas.Include("Detalles").AsNoTracking().SingleOrDefaultAsync(o => o.NominaId == Nomina.NominaId);
+                    if (anterior != null)
+                    {
+                        var firstSet = anterior.Detalles.Select(o => o.NominaDetalleId).ToHashSet();
+                        firstSet.SymmetricExceptWith(Nomina.Detalles.Select(o => o.NominaDetalleId));
+                        var diff = firstSet.ToList();
+                        foreach (var DetalleA in diff)
+                        {
+                            _contexto.Database.ExecuteSqlRaw("DELETE FROM PagoDetalle WHERE NominaDetalleId={0};", DetalleA);
+                        }
+                    }
                     _contexto.Database.ExecuteSqlRaw($"DELETE FROM NominaDetalle WHERE NominaId={Nomina.NominaId};");
+
                     //Agregamos los nuevos detalles
                     Nomina.EstadoId = 2;
                     foreach (var Detalle in Nomina.Detalles)
@@ -142,6 +155,7 @@ namespace ProStellar.Server.Services.NominaService
             }
             return response;
         }
+
         public async Task<ServiceResponse<Nomina>> Eliminar(int NominaId)
         {
             var response = new ServiceResponse<Nomina>();

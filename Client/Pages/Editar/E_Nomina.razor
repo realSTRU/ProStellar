@@ -17,7 +17,9 @@
     <br><br>
     <div style="display:flex; justify-content:space-between; width:100%;">
     <span style="display:flex; ">
+    @if(Nom.EstadoId==1 || Nom.EstadoId==2 ){
     <RadzenButton class="w3-button w3-xlarge w3-circle w3-gray stiky-btn w3-animate-zoom" Click=@NavegarPago ><i class="material-icons w3-large "><span class="material-symbols-outlined">attach_money</span></i></RadzenButton>
+    }
     </span>
     <RadzenText class="rz-color-warning-dark" TextAlign="TextAlign.Center" TextStyle="TextStyle.DisplayH5">Detalles - @Nom.Concepto</RadzenText> 
     <span style="display:flex;">
@@ -335,5 +337,11 @@ catch (Exception e)
     bool Validation()
     {
         return Detail.PersonaId >0 && Detail.TrabajoId > 0 && Detail.CantidadId > 0;
+    }
+
+    bool Tienepagos(int id)
+    {
+        
+        return true;
     }
 }

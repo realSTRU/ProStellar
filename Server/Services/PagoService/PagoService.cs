@@ -19,7 +19,13 @@ namespace ProStellar.Server.Services.PagoService
         public async Task<ServiceResponse<Pago>> GetPagoAsync(int Id)
         {
             var response = new ServiceResponse<Pago>();
+            foreach (var pago in _contexto.Pagos.Include("Detalles").AsNoTracking())
+            {
+                await Modificar(pago);
+            }
+
             var Pago = await _contexto.Pagos.Include("Detalles").AsNoTracking().SingleOrDefaultAsync(o => o.PagoId == Id);
+
             if (Pago == null)
             {
                 response.Success = false;
@@ -35,10 +41,13 @@ namespace ProStellar.Server.Services.PagoService
         public async Task<ServiceResponse<List<Pago>>> GetAllPagosAsync()
         {
             var response = new ServiceResponse<List<Pago>>();
+            foreach (var pago in _contexto.Pagos.Include("Detalles").AsNoTracking())
+            {
+                await Modificar(pago);
+            }
             response.Data = await _contexto.Pagos.ToListAsync();
             return response;
         }
-
 
         public async Task<ServiceResponse<Pago>> Guardar(Pago Pago)
         {
@@ -98,67 +107,74 @@ namespace ProStellar.Server.Services.PagoService
 
         public async Task<ServiceResponse<Pago>> Modificar(Pago Pago)
         {
-            var response = new ServiceResponse<Pago>();
-            try
+            if (Pago.Detalles.Count() <= 0)
             {
-                if (Pago != null)
+                return await Eliminar(Pago.PagoId);
+            }
+            else
+            {
+                var response = new ServiceResponse<Pago>();
+                try
                 {
-                    //eliminamos  los detalles de la Pago y aumentamos el balance
-                    var Nomina = await _contexto.Nominas.Include("Detalles").AsNoTracking().SingleOrDefaultAsync(o => o.NominaId == Pago.NominaId);
-                    var Anterior = await _contexto.Pagos.Include("Detalles").AsNoTracking().SingleOrDefaultAsync(o => o.PagoId == Pago.PagoId);
-                    if (Nomina != null && Anterior != null)
+                    if (Pago != null)
                     {
-                        foreach (var Detalle in Anterior.Detalles)
+                        //eliminamos  los detalles de la Pago y aumentamos el balance
+                        var Nomina = await _contexto.Nominas.Include("Detalles").AsNoTracking().SingleOrDefaultAsync(o => o.NominaId == Pago.NominaId);
+                        var Anterior = await _contexto.Pagos.Include("Detalles").AsNoTracking().SingleOrDefaultAsync(o => o.PagoId == Pago.PagoId);
+                        if (Nomina != null && Anterior != null)
                         {
-                            foreach (var DNomina in Nomina.Detalles)
+                            foreach (var Detalle in Anterior.Detalles)
                             {
-                                if (DNomina.NominaDetalleId == Detalle.NominaDetalleId)
+                                foreach (var DNomina in Nomina.Detalles)
                                 {
-                                    DNomina.Balance += Detalle.ValorPagado;
+                                    if (DNomina.NominaDetalleId == Detalle.NominaDetalleId)
+                                    {
+                                        DNomina.Balance += Detalle.ValorPagado;
+                                    }
                                 }
                             }
-                        }
-                        _contexto.Nominas.Update(Nomina);
-                        _contexto.Database.ExecuteSqlRaw($"DELETE FROM PagoDetalle WHERE PagoId={Pago.PagoId};");
-                        //Agregamos los nuevos detalles y disminuimos el balance
-                        foreach (var Detalle in Pago.Detalles)
-                        {
-                            foreach (var DNomina in Nomina.Detalles)
+                            _contexto.Nominas.Update(Nomina);
+                            _contexto.Database.ExecuteSqlRaw($"DELETE FROM PagoDetalle WHERE PagoId={Pago.PagoId};");
+                            //Agregamos los nuevos detalles y disminuimos el balance
+                            foreach (var Detalle in Pago.Detalles)
                             {
-                                if (DNomina.NominaDetalleId == Detalle.NominaDetalleId)
+                                foreach (var DNomina in Nomina.Detalles)
                                 {
-                                    DNomina.Balance -= Detalle.ValorPagado;
+                                    if (DNomina.NominaDetalleId == Detalle.NominaDetalleId)
+                                    {
+                                        DNomina.Balance -= Detalle.ValorPagado;
+                                    }
                                 }
+                                _contexto.Entry(Detalle).State = EntityState.Added;
                             }
-                            _contexto.Entry(Detalle).State = EntityState.Added;
+
+                            //actualizamos el monto
+                            Pago.Monto = Pago.Detalles.Select(o => o.ValorPagado).Sum();
+
+                            //actualizamos la Nomina
+                            _contexto.Nominas.Update(Nomina);
                         }
-
-                        //actualizamos el monto
-                        Pago.Monto = Pago.Detalles.Select(o => o.ValorPagado).Sum();
-
-                        //actualizamos la Nomina
-                        _contexto.Nominas.Update(Nomina);
+                        //actualizamos el pago
+                        _contexto.Pagos.Update(Pago);
+                        var guardo = await _contexto.SaveChangesAsync() > 0;
+                        _contexto.Entry(Pago).State = EntityState.Detached;
+                        response.Data = Pago;
+                        response.Success = guardo;
                     }
-                    //actualizamos el pago
-                    _contexto.Pagos.Update(Pago);
-                    var guardo = await _contexto.SaveChangesAsync() > 0;
-                    _contexto.Entry(Pago).State = EntityState.Detached;
-                    response.Data = Pago;
-                    response.Success = guardo;
+                    else
+                    {
+                        response.Success = false;
+                        response.Message = "Pago not found";
+                    }
                 }
-                else
+                catch (Exception ex)
                 {
                     response.Success = false;
-                    response.Message = "Pago not found";
+                    response.Message = ex.Message;
+                    response.Data = Pago;
                 }
+                return response;
             }
-            catch (Exception ex)
-            {
-                response.Success = false;
-                response.Message = ex.Message;
-                response.Data = Pago;
-            }
-            return response;
         }
         public async Task<ServiceResponse<Pago>> Eliminar(int PagoId)
         {

@@ -10,7 +10,8 @@
 @inject ICantidadService CantidadService
 @inject NavigationManager NavigationManager
 
-
+@try
+{
     <RadzenTemplateForm TItem="Pago" Data="@pago" Submit="Guardar" class="text-white">
         <RadzenFieldset>
             <HeaderTemplate>
@@ -53,9 +54,9 @@
                             </div>
                             <div class="col-md-8">
                                 <RadzenDropDown class="w-100" FilterCaseSensitivity="FilterCaseSensitivity.CaseInsensitive" FilterOperator="StringFilterOperator.StartsWith" AllowFiltering="true"
-                                                Data=@Nom.Detalles  Name="Empleado"  ValueProperty="NominaDetalleId" AllowClear="true" @bind-Value=@detalle.NominaDetalleId >
+                                                Data=@Nom.Detalles.Where(o=>o.Balance>0)  Name="Empleado"  ValueProperty="NominaDetalleId" AllowClear="true" @bind-Value=@detalle.NominaDetalleId >
                                     <Template Context="Item">
-                                        <a>@getlabor(Item.TrabajoId,Item.PersonaId,Item.CantidadId)</a>
+                                        <a>@getlabor(Item.TrabajoId,Item.PersonaId,Item.CantidadId) - @Item.Fecha.ToString("dd/MM/yy") </a>
                                     </Template>
                                 </RadzenDropDown>
                                 <RadzenRequiredValidator Component="Empleado" Text="Campo requerido" Popup="true" Style="position: absolute" />
@@ -82,20 +83,21 @@
                             </div>
                         </div>
                         <hr>
-                        <table class="table table-striped">
+                        <table class="table table-striped text-white">
                             <thead>
                                 <tr>
-                                    <th>Id#</th>
-                                    <th>Empleado</th>
+                                    <th>Concepto</th>
                                     <th>Tipo Pago</th>
-                                    <th>Valor Pagado</th>
+                                    <th>Valor pagado</th>
+                                    <th>Accion</th>
                                 </tr>
                             </thead>
                             <tbody>
                                 @foreach (var item in pago.Detalles)
                                 {
-                                    <tr>
-                                        <td>@EmpleadoService.ListEmpleado.SingleOrDefault(o=>o.EmpleadoId==Nom.Detalles.SingleOrDefault(n => n.NominaDetalleId == item.NominaDetalleId).PersonaId).NombreCompleto</td>
+                                    var detalle = Nom.Detalles.Find(o=>o.NominaDetalleId==item.NominaDetalleId);
+                                    <tr class="text-white">
+                                        <td>@EmpleadoService.ListEmpleado.SingleOrDefault(o=>o.EmpleadoId==detalle.PersonaId).NombreCompleto -@TrabajoService.ListTrabajo.SingleOrDefault(o=>o.TrabajoId==detalle.TrabajoId).Descripcion - @detalle.Fecha.ToString("dd/MM/yy")</td>
                                         <td>@TipoPagoService.ListTipoPago.SingleOrDefault(t => t.TipoPagoId == item.TipoPagoId).Descripcion</td>
                                         <td>@item.ValorPagado</td>
                                         <td><RadzenButton ButtonStyle="ButtonStyle.Danger" Click="()=>EliminarDetalle(item.PagoDetalleId)" 
@@ -125,7 +127,9 @@
     </RadzenTemplateForm>
 
 
-
+}
+catch(Exception e)
+{}
 
 @code {
 
@@ -152,7 +156,6 @@
         await EmpleadoService.GetList();
         await CantidadService.GetList();
         TrabajoService.GetList();
-        Console.WriteLine($"\n\n\n\n\n\n\n\n\n\n*************************ID nomina{NominaId}");
         currentUrl = NavigationManager.Uri;
         if(NominaId>0)
         {
@@ -180,7 +183,6 @@
         {
             notify.ShowNotification("Error al guardar", "Porfabor llenar todos los campos", NotificationSeverity.Error);
         }
-       
     }
 
     string getlabor(int TrabajoId, int EmpleadoId,int CantidadId)
@@ -201,7 +203,6 @@
     async Task Buscar()
     {
         var Encontrado = await PagoService.GetPagoById(this.PagoId);
-
         if(Encontrado != null)
         {
             this.pago = Encontrado;
@@ -230,15 +231,18 @@
     {
         if(ValidarDetalle())
         {
-            this.pago.Detalles.Add(this.detalle);
-            this.pago.Monto= this.pago.Detalles.Select(o=>o.ValorPagado).Sum();
-            this.detalle = new PagoDetalle();
-            notify.ShowNotification("Detalle registrado con exito!", "Registro Actualizado", NotificationSeverity.Success);
+            if(ValidarMonto())
+            {  
+                this.pago.Detalles.Add(this.detalle);
+                this.pago.Monto= this.pago.Detalles.Select(o=>o.ValorPagado).Sum();
+                this.detalle = new PagoDetalle();
+                notify.ShowNotification("Detalle registrado con exito!", "Registro Actualizado", NotificationSeverity.Success);
+            }
 
         }
         else
         {
-            notify.ShowNotification("Error al guardar", "Porfabor llenar todos los campos", NotificationSeverity.Error);
+            notify.ShowNotification("Error al guardar", "Porfavor llenar todos los campos", NotificationSeverity.Error);
         }
     
 
@@ -248,11 +252,17 @@
         this.pago.Detalles.Remove(pago.Detalles.Where(p => p.PagoDetalleId == DetalleId).SingleOrDefault());
         this.pago.Monto= this.pago.Detalles.Select(o=>o.ValorPagado).Sum();
     }
-
     
-
-
-    
-
-
+    public bool ValidarMonto()
+    {
+        if(detalle.ValorPagado <= Nom.Detalles.Find(o=>o.NominaDetalleId == detalle.NominaDetalleId).Balance)
+        {
+            return true;
+        }
+        else
+        {
+            notify.ShowNotification("Error al guardar", "El pago no puede superar el balance", NotificationSeverity.Error);
+            return false;
+        }
+    }
 }
