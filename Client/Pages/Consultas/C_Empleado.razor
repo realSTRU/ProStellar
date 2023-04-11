@@ -16,9 +16,33 @@
     <RadzenText class="rz-color-warning-darka" TextAlign="TextAlign.Center" TextStyle="TextStyle.DisplayH5">Empleados</RadzenText> 
     <br><br>
     </div>
+    <RadzenFieldset>
+            <HeaderTemplate>
+                <span class="d-inline-flex align-items-center align-middle">
+                    <RadzenIcon Icon="account_box" class="me-1" /><b>Filtro de consulta de empleados</b>
+                </span>
+            </HeaderTemplate>
+            <ChildContent>
+                <div class="d-flex flex-row">
+
+                    <div class="align-items-center d-flex">
+                        <RadzenLabel Text="Criterio:" />
+                    </div>
+                    <div>
+                        <RadzenDropDown class="rz-color-white"  FilterCaseSensitivity="FilterCaseSensitivity.CaseInsensitive" FilterOperator="StringFilterOperator.StartsWith" AllowFiltering="true"
+                                    Data=@Atributos Name="Criterios" AllowClear="true" @bind-Value=@Fil />
+                        <RadzenRequiredValidator Component="Criterios" Text="Campo requerido" Popup="true" Style="position: absolute" />
+                    </div>
+                    <div>
+                        <RadzenTextBox Placeholder="Filtro:" @bind-Value="Contenido" style="width:100%;" />
+                    </div>      
+                </div>
+             </ChildContent>
+    </RadzenFieldset>
+    <br>
     <RadzenDataGrid AllowFiltering="true"  AllowColumnResize="true" AllowAlternatingRows="false"
         FilterMode="FilterMode.Advanced" AllowSorting="true" AllowPaging="true"
-        PagerHorizontalAlign="HorizontalAlign.Left" Data="EmpleadoService.ListEmpleado" TItem="Empleado" ColumnWidth="100%"
+        PagerHorizontalAlign="HorizontalAlign.Left" Data=@Filtro(Fil) TItem="Empleado" ColumnWidth="100%"
         LogicalFilterOperator="LogicalFilterOperator.Or" ShowPagingSummary="true" >
 
         <Columns >
@@ -40,17 +64,55 @@ catch (Exception e)
     
 }
 @code{
+
+    public Empleado empleado {get; set;} = new Empleado();
+
+    public List<string> Atributos { get; set; } = new List<string> { "Primer Nombre", "Segundo Nombre", "Primer Apellido", "SegundoApellido", "Telefono" };
+
+    public string Contenido { get; set; }
+    public string Fil { get; set; } = "";
+
     protected override async Task  OnInitializedAsync()
     {
         await EmpleadoService.GetList();
     }
 
-        public async Task NewEmpleado(int Id)
+    public async Task NewEmpleado(int Id)
     {
         await DialogService.OpenAsync<
             R_Empleado >($"Modificar Empleado",
             new Dictionary<string, object>(){{"EmpleadoId",Id}},
             new DialogOptions() { Width = "50vw", Height = "45vh", Resizable = false, Draggable = true });
+    }
+
+    public IEnumerable<Empleado> Filtro(string fil)
+    {
+        switch(fil)
+        {
+            case "Primer Nombre":
+                return EmpleadoService.ListEmpleado.Where(e => e.PrimerNombre.Contains(Contenido));
+                break;
+            case "Segundo Nombre":
+                return EmpleadoService.ListEmpleado.Where(e => e.SegundoNombre.Contains(Contenido));
+                break;
+            case "Primer Apellido":
+                return EmpleadoService.ListEmpleado.Where(e => e.PrimerApellido.Contains(Contenido));
+                break;
+            case "Segundo Apellido":
+                return EmpleadoService.ListEmpleado.Where(e => e.SegundoApellido.Contains(Contenido));
+                break;
+            case "Telefono":
+                return EmpleadoService.ListEmpleado.Where(e => e.Telefono.Contains(Contenido));
+                break;
+            default:
+                return EmpleadoService.ListEmpleado;
+
+
+
+
+
+
+        }
     }
 
 }
