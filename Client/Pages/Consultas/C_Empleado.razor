@@ -34,7 +34,7 @@
                         <RadzenRequiredValidator Component="Criterios" Text="Campo requerido" Popup="true" Style="position: absolute" />
                     </div>
                     <div>
-                        <RadzenTextBox Placeholder="Filtro:" @bind-Value="Contenido" style="width:100%;" />
+                        <RadzenTextBox @oninput=@(args => Filtro(args.Value.ToString())) Placeholder="Filtro:" style="width:100%;" />
                     </div>      
                 </div>
              </ChildContent>
@@ -42,7 +42,7 @@
     <br>
     <RadzenDataGrid AllowFiltering="true"  AllowColumnResize="true" AllowAlternatingRows="false"
         FilterMode="FilterMode.Advanced" AllowSorting="true" AllowPaging="true"
-        PagerHorizontalAlign="HorizontalAlign.Left" Data=@Filtro(Fil) TItem="Empleado" ColumnWidth="100%"
+        PagerHorizontalAlign="HorizontalAlign.Left" Data=ListaEmpleado TItem="Empleado" ColumnWidth="100%"
         LogicalFilterOperator="LogicalFilterOperator.Or" ShowPagingSummary="true" >
         <Columns >
             <RadzenDataGridColumn TItem="Empleado" Width="100px" Filterable="false" Sortable="false"  Frozen="true" Title="Acciones">
@@ -68,12 +68,13 @@ catch (Exception e)
 
     public List<string> Atributos { get; set; } = new List<string> { "Primer Nombre", "Segundo Nombre", "Primer Apellido", "SegundoApellido", "Telefono" };
 
-    public string Contenido { get; set; }
     public string Fil { get; set; } = "";
+    public IEnumerable<Empleado> ListaEmpleado {get;set;}
 
     protected override async Task  OnInitializedAsync()
     {
         await EmpleadoService.GetList();
+        this.ListaEmpleado= EmpleadoService.ListEmpleado;
     }
 
     public async Task NewEmpleado(int Id)
@@ -84,33 +85,31 @@ catch (Exception e)
             new DialogOptions() { Width = "50vw", Height = "45vh", Resizable = false, Draggable = true });
     }
 
-    public IEnumerable<Empleado> Filtro(string fil)
+    public async Task Filtro(string Contenido)
     {
-        switch(fil)
+        switch(this.Fil)
         {
             case "Primer Nombre":
-                return EmpleadoService.ListEmpleado.Where(e => e.PrimerNombre.Contains(Contenido));
+                this.ListaEmpleado=  EmpleadoService.ListEmpleado.Where(e => e.PrimerNombre.Contains(Contenido));
                 break;
             case "Segundo Nombre":
-                return EmpleadoService.ListEmpleado.Where(e => e.SegundoNombre.Contains(Contenido));
+                this.ListaEmpleado= EmpleadoService.ListEmpleado.Where(e => e.SegundoNombre.Contains(Contenido));
                 break;
             case "Primer Apellido":
-                return EmpleadoService.ListEmpleado.Where(e => e.PrimerApellido.Contains(Contenido));
+                this.ListaEmpleado=   EmpleadoService.ListEmpleado.Where(e => e.PrimerApellido.Contains(Contenido));
                 break;
             case "Segundo Apellido":
-                return EmpleadoService.ListEmpleado.Where(e => e.SegundoApellido.Contains(Contenido));
+                this.ListaEmpleado= EmpleadoService.ListEmpleado.Where(e => e.SegundoApellido.Contains(Contenido));
                 break;
             case "Telefono":
-                return EmpleadoService.ListEmpleado.Where(e => e.Telefono.Contains(Contenido));
+                this.ListaEmpleado=  EmpleadoService.ListEmpleado.Where(e => e.Telefono.Contains(Contenido));
+                break;
+            case "":
+                this.ListaEmpleado=  EmpleadoService.ListEmpleado;
                 break;
             default:
-                return EmpleadoService.ListEmpleado;
-
-
-
-
-
-
+                this.ListaEmpleado= new List<Empleado>();
+                break;
         }
     }
 
