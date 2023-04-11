@@ -166,12 +166,21 @@
 
     async Task Guardar()
     {
-        this.pago.NominaId=NominaId;
-        await PagoService.SavePago(this.pago);
-        Nuevo();
-        notify.ShowNotification("Se a agregado correctamente", "Actualizacion de Registro", NotificationSeverity.Success);
-        NavigationManager.NavigateTo("/");
-        NavigationManager.NavigateTo($"{currentUrl}");
+        if(ValidarPago())
+        {
+            this.pago.NominaId=NominaId;
+            await PagoService.SavePago(this.pago);
+            Nuevo();
+            notify.ShowNotification("Se a agregado correctamente", "Actualizacion de Registro", NotificationSeverity.Success);
+            NavigationManager.NavigateTo("/");
+            NavigationManager.NavigateTo($"{currentUrl}");
+
+        }
+        else
+        {
+            notify.ShowNotification("Error al guardar", "Porfabor llenar todos los campos", NotificationSeverity.Error);
+        }
+       
     }
 
     string getlabor(int TrabajoId, int EmpleadoId,int CantidadId)
@@ -196,6 +205,7 @@
         if(Encontrado != null)
         {
             this.pago = Encontrado;
+            notify.ShowNotification("Econtrado con exito", "Pago Encontrado", NotificationSeverity.Info);
         }
     }
 
@@ -206,12 +216,31 @@
         NavigationManager.NavigateTo($"{currentUrl}");
 
     }
+
+    bool ValidarDetalle()
+    {
+        return detalle.NominaDetalleId != null && detalle.TipoPagoId > 0 && detalle.ValorPagado > 0;
+    }
+
+    bool ValidarPago()
+    {
+        return this.pago.Monto > 0;
+    }
     public void Insertar()
     {
+        if(ValidarDetalle())
+        {
+            this.pago.Detalles.Add(this.detalle);
+            this.pago.Monto= this.pago.Detalles.Select(o=>o.ValorPagado).Sum();
+            this.detalle = new PagoDetalle();
+            notify.ShowNotification("Detalle registrado con exito!", "Registro Actualizado", NotificationSeverity.Success);
 
-        this.pago.Detalles.Add(this.detalle);
-        this.pago.Monto= this.pago.Detalles.Select(o=>o.ValorPagado).Sum();
-        this.detalle = new PagoDetalle();
+        }
+        else
+        {
+            notify.ShowNotification("Error al guardar", "Porfabor llenar todos los campos", NotificationSeverity.Error);
+        }
+    
 
     }
     public void EliminarDetalle(int DetalleId)

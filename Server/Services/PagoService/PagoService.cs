@@ -140,6 +140,7 @@ namespace ProStellar.Server.Services.PagoService
                         _contexto.Nominas.Update(Nomina);
                     }
                     //actualizamos el pago
+                    _contexto.Pagos.Update(Pago);
                     var guardo = await _contexto.SaveChangesAsync() > 0;
                     _contexto.Entry(Pago).State = EntityState.Detached;
                     response.Data = Pago;
@@ -181,7 +182,7 @@ namespace ProStellar.Server.Services.PagoService
                             }
                         }
                         _contexto.Nominas.Update(Nomina);
-                        _contexto.Database.ExecuteSqlRaw($"DELETE FROM PagoDetalle WHERE PagoId={Pago.PagoId};");
+                        _contexto.RemoveRange(Pago.Detalles);
                         _contexto.Remove(Pago);
                     }
                     bool guardado = await _contexto.SaveChangesAsync() > 0;

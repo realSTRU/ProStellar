@@ -95,12 +95,12 @@
         await DialogService.OpenAsync<
             R_Empleado>($"Nuevo Empleado",
             new Dictionary<string, object>(),
-            new DialogOptions() { Width = "50vw", Height = "45vh", Resizable = false, Draggable = true });
+            new DialogOptions() { Width = "50vw", Height = "45vh", Resizable = false, Draggable = false });
     }
     public async Task NewTrabajo()
     {
-        await DialogService.OpenAsync<R_Trabajo >($"Nuevo trabajo",
+        await DialogService.OpenAsync<R_Trabajo>($"Nuevo trabajo",
             new Dictionary<string, object>(),
-            new DialogOptions() { Width = "50vw", Height = "40vh", Resizable = false, Draggable = true });
+            new DialogOptions() { Width = "50vw", Height = "40vh", Resizable = false, Draggable = false });
     }
 }

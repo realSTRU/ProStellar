@@ -140,16 +140,31 @@ catch (Exception e)
 
     async Task Guardar()
     {
-        this.Nom.ProyectoId=Pro.ProyectoId;
-        await NominaService.Save(this.Nom);
-        NavigationManager.NavigateTo("/");
-        NavigationManager.NavigateTo($"proyecto/{Pro.ProyectoId}");
+        if(ValidarProyecto())
+        {
+            this.Nom.ProyectoId=Pro.ProyectoId;
+            await NominaService.Save(this.Nom);
+            notify.ShowNotification("Nomina guardada con exito","Nomina agregada al proyecto", NotificationSeverity.Success);
+            NavigationManager.NavigateTo("/");
+            NavigationManager.NavigateTo($"proyecto/{Pro.ProyectoId}");
+
+        }
+        else
+        {
+           notify.ShowNotification("Porfabor indique un concepto","Error: No puede guardar una nomina sin conceptos", NotificationSeverity.Error); 
+        }
+        
     }
 
     async Task Eliminar()
     {
         ProyectoService.Delete(this.ProyectoId);
         NavigationManager.NavigateTo("/");
+    }
+
+    bool ValidarProyecto()
+    {
+        return this.Nom.Concepto != null;
     }
 
     void Nuevo()
