@@ -2,17 +2,20 @@
 using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using ProStellar.Server.DAL;
 
 #nullable disable
 
-namespace ProStellar.Server.Migrations.ContextoMigrations
+namespace ProStellar.Server.Migrations
 {
     [DbContext(typeof(Contexto))]
-    partial class ContextoModelSnapshot : ModelSnapshot
+    [Migration("20230412003628_Inicial")]
+    partial class Inicial
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder.HasAnnotation("ProductVersion", "8.0.0-preview.2.23128.3");
@@ -228,6 +231,10 @@ namespace ProStellar.Server.Migrations.ContextoMigrations
                         .ValueGeneratedOnAdd()
                         .HasColumnType("INTEGER");
 
+                    b.Property<string>("Concepto")
+                        .IsRequired()
+                        .HasColumnType("TEXT");
+
                     b.Property<DateTime>("Fecha")
                         .HasColumnType("TEXT");
 
@@ -291,6 +298,21 @@ namespace ProStellar.Server.Migrations.ContextoMigrations
                         {
                             ProyectoId = 2,
                             Descripcion = "DURE Interprise BUILD"
+                        },
+                        new
+                        {
+                            ProyectoId = 3,
+                            Descripcion = "Reconstrucción UCNE"
+                        },
+                        new
+                        {
+                            ProyectoId = 4,
+                            Descripcion = "circunvalación Oeste"
+                        },
+                        new
+                        {
+                            ProyectoId = 5,
+                            Descripcion = "La Javiela Bar Red Design"
                         });
                 });
 
@@ -355,6 +377,18 @@ namespace ProStellar.Server.Migrations.ContextoMigrations
                             TrabajoId = 3,
                             Descripcion = "Carpintero",
                             Precio = 1500.0
+                        },
+                        new
+                        {
+                            TrabajoId = 4,
+                            Descripcion = "Electricista",
+                            Precio = 7800.0
+                        },
+                        new
+                        {
+                            TrabajoId = 5,
+                            Descripcion = "Profesional de redes",
+                            Precio = 27000.0
                         });
                 });
 

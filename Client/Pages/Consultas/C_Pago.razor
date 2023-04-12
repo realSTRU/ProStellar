@@ -25,9 +25,32 @@
     </div>
     <hr class="rz-color-warning">
     <br>
+    <RadzenFieldset>
+        <HeaderTemplate>
+            <span class="d-inline-flex align-items-center align-middle">
+                <RadzenIcon Icon="account_box" class="me-1" /><b>Filtro de pagos</b>
+            </span>
+        </HeaderTemplate>
+        <ChildContent>
+            <div class="d-flex flex-row">
+
+                <div class="align-items-center d-flex">
+                    <RadzenLabel Text="Criterio:" />
+                </div>
+                <div>
+                    <RadzenDropDown class="rz-color-white" FilterCaseSensitivity="FilterCaseSensitivity.CaseInsensitive" FilterOperator="StringFilterOperator.StartsWith" AllowFiltering="true"
+                                Data=@Atributos Name="Criterios" AllowClear="true" @bind-Value=@Fil />
+                    <RadzenRequiredValidator Component="Criterios" Text="Campo requerido" Popup="true" Style="position: absolute" />
+                </div>
+                <div>
+                    <RadzenTextBox @oninput=@(args => Filtro(args.Value.ToString())) Placeholder="Filtro:" style="width:100%;" />
+                </div>
+            </div>
+        </ChildContent>
+    </RadzenFieldset>
     <RadzenDataGrid AllowFiltering="true" AllowColumnResize="true" AllowAlternatingRows="false"
                 FilterMode="FilterMode.Advanced" AllowSorting="true" AllowPaging="true"
-                PagerHorizontalAlign="HorizontalAlign.Left" Data="PagoService.ListPago.Where(o=>o.NominaId==NominaId)" TItem="Pago" ColumnWidth="200px"
+                PagerHorizontalAlign="HorizontalAlign.Left" Data="ListaPago" TItem="Pago" ColumnWidth="200px"
                 LogicalFilterOperator="LogicalFilterOperator.Or" ShowPagingSummary="true">
         <Columns>
             <RadzenDataGridColumn TItem="Pago" Width="120px" Filterable="false" Sortable="false" Frozen="true" Title="Acciones">
@@ -42,11 +65,7 @@
             <RadzenText>@Item.Fecha.ToString("MM/dd/yyyy")</RadzenText>
             </Template>
             </RadzenDataGridColumn>
-            <RadzenDataGridColumn TItem="Pago" Filterable="true" Sortable="true" Frozen="false" Title="Concepto">
-                <Template Context="Item">
-                    <RadzenText>@NominaService.ListNomina.SingleOrDefault(n => n.NominaId == Item.NominaId).Concepto</RadzenText>
-                </Template>
-            </RadzenDataGridColumn>
+            <RadzenDataGridColumn TItem="Pago" Width="100%" Property="Concepto" Title="Concepto" />
             <RadzenDataGridColumn TItem="Pago" Width="100%" Property="Monto" Title="Monto" />
         </Columns>
     </RadzenDataGrid>
@@ -57,6 +76,9 @@ catch (Exception e)
 
 }
 @code {
+    public List<string> Atributos { get; set; } = new List<string> { "ID", "Concepto", "Monto" };
+    public IEnumerable<Pago> ListaPago {get; set;}
+    public string Fil { get; set; } = "";
     [Parameter]
     public int ProyectoId { get; set; }
     [Parameter]
@@ -73,6 +95,8 @@ catch (Exception e)
         await PagoService.GetList();
         await NominaService.GetList();
         var Encontrado = await ProyectoService.Find(ProyectoId);
+
+        ListaPago = PagoService.ListPago;
         if (Encontrado != null)
         {
             Pro = Encontrado;
@@ -122,7 +146,24 @@ catch (Exception e)
         </RadzenStack>
     </RadzenStack>);
     }
-
+    public async Task Filtro(string Contenido)
+    {
+        switch (this.Fil)
+        {
+            case "ID":
+                this.ListaPago = PagoService.ListPago.Where(e => e.PagoId.ToString().Contains(Contenido));
+                break;
+            case "Monto":
+                this.ListaPago = PagoService.ListPago.Where(e => e.Monto.ToString().Contains(Contenido));
+                break;
+            case "Concepto":
+                this.ListaPago = PagoService.ListPago.Where(e => e.Concepto.Contains(Contenido));
+                break;
+            default:
+                this.ListaPago = new List<Pago>();
+                break;
+        }
+    }
     public async Task NewPago(int PagoId)
     {
         await DialogService.OpenAsync<

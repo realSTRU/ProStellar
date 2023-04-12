@@ -24,10 +24,33 @@
     </div>
     <hr class="rz-color-warning" >
     <div class=" w3-row-padding w3-section w3-stretch " >
+        <RadzenFieldset>
+            <HeaderTemplate>
+                <span class="d-inline-flex align-items-center align-middle">
+                    <RadzenIcon Icon="account_box" class="me-1" /><b>Filtro de pagos</b>
+                </span>
+            </HeaderTemplate>
+            <ChildContent>
+                <div class="d-flex flex-row">
+
+                    <div class="align-items-center d-flex">
+                        <RadzenLabel Text="Criterio:" />
+                    </div>
+                    <div>
+                        <RadzenDropDown class="rz-color-white" FilterCaseSensitivity="FilterCaseSensitivity.CaseInsensitive" FilterOperator="StringFilterOperator.StartsWith" AllowFiltering="true"
+                                    Data=@Atributos Name="Criterios" AllowClear="true" @bind-Value=@Fil />
+                        <RadzenRequiredValidator Component="Criterios" Text="Campo requerido" Popup="true" Style="position: absolute" />
+                    </div>
+                    <div>
+                        <RadzenTextBox @oninput=@(args => Filtro(args.Value.ToString())) Placeholder="Filtro:" style="width:100%;" />
+                    </div>
+                </div>
+            </ChildContent>
+        </RadzenFieldset>
     
     <RadzenDataGrid AllowFiltering="true" AllowColumnResize="true" AllowAlternatingRows="false"
         FilterMode="FilterMode.Advanced" AllowGrouping="true" AllowSorting="true" AllowPaging="true"
-        PagerHorizontalAlign="HorizontalAlign.Left" Data="NominaService.ListNomina.Where(o=>o.ProyectoId==ProyectoId)" TItem="Nomina" ColumnWidth="200px"
+        PagerHorizontalAlign="HorizontalAlign.Left" Data="ListaNomina" TItem="Nomina" ColumnWidth="200px"
         LogicalFilterOperator="LogicalFilterOperator.Or" ShowPagingSummary="true" >
         <Columns >
             <RadzenDataGridColumn TItem="Nomina" Width="90px" Filterable="false" Sortable="false"  Frozen="true" Title="Acciones">
@@ -78,9 +101,19 @@ catch (Exception e)
     public int ProyectoId {get;set;}
     public Proyecto Pro = new Proyecto();
     public Nomina Nom = new Nomina();
+    public List<string> Atributos { get; set; } = new List<string> {"Concepto", "Estado" };
+    public string Fil { get; set; }
+    public IEnumerable<Nomina> ListaNomina { get; set; }
+    public string[] Estados = new string[] { "Deuda", "Paga", "Vacia","DEUDA","PAGA","VACIA" };
 
     protected override async Task  OnInitializedAsync()
     {
+        await NominaService.GetList();
+
+        ListaNomina = NominaService.ListNomina;
+
+
+
         if(ProyectoId >0)
         {
             var Encontrado = await ProyectoService.Find(ProyectoId);
@@ -132,7 +165,8 @@ catch (Exception e)
                         <RadzenButton Text="Cancel" Click="() => ds.Close(false)" ButtonStyle="ButtonStyle.Light" />
                     </div>
             </RadzenStack>
-        </RadzenStack>);
+        </RadzenStack>
+    );
     }
 
     async Task Guardar()
@@ -140,6 +174,7 @@ catch (Exception e)
         if(ValidarProyecto())
         {
             this.Nom.ProyectoId=Pro.ProyectoId;
+            this.Nom.EstadoId = 3;
             await NominaService.Save(this.Nom);
             notify.ShowNotification("Nomina guardada con exito","Nomina agregada al proyecto", NotificationSeverity.Success);
             NavigationManager.NavigateTo("/");
@@ -204,7 +239,8 @@ catch (Exception e)
                     </div>
                 </RadzenTemplateForm>
             </RadzenStack>
-        </RadzenStack>);
+        </RadzenStack>
+    );
     }
 
     async Task GuardarNomina()
@@ -212,5 +248,40 @@ catch (Exception e)
         await ProyectoService.Save(Pro);
         NavigationManager.NavigateTo($"/");
         NavigationManager.NavigateTo($"/proyecto/{ProyectoId}");
+    }
+
+    public async Task Filtro(string Contenido)
+    {
+        
+        switch (this.Fil)
+        {
+            case "Concepto":
+                this.ListaNomina = NominaService.ListNomina.Where(e => e.Concepto.Contains(Contenido));
+                break;
+            case "Estado":
+                if ((Estados[0].ToLower()).Contains((Contenido.ToLower())))
+                {
+                    this.ListaNomina = NominaService.ListNomina.Where(e => e.EstadoId.ToString().Contains("1"));
+                    break;
+                }
+                else if ((Estados[1].ToLower()).Contains((Contenido.ToLower())))
+                {
+                    this.ListaNomina = NominaService.ListNomina.Where(e => e.EstadoId.ToString().Contains("2"));
+                    break;
+                }
+                else if ((Estados[2].ToLower()).Contains((Contenido.ToLower())))
+                {
+                    this.ListaNomina = NominaService.ListNomina.Where(e => e.EstadoId.ToString().Contains("3"));
+                    break;
+                }
+                else
+                {
+                    this.ListaNomina = new List<Nomina>();
+                    break;
+                }
+            default:
+                this.ListaNomina = new List<Nomina>();
+                break;
+        }
     }
 }

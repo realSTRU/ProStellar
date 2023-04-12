@@ -90,6 +90,23 @@ namespace ProStellar.Server.DAL
                     Descripcion = "Carpintero",
                     Precio = 1500.00
                 }
+                ,
+                new Trabajo
+                {
+                    TrabajoId = 4,
+                    Descripcion = "Electricista",
+                    Precio = 7800.00
+                },
+
+
+                new Trabajo
+                {
+                    TrabajoId = 5,
+                    Descripcion = "Profesional de redes",
+                    Precio = 27000.00
+                }
+
+
 
                 );
 
@@ -125,6 +142,23 @@ namespace ProStellar.Server.DAL
                 {
                     ProyectoId = 2,
                     Descripcion = "DURE Interprise BUILD"
+                },
+
+                new Proyecto
+                {
+                    ProyectoId = 3,
+                    Descripcion = "Reconstrucción UCNE"
+                },
+                new Proyecto
+                {
+                    ProyectoId = 4,
+                    Descripcion = "circunvalación Oeste"
+
+                },
+                new Proyecto
+                {
+                    ProyectoId = 5,
+                    Descripcion = "La Javiela Bar Red Design"
                 }
 
 

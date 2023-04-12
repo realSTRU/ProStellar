@@ -67,7 +67,7 @@
                 Monto Total: <b>@TMonto</b>
             </FooterTemplate>
             </RadzenDataGridColumn>
-            <RadzenDataGridColumn TItem="NominaDetalle" Filterable="true" Sortable="true" Frozen="false" Title="Trabajo">
+            <RadzenDataGridColumn TItem="NominaDetalle" Filterable="true" Sortable="true" Frozen="false" Title="Tiempo/Trabajo">
                 <Template Context="Item">
                     <RadzenText>@CantidadService.ListCantidad.SingleOrDefault(t => t.CantidadId == Item.CantidadId).Descripcion</RadzenText>
                 </Template>

@@ -5,10 +5,10 @@ using Microsoft.EntityFrameworkCore.Migrations;
 
 #pragma warning disable CA1814 // Prefer jagged arrays over multidimensional
 
-namespace ProStellar.Server.Migrations.ContextoMigrations
+namespace ProStellar.Server.Migrations
 {
     /// <inheritdoc />
-    public partial class Reajuste : Migration
+    public partial class Inicial : Migration
     {
         /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)
@@ -80,6 +80,7 @@ namespace ProStellar.Server.Migrations.ContextoMigrations
                 {
                     PagoId = table.Column<int>(type: "INTEGER", nullable: false)
                         .Annotation("Sqlite:Autoincrement", true),
+                    Concepto = table.Column<string>(type: "TEXT", nullable: false),
                     Fecha = table.Column<DateTime>(type: "TEXT", nullable: false),
                     NominaId = table.Column<int>(type: "INTEGER", nullable: false),
                     Monto = table.Column<double>(type: "REAL", nullable: false)
@@ -214,7 +215,10 @@ namespace ProStellar.Server.Migrations.ContextoMigrations
                 values: new object[,]
                 {
                     { 1, "Enel´s new house" },
-                    { 2, "DURE Interprise BUILD" }
+                    { 2, "DURE Interprise BUILD" },
+                    { 3, "Reconstrucción UCNE" },
+                    { 4, "circunvalación Oeste" },
+                    { 5, "La Javiela Bar Red Design" }
                 });
 
             migrationBuilder.InsertData(
@@ -233,7 +237,9 @@ namespace ProStellar.Server.Migrations.ContextoMigrations
                 {
                     { 1, "Maestro Constructor", 2000.0 },
                     { 2, "Peon de construcción", 700.0 },
-                    { 3, "Carpintero", 1500.0 }
+                    { 3, "Carpintero", 1500.0 },
+                    { 4, "Electricista", 7800.0 },
+                    { 5, "Profesional de redes", 27000.0 }
                 });
 
             migrationBuilder.CreateIndex(

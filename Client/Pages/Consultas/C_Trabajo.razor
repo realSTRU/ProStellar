@@ -16,9 +16,32 @@
     <RadzenText class="rz-color-warning-darka" TextAlign="TextAlign.Center" TextStyle="TextStyle.DisplayH5">Trabajos</RadzenText> 
     <br><br>
     </div>
+    <RadzenFieldset>
+        <HeaderTemplate>
+            <span class="d-inline-flex align-items-center align-middle">
+                <RadzenIcon Icon="account_box" class="me-1" /><b>Filtro de consulta de empleados</b>
+            </span>
+        </HeaderTemplate>
+        <ChildContent>
+            <div class="d-flex flex-row">
+
+                <div class="align-items-center d-flex">
+                    <RadzenLabel Text="Criterio:" />
+                </div>
+                <div>
+                    <RadzenDropDown class="rz-color-white" FilterCaseSensitivity="FilterCaseSensitivity.CaseInsensitive" FilterOperator="StringFilterOperator.StartsWith" AllowFiltering="true"
+                                Data=@Atributos Name="Criterios" AllowClear="true" @bind-Value=@Fil />
+                    <RadzenRequiredValidator Component="Criterios" Text="Campo requerido" Popup="true" Style="position: absolute" />
+                </div>
+                <div>
+                    <RadzenTextBox @oninput=@(args => Filtro(args.Value.ToString())) Placeholder="Filtro:" style="width:100%;" />
+                </div>
+            </div>
+        </ChildContent>
+    </RadzenFieldset>
     <RadzenDataGrid AllowFiltering="true"  AllowColumnResize="true" AllowAlternatingRows="false"
         FilterMode="FilterMode.Advanced" AllowSorting="true" AllowPaging="true"
-        PagerHorizontalAlign="HorizontalAlign.Left" Data="TrabajoService.ListTrabajo" TItem="Trabajo" ColumnWidth="100%"
+        PagerHorizontalAlign="HorizontalAlign.Left" Data=ListaTrabajo TItem="Trabajo" ColumnWidth="100%"
         LogicalFilterOperator="LogicalFilterOperator.Or" ShowPagingSummary="true" >
 
         <Columns >
@@ -37,14 +60,36 @@ catch (Exception e)
 
 }
 @code{
+
+    public List<string> Atributos { get; set; } = new List<string> { "Descripcion", "Precio" };
+    public string Fil { get; set; }
+    public IEnumerable<Trabajo> ListaTrabajo { get; set; }
     protected override async Task  OnInitializedAsync()
     {
+       
         await TrabajoService.GetList();
+        ListaTrabajo = TrabajoService.ListTrabajo;
     }
     public async Task NewTrabajo(int Id)
     {
         await DialogService.OpenAsync<R_Trabajo>($"Nuevo trabajo",
             new Dictionary<string, object>(){{"TrabajoId",Id}},
             new DialogOptions() { Width = "50vw", Height = "40vh", Resizable = false, Draggable = true });
+    }
+    
+    public async Task Filtro(string Contenido)
+    {
+        switch (this.Fil)
+        {
+            case "Descripcion":
+                this.ListaTrabajo = TrabajoService.ListTrabajo.Where(e => e.Descripcion.Contains(Contenido));
+                break;
+            case "Precio":
+                this.ListaTrabajo = TrabajoService.ListTrabajo.Where(e => e.Precio.ToString().Contains(Contenido));
+                break;
+            default:
+                this.ListaTrabajo= new List<Trabajo>();
+                break;
+        }
     }
 }
