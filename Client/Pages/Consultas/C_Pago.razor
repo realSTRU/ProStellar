@@ -45,9 +45,27 @@
                 <div>
                     <RadzenTextBox @oninput=@(args => Filtro(args.Value.ToString())) Placeholder="Filtro:" style="width:100%;" />
                 </div>
+                <div class="">
+                    <RadzenLabel Text="Desde:" />
+                </div>
+                <div class="">
+                    <RadzenDatePicker style="width: 100%;" DateFormat="MM/dd/yyyy" Name="Fecha" DateOnly="true" @bind-Value="FechaDesde" />
+                </div>
+
+                <div class="c">
+                    <RadzenLabel Text="Hasta:" />
+                </div>
+                <div class="">
+                    <RadzenDatePicker style="width: 100%;" DateFormat="MM/dd/yyyy" Name="Fecha" DateOnly="true" @bind-Value="FechaHasta" />
+                </div>
+
+                <RadzenButton Click="BuscarPorRango" class="w3-orange" Icon="search" />
+                <RadzenButton Click="RestablecerLista" class="bg-secondary" Icon="remove" />
+
             </div>
         </ChildContent>
     </RadzenFieldset>
+
     <RadzenDataGrid AllowFiltering="true" AllowColumnResize="true" AllowAlternatingRows="false"
                 FilterMode="FilterMode.Advanced" AllowSorting="true" AllowPaging="true"
                 PagerHorizontalAlign="HorizontalAlign.Left" Data="ListaPago" TItem="Pago" ColumnWidth="200px"
@@ -88,6 +106,8 @@ catch (Exception e)
     public Pago pago { get; set; } = new Pago();
     public Proyecto Pro { get; set; } = new Proyecto();
     public Nomina Nom { get; set; } = new Nomina();
+    public DateTime FechaHasta {get;set;} = DateTime.Now;
+    public DateTime FechaDesde {get;set;} = DateTime.Now;
     public NominaDetalle Detail = new NominaDetalle();
     protected override async Task OnInitializedAsync()
     {
@@ -151,13 +171,13 @@ catch (Exception e)
         switch (this.Fil)
         {
             case "ID":
-                this.ListaPago = PagoService.ListPago.Where(e => e.PagoId.ToString().Contains(Contenido));
+                this.ListaPago = this.ListaPago.Where(e => e.PagoId.ToString().Contains(Contenido));
                 break;
             case "Monto":
-                this.ListaPago = PagoService.ListPago.Where(e => e.Monto.ToString().Contains(Contenido));
+                this.ListaPago = this.ListaPago.Where(e => e.Monto.ToString().Contains(Contenido));
                 break;
             case "Concepto":
-                this.ListaPago = PagoService.ListPago.Where(e => e.Concepto.Contains(Contenido));
+                this.ListaPago = this.ListaPago.Where(e => e.Concepto.Contains(Contenido));
                 break;
             default:
                 this.ListaPago = new List<Pago>();
@@ -179,4 +199,14 @@ catch (Exception e)
             new Dictionary<string, object>(){{"NominaId",NominaId}},
             new DialogOptions() { Width = "70vw", Height = "70vh", Resizable = false, Draggable =false });
     }
+
+    public void BuscarPorRango()
+    {
+        this.ListaPago = ListaPago.Where(o=>o.Fecha.Date<=FechaHasta.Date.AddDays(1).AddTicks(-1) && o.Fecha.Date>=FechaDesde.Date);
+    }
+    public void RestablecerLista()
+    {
+        this.ListaPago =  PagoService.ListPago;
+    }
+
 }

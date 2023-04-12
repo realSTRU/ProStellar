@@ -44,6 +44,22 @@
                     <div>
                         <RadzenTextBox @oninput=@(args => Filtro(args.Value.ToString())) Placeholder="Filtro:" style="width:100%;" />
                     </div>
+                     <div class="">
+                    <RadzenLabel Text="Desde:" />
+                    </div>
+                    <div class="">
+                        <RadzenDatePicker style="width: 100%;" DateFormat="MM/dd/yyyy" Name="Fecha" DateOnly="true" @bind-Value="FechaDesde" />
+                    </div>
+
+                    <div class="c">
+                        <RadzenLabel Text="Hasta:" />
+                    </div>
+                    <div class="">
+                        <RadzenDatePicker style="width: 100%;" DateFormat="MM/dd/yyyy" Name="Fecha" DateOnly="true" @bind-Value="FechaHasta" />
+                    </div>
+
+                <RadzenButton Click="BuscarPorRango" class="w3-orange" Icon="search" />
+                <RadzenButton Click="RestablecerLista" class="bg-secondary" Icon="remove" />
                 </div>
             </ChildContent>
         </RadzenFieldset>
@@ -103,6 +119,8 @@ catch (Exception e)
     public Nomina Nom = new Nomina();
     public List<string> Atributos { get; set; } = new List<string> {"Concepto", "Estado" };
     public string Fil { get; set; }
+    public DateTime FechaHasta {get;set;} = DateTime.Now;
+    public DateTime FechaDesde {get;set;} = DateTime.Now;
     public IEnumerable<Nomina> ListaNomina { get; set; }
     public string[] Estados = new string[] { "Deuda", "Paga", "Vacia","DEUDA","PAGA","VACIA" };
 
@@ -283,5 +301,15 @@ catch (Exception e)
                 this.ListaNomina = new List<Nomina>();
                 break;
         }
+    }
+    public void BuscarPorRango()
+    {
+        this.ListaNomina= ListaNomina.Where(o=>o.Fecha.Date<=FechaHasta.Date.AddDays(1).AddTicks(-1) && o.Fecha.Date>=FechaDesde.Date);
+    }
+    public void RestablecerLista()
+    {
+        this.ListaNomina =  NominaService.ListNomina;
+        this.FechaHasta= DateTime.Now.Date;
+        this.FechaDesde= DateTime.Now.Date;
     }
 }
