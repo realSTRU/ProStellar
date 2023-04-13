@@ -195,6 +195,7 @@ catch (Exception e)
     async Task Eliminar()
     {
         await NominaService.Delete(this.NominaId);
+                NavigationManager.NavigateTo($"/proyecto/{Nom.ProyectoId}");
         
     }
     async Task Insertar()
