@@ -26,12 +26,180 @@ namespace ProStellar.Server.DAL
                 {
                     EmpleadoId = 1,
                     PrimerNombre = "Kevin",
-                    SegundoNombre = "",
+                    SegundoNombre = "Javier",
                     PrimerApellido = "Duran",
                     SegundoApellido = "Bruno",
                     Telefono = "809-396-8457"
+                },
+
+                new Empleado
+                {
+                    EmpleadoId = 2,
+                    PrimerNombre = "Manuel",
+                    SegundoNombre = "Ernesto",
+                    PrimerApellido = "Germosen",
+                    SegundoApellido = "Santos",
+                    Telefono = "849-456-1153"
+                },
+                new Empleado
+                {
+                    EmpleadoId = 3,
+                    PrimerNombre = "Jose",
+                    SegundoNombre = "Matias",
+                    PrimerApellido = "Perdomo",
+                    SegundoApellido = "Escobar",
+                    Telefono = "809-588-5555"
+                },
+                new Empleado
+                {
+                    EmpleadoId = 4,
+                    PrimerNombre = "Samuel",
+                    SegundoNombre = "Martin",
+                    PrimerApellido = "Del Orbe",
+                    SegundoApellido = "De Jesus",
+                    Telefono = "829-876-2231"
+                },
+                new Empleado
+                {
+                    EmpleadoId = 5,
+                    PrimerNombre = "Cesar",
+                    SegundoNombre = "Enmanuel",
+                    PrimerApellido = "Rodriguez",
+                    SegundoApellido = "Jimenez",
+                    Telefono = "849-456-5356"
                 }
                 );
+
+            modelBuilder.Entity<Trabajo>().HasData(
+
+                new Trabajo
+                {
+                    TrabajoId = 1,
+                    Descripcion = "Maestro Constructor",
+                    Precio = 2000.00
+                },
+                new Trabajo
+                {
+                    TrabajoId = 2,
+                    Descripcion = "Peon de construcción",
+                    Precio = 700.00
+                },
+                new Trabajo
+                {
+                    TrabajoId = 3,
+                    Descripcion = "Carpintero",
+                    Precio = 1500.00
+                }
+                ,
+                new Trabajo
+                {
+                    TrabajoId = 4,
+                    Descripcion = "Electricista",
+                    Precio = 7800.00
+                },
+
+
+                new Trabajo
+                {
+                    TrabajoId = 5,
+                    Descripcion = "Profesional de redes",
+                    Precio = 27000.00
+                }
+
+
+
+                );
+
+            modelBuilder.Entity<Estado>().HasData(
+
+                new Estado
+                {
+                    EstadoId = 1,
+                    Descripcion = "Con deuda"
+                },
+                new Estado
+                {
+                    EstadoId = 2,
+                    Descripcion = "Paga"
+                },
+                new Estado
+                {
+                    EstadoId = 3,
+                    Descripcion = "Vacia"
+                }
+
+
+
+                );
+            modelBuilder.Entity<Proyecto>().HasData(
+                new Proyecto
+                {
+                    ProyectoId = 1,
+                    Descripcion = "Enel´s new house"
+                },
+
+                new Proyecto
+                {
+                    ProyectoId = 2,
+                    Descripcion = "DURE Interprise BUILD"
+                },
+
+                new Proyecto
+                {
+                    ProyectoId = 3,
+                    Descripcion = "Reconstrucción UCNE"
+                },
+                new Proyecto
+                {
+                    ProyectoId = 4,
+                    Descripcion = "circunvalación Oeste"
+
+                },
+                new Proyecto
+                {
+                    ProyectoId = 5,
+                    Descripcion = "La Javiela Bar Red Design"
+                }
+
+
+                );
+
+            modelBuilder.Entity<Cantidad>().HasData(
+
+                    new Cantidad
+                    {
+                        CantidadId = 1,
+                        Descripcion = "Día completo",
+                        Valor = 1
+                    },
+                    new Cantidad
+                    {
+                        CantidadId = 2,
+                        Descripcion = "Medio Día",
+                        Valor = 0.5
+                    }
+
+                );
+            modelBuilder.Entity<TipoPago>().HasData(
+
+                new TipoPago
+                {
+                    TipoPagoId = 1,
+                    Descripcion = "Pago común"
+                },
+                new TipoPago
+                {
+                    TipoPagoId = 2,
+                    Descripcion = "Adelanto"
+                }
+
+
+
+
+                );
+
+
+
         }
     }
 }

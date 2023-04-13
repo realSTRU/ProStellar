@@ -19,7 +19,7 @@ namespace ProStellar.Server.Services.NominaService
         public async Task<ServiceResponse<Nomina>> GetNominaAsync(int Id)
         {
             var response = new ServiceResponse<Nomina>();
-            var Nomina = await _contexto.Nominas.Include("NominaDetalle").AsNoTracking().SingleOrDefaultAsync(o => o.NominaId == Id);
+            var Nomina = await _contexto.Nominas.Include("Detalles").AsNoTracking().SingleOrDefaultAsync(o => o.NominaId == Id);
             if (Nomina == null)
             {
                 response.Success = false;
@@ -35,6 +35,10 @@ namespace ProStellar.Server.Services.NominaService
         public async Task<ServiceResponse<List<Nomina>>> GetAllNominasAsync()
         {
             var response = new ServiceResponse<List<Nomina>>();
+            foreach (var nomina in _contexto.Nominas.Include("Detalles").AsNoTracking())
+            {
+                await Modificar(nomina);
+            }
             response.Data = await _contexto.Nominas.ToListAsync();
             return response;
         }
@@ -89,18 +93,50 @@ namespace ProStellar.Server.Services.NominaService
                 if (Nomina != null)
                 {
                     //eliminamos los detalles de la nomina
+                    var anterior = await _contexto.Nominas.Include("Detalles").AsNoTracking().SingleOrDefaultAsync(o => o.NominaId == Nomina.NominaId);
+                    if (anterior != null)
+                    {
+                        var firstSet = anterior.Detalles.Select(o => o.NominaDetalleId).ToHashSet();
+                        firstSet.SymmetricExceptWith(Nomina.Detalles.Select(o => o.NominaDetalleId));
+                        var diff = firstSet.ToList();
+                        foreach (var DetalleA in diff)
+                        {
+                            _contexto.Database.ExecuteSqlRaw("DELETE FROM PagoDetalle WHERE NominaDetalleId={0};", DetalleA);
+                        }
+                    }
                     _contexto.Database.ExecuteSqlRaw($"DELETE FROM NominaDetalle WHERE NominaId={Nomina.NominaId};");
-
                     //Agregamos los nuevos detalles
+                    Nomina.EstadoId = 2;
                     foreach (var Detalle in Nomina.Detalles)
                     {
                         _contexto.Entry(Detalle).State = EntityState.Added;
+                        if (Detalle.Balance > 0)
+                        {
+                            Nomina.EstadoId = 1;
+                        }
+                    }
+                    // Actualizamos el estado y balance
+                    Nomina.Balance = Nomina.Detalles.Select(p => p.Balance).Sum();
+                    //verficamos que no este vacia la lista
+                    if (Nomina.Detalles.Count > 0)
+                    {
+                        if (Nomina.Balance <= 0)
+                        {
+                            Nomina.EstadoId = 2;
+                        }
+                        else
+                        {
+                            Nomina.EstadoId = 1;
+                        }
+                    }
+                    else
+                    {
+                        Nomina.EstadoId = 3;
                     }
                     //actualizamos la nomina
                     _contexto.Update(Nomina);
                     var guardo = await _contexto.SaveChangesAsync() > 0;
                     _contexto.Entry(Nomina).State = EntityState.Detached;
-
                     response.Data = Nomina;
                     response.Success = guardo;
                 }
@@ -118,16 +154,17 @@ namespace ProStellar.Server.Services.NominaService
             }
             return response;
         }
+
         public async Task<ServiceResponse<Nomina>> Eliminar(int NominaId)
         {
             var response = new ServiceResponse<Nomina>();
-            var Nomina = await _contexto.Nominas.Include("NominaDetalle").AsNoTracking().SingleOrDefaultAsync(o => o.NominaId == NominaId);
             try
             {
+                var Nomina = await _contexto.Nominas.Include("Detalles").AsNoTracking().SingleOrDefaultAsync(o => o.NominaId == NominaId);
                 if (Nomina != null)
                 {
                     _contexto.Remove(Nomina);
-                    _contexto.Database.ExecuteSqlRaw($"DELETE FROM Nominas WHERE NominaId={NominaId};");
+                    //eliminamos los detalles de pagos 
                     bool guardado = await _contexto.SaveChangesAsync() > 0;
                     response.Data = Nomina;
                     response.Success = guardado;
@@ -142,7 +179,6 @@ namespace ProStellar.Server.Services.NominaService
             {
                 response.Success = false;
                 response.Message = ex.Message;
-                response.Data = Nomina;
             }
             return response;
         }

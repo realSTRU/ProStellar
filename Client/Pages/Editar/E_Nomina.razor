@@ -1,0 +1,412 @@
+@page "/proyecto/{ProyectoId:int}/{NominaId:int}"
+@inject IProyectoService ProyectoService
+@inject IEstadoService EstadoService
+@inject INominaService NominaService
+@inject ITrabajoService TrabajoService
+@inject DialogService DialogService
+@inject NotificationService notify
+@inject IEmpleadoService EmpleadoService
+@inject ICantidadService CantidadService
+@inject NavigationManager NavigationManager
+@inject IPagoService PagoSevice 
+
+
+@try{
+    <div class="container">
+    <p><a href="/" class="w3-hover-orange btn btn-primary bg-transparent w3-border-0">Proyectos</a> / <a href=@($"/proyecto/{ProyectoId}") class="w3-hover-orange btn btn-primary bg-transparent w3-border-0" >@Pro.Descripcion</a> / Nomina - @Nom.Concepto</p>
+    </div>
+    <br><br>
+    <div style="display:flex; justify-content:space-between; width:100%;">
+    <span style="display:flex; ">
+    @if(Nom.EstadoId==1 || Nom.EstadoId==2 ){
+    <RadzenButton class="w3-button w3-xlarge w3-circle w3-gray stiky-btn w3-animate-zoom" Click=@NavegarPago ><i class="material-icons w3-large "><span class="material-symbols-outlined">attach_money</span></i></RadzenButton>
+    }
+    </span>
+    <RadzenText class="rz-color-warning-dark" TextAlign="TextAlign.Center" TextStyle="TextStyle.DisplayH5">Detalles - @Nom.Concepto</RadzenText> 
+    <span style="display:flex;">
+        <RadzenButton class="w3-button w3-xlarge w3-circle bg-transparent stiky-btn w3-animate-zoom" Click=@GuardarTitulo ><i class="material-icons w3-large ">edit</i></RadzenButton>
+        <RadzenButton class="w3-button w3-xlarge w3-circle  bg-transparent stiky-btn w3-animate-zoom" Click=@ShowInlineDialog >+</RadzenButton>
+        <RadzenButton class="w3-button w3-xlarge w3-circle bg-transparent stiky-btn w3-animate-zoom" Click=@DeleteResponse ><i class="material-icons w3-large ">delete</i></RadzenButton>
+        <a href=@($"/Print/{ProyectoId}/{Nom.NominaId}") class="w3-button w3-xlarge w3-circle bg-transparent stiky-btn w3-animate-zoom" target="_blank"><i class="material-icons w3-large ">print</i></a>
+    </span>
+    </div>
+    <hr class="rz-color-warning" >
+        <br>
+    <RadzenDataGrid AllowFiltering="true" AllowColumnResize="true" AllowAlternatingRows="false"
+                FilterMode="FilterMode.Advanced" AllowSorting="true" AllowPaging="true"
+                PagerHorizontalAlign="HorizontalAlign.Left" Data="Nom.Detalles" TItem="NominaDetalle" ColumnWidth="200px"
+                LogicalFilterOperator="LogicalFilterOperator.Or" ShowPagingSummary="true">
+
+        <Columns>
+            <RadzenDataGridColumn TItem="NominaDetalle" Width="100px" Filterable="false" Sortable="false" Frozen="true" Title="Acciones">
+                <Template Context="Item">
+                    <button @onclick="() => Tienepagos(Item.NominaDetalleId)" class="bg-transparent w3-margin-left w3-border-0"><RadzenBadge Shade="Shade.Dark" BadgeStyle="BadgeStyle.Danger" Text="Ver"><i class="material-icons w3-large ">delete</i></RadzenBadge></button>
+                </Template>
+            </RadzenDataGridColumn>
+            <RadzenDataGridColumn TItem="NominaDetalle" Width="100%"  Title="Fecha" >
+                <Template Context="Item">
+                    <RadzenText>@Item.Fecha.ToString("MM/dd/yyyy")</RadzenText>
+                </Template>
+            </RadzenDataGridColumn>
+
+            <RadzenDataGridColumn TItem="NominaDetalle" Filterable="true" Sortable="true" Frozen="false" Title="Nombre">
+                <Template Context="Item">
+                    <RadzenText>@ReturnNombre(Item.PersonaId)</RadzenText>
+                </Template>
+                <FooterTemplate>
+                    Total Empleados: <b>@TEmpleado</b>
+                </FooterTemplate>
+            </RadzenDataGridColumn>
+            <RadzenDataGridColumn TItem="NominaDetalle" Filterable="true" Sortable="true" Frozen="false" Title="Trabajo">
+                <Template Context="Item">
+                    <RadzenText>@TrabajoService.ListTrabajo.SingleOrDefault(t => t.TrabajoId == Item.TrabajoId).Descripcion</RadzenText>
+                </Template>
+            </RadzenDataGridColumn>
+            <RadzenDataGridColumn TItem="NominaDetalle" Width="100%" Property="Precio" Title="Precio" >
+            <FooterTemplate>
+                Monto Total: <b>@TMonto</b>
+            </FooterTemplate>
+            </RadzenDataGridColumn>
+            <RadzenDataGridColumn TItem="NominaDetalle" Filterable="true" Sortable="true" Frozen="false" Title="Tiempo/Trabajo">
+                <Template Context="Item">
+                    <RadzenText>@CantidadService.ListCantidad.SingleOrDefault(t => t.CantidadId == Item.CantidadId).Descripcion</RadzenText>
+                </Template>
+            </RadzenDataGridColumn>
+            <RadzenDataGridColumn TItem="NominaDetalle" Width="100%" Property="Balance" Title="Balance" >
+            <FooterTemplate>
+                Balance Total: <b>@TBalance</b>
+            </FooterTemplate>
+            </RadzenDataGridColumn>
+            <RadzenDataGridColumn TItem="NominaDetalle" Width="100%" Frozen="true" Title="Estado">
+                <Template Context="Item">
+                    @if (Item.Balance != 0)
+                    {
+                        <RadzenBadge BadgeStyle="BadgeStyle.Danger">Con Deuda</RadzenBadge>
+                    }
+                    else
+                    {
+                        <RadzenBadge BadgeStyle="BadgeStyle.Success">Paga</RadzenBadge>
+                    }
+                </Template>
+            </RadzenDataGridColumn>
+        </Columns>
+    </RadzenDataGrid>
+}
+catch (Exception e)
+{
+    <p>@e.Message</p>
+}
+@code{
+    [Parameter]
+    public int ProyectoId {get;set;}
+
+    [Parameter]
+    public int NominaId {get;set;}
+
+    IEnumerable<int> Empleados{get;set;} 
+    public int TEmpleado {get;set;}
+
+    IEnumerable<double> Montos{get;set;} 
+    public double TMonto {get;set;}
+
+    IEnumerable<double> Balances{get;set;} 
+    public double TBalance {get;set;}
+
+    public Proyecto Pro{get;set;} = new Proyecto();
+    public Nomina Nom {get;set;} = new Nomina();
+    public NominaDetalle Detail = new NominaDetalle();
+    private string currentUrl;
+    
+    protected override async Task  OnInitializedAsync()
+    {
+        TrabajoService.GetList();
+        EmpleadoService.GetList();
+        CantidadService.GetList();
+        PagoSevice.GetList();
+        if(ProyectoId >0)
+        {
+            if(NominaId > 0)
+            {
+                Buscar();
+            }
+        }
+        var Encontrado = await ProyectoService.Find(ProyectoId);
+
+        if(Encontrado != null)
+        {
+            Pro=Encontrado;
+
+        }
+
+        
+            currentUrl = NavigationManager.Uri;
+            AjustarTotales();
+    }
+
+    void AjustarTotales()
+    {
+        Empleados= from Detalle in Nom.Detalles select Detalle.PersonaId;
+        TEmpleado = Empleados.Count();
+
+        Montos= from Detalle in Nom.Detalles select Detalle.Precio;
+        TMonto = Montos.Sum();
+
+        Balances= from Detalle in Nom.Detalles select Detalle.Balance;
+        TBalance = Balances.Sum();
+
+    }
+
+    public void EliminarDetalle(int DetalleId)
+    {
+        this.Nom.Detalles.Remove(Nom.Detalles.Where(o=>o.NominaDetalleId == DetalleId).SingleOrDefault());
+        Guardar();
+        notify.ShowNotification("Detalle Eliminado con exito", "Eliminar exitoso!", NotificationSeverity.Success);
+        Actualizar();
+    }
+
+    string ReturnNombre(int Id)
+    {
+        var persona = EmpleadoService.ListEmpleado.SingleOrDefault(e => e.EmpleadoId == Id);
+        return $"{persona.PrimerNombre} {persona.SegundoNombre} {persona.PrimerApellido} {persona.SegundoApellido}";
+    }
+    void Actualizar()
+    {
+        NavigationManager.NavigateTo($"/");
+        NavigationManager.NavigateTo($"{currentUrl}");
+    }
+
+
+    public void NavegarPago()
+    {
+        NavigationManager.NavigateTo($"/proyecto/{ProyectoId}/{NominaId}/Pagos");
+    }
+
+
+    async Task Buscar()
+    {
+        var Encontrado = await NominaService.Find(this.NominaId);
+        if(Encontrado!=null)
+        {
+            this.Nom=Encontrado;
+            
+        }
+        
+    }
+    async Task Eliminar()
+    {
+        await NominaService.Delete(this.NominaId);
+        
+    }
+    async Task Insertar()
+    {
+        if(Validation())
+        {
+            if(Pro != null)
+            {
+                this.Detail.NominaId = this.Nom.NominaId;
+                var Trabajo = await TrabajoService.Find(Detail.TrabajoId);
+                var Persona = await EmpleadoService.Find(Detail.PersonaId);
+                var Cantidad = await CantidadService.Find(Detail.CantidadId);
+                this.Detail.NombrePersona = Persona.NombreCompleto;
+                if(Trabajo != null)
+                {
+                    this.Detail.Balance=this.Detail.Precio=Trabajo.Precio*Cantidad.Valor;
+                }
+                this.Nom.Detalles.Add(this.Detail);
+                this.Detail=new NominaDetalle();
+                notify.ShowNotification("Detalle agregado correctamente","Actualizacion de Registro", NotificationSeverity.Success);
+                Guardar();
+            }
+            else
+            {
+                notify.ShowNotification("Error al guardar","Porfabor llene todos los campos", NotificationSeverity.Error);
+            }
+        }
+        else
+        {
+            notify.ShowNotification("Error al guardar","Porfabor llene todos los campos", NotificationSeverity.Error);
+        }
+        
+    }
+    async Task Guardar()
+    {
+        await NominaService.Save(this.Nom);
+        NavigationManager.NavigateTo($"/");
+        NavigationManager.NavigateTo($"/proyecto/{ProyectoId}/{NominaId}");
+    }
+
+    async Task ShowInlineDialog()
+    {
+        var result = await DialogService.OpenAsync("Nuevo Detalle", ds =>
+        @<RadzenStack Gap="1.5rem">
+            <RadzenStack Orientation="Orientation.Horizontal" class="rz-color-white" Gap="0.5rem" AlignItems="AlignItems.Center" JustifyContent="JustifyContent.SpaceBetween">
+                <div class="container">
+                            <RadzenTemplateForm TItem="Nomina" Data="@Nom" Submit="Validar">
+                                <RadzenFieldset>
+                                    <HeaderTemplate>
+                                    <span class="d-inline-flex align-items-center align-middle">
+                                        <RadzenIcon Icon="account_box" class="me-1" /><b>Detalle</b>
+                                    </span>
+                                    </HeaderTemplate>
+                                    <ChildContent>
+
+                                        <div class="row">
+                                            <div class="col-md-4 align-items-center d-flex">
+                                                <RadzenLabel Text="Fecha" />
+                                            </div>
+                                            <div class="col-md-8">
+                                                <RadzenDatePicker style="width: 100%;" DateFormat="MM/dd/yyyy" Name="Fecha" DateOnly="true"  @bind-Value="Detail.Fecha" />
+                                                <RadzenRequiredValidator Component="Fecha" Text="Campo requerido" Popup="true" Style="position: absolute"/>
+                                            </div>
+                                        </div>
+
+                                        <div class="row">
+                                            <div class="col-md-4 align-items-center d-flex">
+                                                <RadzenLabel Text="Empleado" />
+                                            </div>
+                                            <div class="col-md-8">
+
+                                                <RadzenDropDown class="rz-color-white" style="width: 100%;" FilterCaseSensitivity="FilterCaseSensitivity.CaseInsensitive" FilterOperator="StringFilterOperator.StartsWith" AllowFiltering="true"
+                                                    Data=@EmpleadoService.ListEmpleado  Name="Empleado" TextProperty="NombreCompleto" ValueProperty="EmpleadoId" AllowClear="true" @bind-Value=@Detail.PersonaId />
+
+                                                <RadzenRequiredValidator Component="Empleado" Text="Campo requerido" Popup="true" Style="position: absolute"/>
+                                            </div>
+                                        </div>
+
+                                        <div class="row">
+                                            <div class="col-md-4 align-items-center d-flex">
+                                                <RadzenLabel Text="Trabajo" />
+                                            </div>
+                                            <div class="col-md-8">
+                                                <RadzenDropDown style="width: 100%;" FilterCaseSensitivity="FilterCaseSensitivity.CaseInsensitive" FilterOperator="StringFilterOperator.StartsWith" AllowFiltering="true"
+                                                    Data=@TrabajoService.ListTrabajo  Name="Trabajo" TextProperty="Descripcion" ValueProperty="TrabajoId" AllowClear="true" @bind-Value=@Detail.TrabajoId />
+                                                <RadzenRequiredValidator Component="Trabajo" Text="Campo requerido" Popup="true" Style="position: absolute"/>
+                                            </div>
+                                        </div>
+
+                                        <div class="row">
+                                            <div class="col-md-4 align-items-center d-flex">
+                                                <RadzenLabel Text="Cantidad" />
+                                            </div>
+                                            <div class="col-md-8">
+                                                <RadzenDropDown style="width: 100%;" FilterCaseSensitivity="FilterCaseSensitivity.CaseInsensitive" FilterOperator="StringFilterOperator.StartsWith" AllowFiltering="true"
+                                                    Data=@CantidadService.ListCantidad  Name="Cantidad" TextProperty="Descripcion" ValueProperty="CantidadId" AllowClear="true" @bind-Value=@Detail.CantidadId />
+                                                <RadzenRequiredValidator Component="Cantidad" Text="Campo requerido" Popup="true" Style="position: absolute"/>
+                                            </div>
+                                        </div>
+                                    </ChildContent>
+                                </RadzenFieldset>
+                                <div class="w3-margin align-content-center ">
+                                    <RadzenButton Text="Agregar" ButtonType="ButtonType.Submit" ButtonStyle="ButtonStyle.Success" />
+                                    <RadzenButton Text="Cancel" Click="() => ds.Close(false)" ButtonStyle="ButtonStyle.Light" />
+                                </div>
+                            </RadzenTemplateForm>
+                </div>
+            </RadzenStack>
+        </RadzenStack>);
+    }
+
+    async Task DeleteResponse()
+    {
+        var result = await DialogService.OpenAsync("Confirmar Accion", ds =>
+        @<RadzenStack Gap="1.5rem">
+            <RadzenStack Orientation="Orientation.Horizontal" Gap="0.5rem" AlignItems="AlignItems.Center" JustifyContent="JustifyContent.SpaceBetween">
+                    <div class="w3-margin row rz-color-white">
+                        <div class="align-items-center d-flex">
+                            <RadzenLabel Text="Desea eliminar la nomina actual?" />
+                        </div>
+                    </div>
+                    <div class="w3-margin align-content-center ">
+                        <RadzenButton Text="Eliminar" Click="Eliminar" ButtonStyle="ButtonStyle.Danger" />
+                        <RadzenButton Text="Cancel" Click="() => ds.Close(false)" ButtonStyle="ButtonStyle.Light" />
+                    </div>
+            </RadzenStack>
+        </RadzenStack>);
+    }
+
+    void Validar()
+    {
+        if(Pro.ProyectoId!=null)
+        {
+            Insertar();
+            
+        }
+        else
+        {
+            notify.ShowNotification("Nombre del proyecto invalido","Error de Registro", NotificationSeverity.Error);
+        }
+    }
+
+    bool Validation()
+    {
+        return Detail.PersonaId >0 && Detail.TrabajoId > 0 && Detail.CantidadId > 0;
+    }
+
+    void Tienepagos(int id)
+    {
+        var detalle = Nom.Detalles.SingleOrDefault(o=>o.NominaDetalleId==id);
+        if(detalle!=null)
+        {
+            if(detalle.Balance!=detalle.Precio)
+            {
+                DeleteDetalle(id);
+            }
+            else
+            {
+                EliminarDetalle(id);
+            }
+        }
+        else{
+            EliminarDetalle(id);
+        }
+    }
+
+    async Task DeleteDetalle(int DetalleId)
+    {
+        var result = await DialogService.OpenAsync("Confirmar Accion", ds =>
+        @<RadzenStack Gap="1.5rem">
+            <RadzenStack Orientation="Orientation.Horizontal" Gap="0.5rem" AlignItems="AlignItems.Center" JustifyContent="JustifyContent.SpaceBetween">
+                    <div class="w3-margin row rz-color-white">
+                        <div class="align-items-center d-flex">
+                            <RadzenLabel Text="Este registro posee pagos, ¿Desea eliminarlo de todas formas?" />
+                        </div>
+                    </div>
+                    <div class="w3-margin align-content-center ">
+                        <RadzenButton Text="Eliminar" Click="()=> EliminarDetalle(DetalleId)" ButtonStyle="ButtonStyle.Danger" />
+                        <RadzenButton Text="Cancel" Click="() => ds.Close(false)" ButtonStyle="ButtonStyle.Light" />
+                    </div>
+            </RadzenStack>
+        </RadzenStack>);
+    }
+
+    async Task GuardarTitulo()
+    {
+        var result = await DialogService.OpenAsync("Nueva Nomina", ds =>
+        @<RadzenStack Gap="1.5rem">
+            <RadzenStack Orientation="Orientation.Horizontal" Gap="0.5rem" AlignItems="AlignItems.Center" JustifyContent="JustifyContent.SpaceBetween">
+                <RadzenTemplateForm TItem="Nomina" Data="@Nom" Submit="GuardarNomina">
+                    <div class="row">
+                        <div class="col-md-3 align-items-center d-flex">
+                            <RadzenLabel class="text-white"  Text="Concepto" />
+                        </div>
+                        <div class="col-md-8">
+                            <RadzenTextBox style="width: 100%;" class="text-white" Name="Concepto" @bind-Value="Nom.Concepto" />
+                            <RadzenRequiredValidator Component="Concepto" Text="Campo requerido" Popup="true" Style="position: absolute" />
+                        </div>
+                    </div>
+                    <div class="w3-margin align-content-center ">
+                        <RadzenButton Text="Agregar" ButtonType="ButtonType.Submit" ButtonStyle="ButtonStyle.Success" />
+                        <RadzenButton Text="Cancel" Click="() => ds.Close(false)" ButtonStyle="ButtonStyle.Light" />
+                    </div>
+                </RadzenTemplateForm>
+            </RadzenStack>
+        </RadzenStack>);
+    }
+
+    async Task GuardarNomina()
+    {
+        await NominaService.Save(Nom);
+        NavigationManager.NavigateTo($"/");
+        NavigationManager.NavigateTo($"/proyecto/{ProyectoId}/{NominaId}");
+    }
+}

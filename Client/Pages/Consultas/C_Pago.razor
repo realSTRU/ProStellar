@@ -1,0 +1,213 @@
+@page "/proyecto/{ProyectoId:int}/{NominaId:int}/Pagos"
+@inject IProyectoService ProyectoService
+@inject IEstadoService EstadoService
+@inject INominaService NominaService
+@inject ITrabajoService TrabajoService
+@inject IPagoService PagoService
+@inject DialogService DialogService
+@inject NotificationService notify
+@inject IEmpleadoService EmpleadoService
+@inject ICantidadService CantidadService
+@inject NavigationManager NavigationManager
+
+@try
+{
+    <div class="container">
+        <p><a href="/" class="w3-hover-orange btn btn-primary bg-transparent w3-border-0">Proyecto</a> / <a href=@($"/proyecto/{ProyectoId}") class="w3-hover-orange btn btn-primary bg-transparent w3-border-0">@Pro.Descripcion</a> / <a href=@($"/proyecto/{ProyectoId}/{NominaId}") class="w3-hover-orange btn btn-primary bg-transparent w3-border-0">Nomina @Nom.Concepto</a> / Pago @Nom.Concepto</p>
+        <br><br>
+    </div>
+    <div style="display:flex; justify-content:space-between; width:100%;">
+        <p/>
+        <RadzenText class="rz-color-warning-dark" TextAlign="TextAlign.Center" TextStyle="TextStyle.DisplayH5">Pagos</RadzenText>
+        <span style="display:flex;">
+            <RadzenButton class="w3-button w3-xlarge w3-circle bg-transparent  stiky-btn w3-animate-zoom" Click=@NewPago >+</RadzenButton>
+        </span>
+    </div>
+    <hr class="rz-color-warning">
+    <br>
+    <RadzenFieldset>
+        <HeaderTemplate>
+            <span class="d-inline-flex align-items-center align-middle">
+                <RadzenIcon Icon="account_box" class="me-1" /><b>Filtro de pagos</b>
+            </span>
+        </HeaderTemplate>
+        <ChildContent>
+            <div class="d-flex flex-row">
+
+                <div class="align-items-center d-flex">
+                    <RadzenLabel Text="Criterio:" />
+                </div>
+                <div>
+                    <RadzenDropDown class="rz-color-white" FilterCaseSensitivity="FilterCaseSensitivity.CaseInsensitive" FilterOperator="StringFilterOperator.StartsWith" AllowFiltering="true"
+                                Data=@Atributos Name="Criterios" AllowClear="true" @bind-Value=@Fil />
+                    <RadzenRequiredValidator Component="Criterios" Text="Campo requerido" Popup="true" Style="position: absolute" />
+                </div>
+                <div>
+                    <RadzenTextBox @oninput=@(args => Filtro(args.Value.ToString())) Placeholder="Filtro:" style="width:100%;" />
+                </div>
+                <div class="">
+                    <RadzenLabel Text="Desde:" />
+                </div>
+                <div class="">
+                    <RadzenDatePicker style="width: 100%;" DateFormat="MM/dd/yyyy" Name="Fecha" DateOnly="true" @bind-Value="FechaDesde" />
+                </div>
+
+                <div class="c">
+                    <RadzenLabel Text="Hasta:" />
+                </div>
+                <div class="">
+                    <RadzenDatePicker style="width: 100%;" DateFormat="MM/dd/yyyy" Name="Fecha" DateOnly="true" @bind-Value="FechaHasta" />
+                </div>
+
+                <RadzenButton Click="BuscarPorRango" class="w3-orange" Icon="search" />
+                <RadzenButton Click="RestablecerLista" class="bg-secondary" Icon="remove" />
+
+            </div>
+        </ChildContent>
+    </RadzenFieldset>
+
+    <RadzenDataGrid AllowFiltering="true" AllowColumnResize="true" AllowAlternatingRows="false"
+                FilterMode="FilterMode.Advanced" AllowSorting="true" AllowPaging="true"
+                PagerHorizontalAlign="HorizontalAlign.Left" Data="ListaPago" TItem="Pago" ColumnWidth="200px"
+                LogicalFilterOperator="LogicalFilterOperator.Or" ShowPagingSummary="true">
+        <Columns>
+            <RadzenDataGridColumn TItem="Pago" Width="120px" Filterable="false" Sortable="false" Frozen="true" Title="Acciones">
+                <Template Context="Item">
+                <button class ="bg-transparent  w3-border-0" @onclick="() => NewPago(Item.PagoId)" ><RadzenBadge Shade="Shade.Dark" BadgeStyle="BadgeStyle.Warning" Text="Ver" ><i class="material-icons w3-large ">edit</i></RadzenBadge></button>
+                    <button @onclick="() => Eliminar(Item.PagoId)" class="bg-transparent  w3-border-0"><RadzenBadge Shade="Shade.Dark" BadgeStyle="BadgeStyle.Danger" Text="Ver"><i class="material-icons w3-large ">delete</i></RadzenBadge></button>
+                </Template>
+            </RadzenDataGridColumn>
+            <RadzenDataGridColumn TItem="Pago" Width="100%" Property="PagoId" Title="Id#" />
+            <RadzenDataGridColumn TItem="Pago"  Width="100%" Property="Fecha" Title="Fecha" >
+            <Template Context="Item">
+            <RadzenText>@Item.Fecha.ToString("MM/dd/yyyy")</RadzenText>
+            </Template>
+            </RadzenDataGridColumn>
+            <RadzenDataGridColumn TItem="Pago" Width="100%" Property="Concepto" Title="Concepto" />
+            <RadzenDataGridColumn TItem="Pago" Width="100%" Property="Monto" Title="Monto" />
+        </Columns>
+    </RadzenDataGrid>
+    
+}
+catch (Exception e)
+{
+
+}
+@code {
+    public List<string> Atributos { get; set; } = new List<string> { "ID", "Concepto", "Monto" };
+    public IEnumerable<Pago> ListaPago {get; set;}
+    public IEnumerable<Pago> PagosCorrespondientes {get; set;}
+    public string Fil { get; set; } = "";
+    [Parameter]
+    public int ProyectoId { get; set; }
+    [Parameter]
+    public int NominaId { get; set; }
+    [Parameter]
+    public int PagoId { get; set; }
+    public Pago pago { get; set; } = new Pago();
+    public Proyecto Pro { get; set; } = new Proyecto();
+    public Nomina Nom { get; set; } = new Nomina();
+    public DateTime FechaHasta {get;set;} = DateTime.Now;
+    public DateTime FechaDesde {get;set;} = DateTime.Now;
+    public NominaDetalle Detail = new NominaDetalle();
+    protected override async Task OnInitializedAsync()
+    {
+        await EmpleadoService.GetList();
+        await PagoService.GetList();
+        await NominaService.GetList();
+        var Encontrado = await ProyectoService.Find(ProyectoId);
+
+        ListaPago = PagosCorrespondientes = PagoService.ListPago.Where(o=>o.NominaId==NominaId);
+        if (Encontrado != null)
+        {
+            Pro = Encontrado;
+        }
+        if(NominaId>0)
+        {
+            this.Nom = await NominaService.Find(NominaId);
+        }
+    }
+
+    async Task Buscar()
+    {
+        var Encontrado = await PagoService.GetPagoById(PagoId);
+        if(Encontrado!= null)
+        {
+            this.pago = Encontrado;
+        }
+    }
+    async Task Eliminar(int Id)
+    {
+        await PagoService.DeletePago(Id);
+        NavigationManager.NavigateTo($"/proyecto/{ProyectoId}/{NominaId}/");
+    }
+    
+    public async Task NewEmpleado(int Id)
+    {
+        await DialogService.OpenAsync<
+            R_Empleado>($"Modificar Empleado",
+            new Dictionary<string, object>() { { "EmpleadoId", Id } },
+            new DialogOptions() { Width = "50vw", Height = "45vh", Resizable = false, Draggable = true });
+    }
+
+    async Task DeleteResponse()
+    {
+        var result = await DialogService.OpenAsync("Confirmar Accion", ds =>
+    @<RadzenStack Gap="1.5rem">
+        <RadzenStack Orientation="Orientation.Horizontal" Gap="0.5rem" AlignItems="AlignItems.Center" JustifyContent="JustifyContent.SpaceBetween">
+            <div class="w3-margin row rz-color-white">
+                <div class="align-items-center d-flex">
+                    <RadzenLabel Text="Desea eliminar la nomina actual?" />
+                </div>
+            </div>
+            <div class="w3-margin align-content-center ">
+                <RadzenButton Text="Eliminar"  ButtonStyle="ButtonStyle.Danger" />
+                <RadzenButton Text="Cancel" Click="() => ds.Close(false)" ButtonStyle="ButtonStyle.Light" />
+            </div>
+        </RadzenStack>
+    </RadzenStack>);
+    }
+    public async Task Filtro(string Contenido)
+    {
+        switch (this.Fil)
+        {
+            case "ID":
+                this.ListaPago = PagosCorrespondientes.Where(e => e.PagoId.ToString().Contains(Contenido));
+                break;
+            case "Monto":
+                this.ListaPago = PagosCorrespondientes.Where(e => e.Monto.ToString().Contains(Contenido));
+                break;
+            case "Concepto":
+                this.ListaPago = PagosCorrespondientes.Where(e => e.Concepto.Contains(Contenido));
+                break;
+            default:
+                this.ListaPago = new List<Pago>();
+                break;
+        }
+    }
+    public async Task NewPago(int PagoId)
+    {
+        await DialogService.OpenAsync<
+            R_Pagos>($"Registro de pagos",
+            new Dictionary<string, object>(){{"NominaId",NominaId},{"PagoId",PagoId}},
+            new DialogOptions() { Width = "70vw", Height = "70vh", Resizable = false, Draggable =false });
+    }
+
+    public async Task NewPago()
+    {
+        await DialogService.OpenAsync<
+            R_Pagos>($"Registro de pagos",
+            new Dictionary<string, object>(){{"NominaId",NominaId}},
+            new DialogOptions() { Width = "70vw", Height = "70vh", Resizable = false, Draggable =false });
+    }
+
+    public void BuscarPorRango()
+    {
+        this.ListaPago = PagosCorrespondientes.Where(o=>o.Fecha.Date<=FechaHasta.Date.AddDays(1).AddTicks(-1) && o.Fecha.Date>=FechaDesde.Date);
+    }
+    public void RestablecerLista()
+    {
+        this.ListaPago =  PagosCorrespondientes;
+    }
+
+}

@@ -11,36 +11,30 @@ namespace ProStellar.Client.Services.EstadoServices
         {
             _http = http;
         }
-
         public List<Estado> ListEstado { get; set; } = new List<Estado>();
 
         public async Task<ServiceResponse<string>> Delete(int Id)
         {
             var response = await _http.DeleteAsync($"api/Estado/{Id}");
             response.EnsureSuccessStatusCode();
-
             var result = await response.Content.ReadAsStringAsync();
             return new ServiceResponse<string>
             {
                 Success = true,
                 Data = result
             };
-            
         }
 
         public async Task<Estado> Find(int Id)
         {
             var result = await _http.GetFromJsonAsync<ServiceResponse<Estado>>($"api/Estado/{Id}");
-
             return result.Data;
         }
 
         public async Task GetList()
         {
-
             var result = await _http.GetFromJsonAsync<ServiceResponse<List<Estado>>>($"api/Estado");
-
-            if(result != null && result.Data != null)
+            if (result != null && result.Data != null)
             {
                 ListEstado = result.Data;
             }
@@ -54,7 +48,6 @@ namespace ProStellar.Client.Services.EstadoServices
             {
                 Data = response
             };
-
             return result;
         }
     }

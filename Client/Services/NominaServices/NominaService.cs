@@ -1,4 +1,5 @@
 ﻿using System.Linq.Expressions;
+using ProStellar.Shared;
 
 namespace ProStellar.Client.Services.NominaServices
 {
@@ -36,7 +37,7 @@ namespace ProStellar.Client.Services.NominaServices
         {
             var result = await _http.GetFromJsonAsync<ServiceResponse<List<Nomina>>>("api/Nomina");
 
-            if(result != null && result.Data != null)
+            if (result != null && result.Data != null)
             {
                 ListNomina = result.Data;
             }

@@ -11,7 +11,7 @@ namespace ProStellar.Shared.Models
     {
         [Key]
         public int TrabajoId { get; set; }
-        public string Descripcion { get; set; }
+        public string? Descripcion { get; set; }
         public double Precio { get; set; }
     }
 }

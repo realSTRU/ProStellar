@@ -1,18 +1,102 @@
-﻿@page "/"
-<br>
-<RadzenTextBox class="rz-border-color-base-900 rz-background-color-base-900 w-100 " Icon="search" @oninput=@(args => OnChange(args.Value.ToString())) Placeholder="Buscar Proyecto" />
-<br><br>
-<RadzenText class="rz-color-warning" TextAlign="TextAlign.Center" TextStyle="TextStyle.DisplayH5">Proyectos</RadzenText> 
-<hr class="rz-color-warning" >
-@Search
+﻿
+@inject IProyectoService ProyectoService
+@inject DialogService DialogService
+@inject NotificationService notify
+@inject NavigationManager NavigationManager
 
+
+@try{
+    <div class="">
+    <div style="display:flex; justify-content:space-between; width:100%;">
+    <p></p>
+    <RadzenText class="rz-color-warning-dark" TextAlign="TextAlign.Center" TextStyle="TextStyle.DisplayH5">Proyectos</RadzenText> 
+    <RadzenButton class="w3-button w3-xlarge w3-circle bg-transparent  stiky-btn w3-animate-zoom" Click=@ShowInlineDialog >+</RadzenButton>
+    </div>
+    <hr class="rz-color-warning" >
+        <br>
+    <RadzenTextBox class="rz-border-color-base-900 rz-background-color-base-900 w-100 " Icon="search" @oninput=@(args => OnChange(args.Value.ToString())) Placeholder="Buscar Proyecto" />
+    <br>
+    <div class=" w3-row-padding w3-section w3-stretch " >
+    @foreach(var Proyecto in ProyectoService.ListProyecto)
+    {
+        if(Proyecto.Descripcion.ToLower().Contains(Search.ToLower()))
+        {
+            <a href=@($"proyecto/{Proyecto.ProyectoId}")><div class="card w3-col rz-shadow-1  rz-background-color-base-900 text-white w3-hover-orange w3-margin w3-animate-bottom w3-mobile" style="width:400px;">
+            <center>
+            <i class="material-icons w3-jumbo ">construction</i>
+            <div class="card-body bg-dark rz-shadow-7 text-white" >@Proyecto.Descripcion</div>
+            </center>
+            </div></a>
+        }
+    }
+    </div>
+    </div>
+
+    
+}
+catch (Exception e)
+{
+    <p>@e.Message</p>
+}
 
 
 @code{
-    public string Search {get;set;}
+    public string Search {get;set;} = "";
+    public Proyecto Pro = new Proyecto();
+
+    protected override async Task  OnInitializedAsync()
+    {
+        await ProyectoService.GetList();
+    }
 
     void OnChange(string value)
     {
         Search=value;
+    }
+
+
+    async Task ShowInlineDialog()
+    {
+        var result = await DialogService.OpenAsync("Nuevo Proyecto", ds =>
+        @<RadzenStack Gap="1.5rem">
+            <RadzenStack Orientation="Orientation.Horizontal" Gap="0.5rem" AlignItems="AlignItems.Center" JustifyContent="JustifyContent.SpaceBetween">
+                    <RadzenTemplateForm TItem="Proyecto" Data="@Pro" Submit="Validar">
+                    <div class="row w3-margin ">
+                        <div class="col-md-4 align-items-center d-flex">
+                            <RadzenLabel Text="Nombre" />
+                        </div>
+                        <div class="col-md-8">
+                            <RadzenTextBox style="width: 100%;" Name="Nombre" @bind-Value="Pro.Descripcion" />
+                            <RadzenRequiredValidator Component="Nombre" Text="Campo requerido" Popup="true" Style="position: absolute"/>
+                        </div>
+                    </div>
+                    <div class="w3-margin ">
+                        <RadzenButton Text="Agregar" ButtonType="ButtonType.Submit" ButtonStyle="ButtonStyle.Success" />
+                        <RadzenButton Text="Cancel" Click="() => ds.Close(false)" ButtonStyle="ButtonStyle.Light" />
+                    </div>
+                    </RadzenTemplateForm>
+            </RadzenStack>
+        </RadzenStack>);
+    }
+
+    async Task  Guardar()
+    {
+        await ProyectoService.Save(this.Pro);
+        await ProyectoService.GetList();
+        NavigationManager.NavigateTo("/");
+
+    }
+    void Validar()
+    {
+        if(Pro.Descripcion!=null)
+        {
+            Guardar();
+            notify.ShowNotification("Se a agregado correctamente","Actualizacion de Registro", NotificationSeverity.Success);
+            this.Pro=new Proyecto();
+        }
+        else
+        {
+            notify.ShowNotification("Nombre del proyecto invalido","Error de Registro", NotificationSeverity.Error);
+        }
     }
 }

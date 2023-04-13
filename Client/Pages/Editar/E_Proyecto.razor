@@ -1,0 +1,321 @@
+@page "/proyecto/{ProyectoId:int}"
+
+@inject IProyectoService ProyectoService
+@inject IEstadoService EstadoService
+@inject INominaService NominaService
+@inject DialogService DialogService
+@inject NotificationService notify
+@inject NavigationManager NavigationManager
+
+@try{
+<div class="container">
+    <p><a href="/" class="w3-hover-orange btn btn-primary bg-transparent w3-border-0">Proyectos</a> / @Pro.Descripcion</p>
+    <br><br>
+    </div>
+    <div style="display:flex; justify-content:space-between; width:100%;">
+    <p></p>
+    
+    <RadzenText class="rz-color-warning-dark" TextAlign="TextAlign.Center" TextStyle="TextStyle.DisplayH5">Nominas - @Pro.Descripcion</RadzenText> 
+    <span style="display:flex;">
+        <RadzenButton class="w3-button w3-xlarge w3-circle bg-transparent stiky-btn w3-animate-zoom" Click=@GuardarTitulo ><i class="material-icons w3-large ">edit</i></RadzenButton>
+        <RadzenButton class="w3-button w3-xlarge w3-circle bg-transparent stiky-btn w3-animate-zoom" Click=@ShowInlineDialog >+</RadzenButton>
+        <RadzenButton class="w3-button w3-xlarge w3-circle bg-transparent stiky-btn w3-animate-zoom" Click=@DeleteResponse ><i class="material-icons w3-large ">delete</i></RadzenButton>
+    </span>
+    </div>
+    <hr class="rz-color-warning" >
+    <div class=" w3-row-padding w3-section w3-stretch " >
+        <RadzenFieldset>
+            <HeaderTemplate>
+                <span class="d-inline-flex align-items-center align-middle">
+                    <RadzenIcon Icon="account_box" class="me-1" /><b>Filtro de pagos</b>
+                </span>
+            </HeaderTemplate>
+            <ChildContent>
+                <div class="d-flex flex-row">
+
+                    <div class="align-items-center d-flex">
+                        <RadzenLabel Text="Criterio:" />
+                    </div>
+                    <div>
+                        <RadzenDropDown class="rz-color-white" FilterCaseSensitivity="FilterCaseSensitivity.CaseInsensitive" FilterOperator="StringFilterOperator.StartsWith" AllowFiltering="true"
+                                    Data=@Atributos Name="Criterios" AllowClear="true" @bind-Value=@Fil />
+                        <RadzenRequiredValidator Component="Criterios" Text="Campo requerido" Popup="true" Style="position: absolute" />
+                    </div>
+                    <div>
+                        <RadzenTextBox @oninput=@(args => Filtro(args.Value.ToString())) Placeholder="Filtro:" style="width:100%;" />
+                    </div>
+                     <div class="">
+                    <RadzenLabel Text="Desde:" />
+                    </div>
+                    <div class="">
+                        <RadzenDatePicker style="width: 100%;" DateFormat="MM/dd/yyyy" Name="Fecha" DateOnly="true" @bind-Value="FechaDesde" />
+                    </div>
+
+                    <div class="align-items-center">
+                        <RadzenLabel Text="Hasta:" />
+                    </div>
+                    <div class="align-items-center">
+                        <RadzenDatePicker style="width: 100%;" DateFormat="MM/dd/yyyy" Name="Fecha" DateOnly="true" @bind-Value="FechaHasta" />
+                    </div>
+
+                <RadzenButton Click="BuscarPorRango" class="w3-orange" Icon="search" />
+                <RadzenButton Click="RestablecerLista" class="bg-secondary" Icon="remove" />
+                </div>
+            </ChildContent>
+        </RadzenFieldset>
+    
+    <RadzenDataGrid AllowFiltering="true" AllowColumnResize="true" AllowAlternatingRows="false"
+        FilterMode="FilterMode.Advanced" AllowGrouping="true" AllowSorting="true" AllowPaging="true"
+        PagerHorizontalAlign="HorizontalAlign.Left" Data="ListaNomina" TItem="Nomina" ColumnWidth="200px"
+        LogicalFilterOperator="LogicalFilterOperator.Or" ShowPagingSummary="true" >
+        <Columns >
+            <RadzenDataGridColumn TItem="Nomina" Width="90px" Filterable="false" Sortable="false"  Frozen="true" Title="Acciones">
+                <Template Context="Item">
+                    <RadzenLink Path=@($"/proyecto/{ProyectoId}/{Item.NominaId}")><RadzenBadge Shade="Shade.Dark" BadgeStyle="BadgeStyle.Warning" Text="Ver" ><i class="material-icons w3-large ">edit</i></RadzenBadge></RadzenLink>
+                    <a href=@($"/Print/{ProyectoId}/{Item.NominaId}") target="_blank"><RadzenBadge Shade="Shade.Dark" BadgeStyle="BadgeStyle.Info" Text="Ver"><i class="material-icons w3-large ">print</i></RadzenBadge></a>
+                </Template>
+            </RadzenDataGridColumn>
+            <RadzenDataGridColumn TItem="Nomina" Property="Concepto" Title="Concepto"/>
+            <RadzenDataGridColumn TItem="Nomina"  Title="Fecha">
+                <Template Context="Item">
+                    <RadzenText>@Item.Fecha.ToString("MM/dd/yyyy")</RadzenText>
+                </Template>
+            </RadzenDataGridColumn>
+
+
+            <RadzenDataGridColumn TItem="Nomina" Frozen="true" Title="Estado">
+                <Template Context="Item">
+                    @if(Item.EstadoId==1)
+                    {
+                        <RadzenBadge BadgeStyle="BadgeStyle.Danger">Deuda</RadzenBadge>
+                    }
+                    else if (Item.EstadoId==2)
+                    {
+                        <RadzenBadge BadgeStyle="BadgeStyle.Success">Paga</RadzenBadge>
+                    }
+                    else
+                    {
+                        <RadzenBadge BadgeStyle="BadgeStyle.Light">Vacia</RadzenBadge>
+                    }
+                    @if(Item.Balance >0)
+                    {
+                        <RadzenBadge BadgeStyle="BadgeStyle.Info">Balance : @Item.Balance </RadzenBadge>
+                    }
+                </Template>
+            </RadzenDataGridColumn>
+        </Columns>
+    </RadzenDataGrid>
+</div>
+}
+catch (Exception e)
+{
+    <p>@e.Message</p>
+}
+
+@code{
+    [Parameter]
+    public int ProyectoId {get;set;}
+    public Proyecto Pro = new Proyecto();
+    public Nomina Nom = new Nomina();
+    public List<string> Atributos { get; set; } = new List<string> {"Concepto", "Estado" };
+    public string Fil { get; set; }
+    public DateTime FechaHasta {get;set;} = DateTime.Now;
+    public DateTime FechaDesde {get;set;} = DateTime.Now;
+    public IEnumerable<Nomina> ListaNomina { get; set; }
+    public IEnumerable<Nomina> NominasCorrespondientes { get; set; }
+    public string[] Estados = new string[] { "Deuda", "Paga", "Vacia","DEUDA","PAGA","VACIA" };
+
+    protected override async Task  OnInitializedAsync()
+    {
+        await NominaService.GetList();
+
+        ListaNomina = NominasCorrespondientes= NominaService.ListNomina.Where(o=>o.ProyectoId==ProyectoId);
+
+
+
+        if(ProyectoId >0)
+        {
+            var Encontrado = await ProyectoService.Find(ProyectoId);
+            if(Encontrado != null)
+            {
+                Pro=Encontrado;
+                
+            }
+        }
+        await NominaService.GetList();
+    }
+
+    async Task ShowInlineDialog()
+    {
+        var result = await DialogService.OpenAsync("Nueva Nomina", ds =>
+        @<RadzenStack Gap="1.5rem">
+            <RadzenStack Orientation="Orientation.Horizontal" Gap="0.5rem" AlignItems="AlignItems.Center" JustifyContent="JustifyContent.SpaceBetween">
+                <RadzenTemplateForm TItem="Nomina" Data="@Nom" Submit="Validar">
+                    <div class="row">
+                        <div class="col-md-3 align-items-center d-flex">
+                            <RadzenLabel class="text-white"  Text="Concepto" />
+                        </div>
+                        <div class="col-md-8">
+                            <RadzenTextBox style="width: 100%;" class="text-white" Name="Concepto" @bind-Value="Nom.Concepto" />
+                            <RadzenRequiredValidator Component="Concepto" Text="Campo requerido" Popup="true" Style="position: absolute" />
+                        </div>
+                    </div>
+                    <div class="w3-margin align-content-center ">
+                        <RadzenButton Text="Agregar" ButtonType="ButtonType.Submit" ButtonStyle="ButtonStyle.Success" />
+                        <RadzenButton Text="Cancel" Click="() => ds.Close(false)" ButtonStyle="ButtonStyle.Light" />
+                    </div>
+                </RadzenTemplateForm>
+            </RadzenStack>
+        </RadzenStack>);
+    }
+
+    async Task DeleteResponse()
+    {
+        var result = await DialogService.OpenAsync("Confirmar Accion", ds =>
+        @<RadzenStack Gap="1.5rem">
+            <RadzenStack Orientation="Orientation.Horizontal" Gap="0.5rem" AlignItems="AlignItems.Center" JustifyContent="JustifyContent.SpaceBetween">
+                    <div class="w3-margin row rz-color-white">
+                        <div class="align-items-center d-flex">
+                            <RadzenLabel Text="Desea eliminar el Proyecto actual?" />
+                        </div>
+                    </div>
+                    <div class="w3-margin align-content-center ">
+                        <RadzenButton Text="Eliminar" Click="Eliminar" ButtonStyle="ButtonStyle.Danger" />
+                        <RadzenButton Text="Cancel" Click="() => ds.Close(false)" ButtonStyle="ButtonStyle.Light" />
+                    </div>
+            </RadzenStack>
+        </RadzenStack>
+    );
+    }
+
+    async Task Guardar()
+    {
+        if(ValidarProyecto())
+        {
+            this.Nom.ProyectoId=Pro.ProyectoId;
+            this.Nom.EstadoId = 3;
+            await NominaService.Save(this.Nom);
+            notify.ShowNotification("Nomina guardada con exito","Nomina agregada al proyecto", NotificationSeverity.Success);
+            NavigationManager.NavigateTo("/");
+            NavigationManager.NavigateTo($"proyecto/{Pro.ProyectoId}");
+
+        }
+        else
+        {
+            notify.ShowNotification("Porfabor indique un concepto","Error: No puede guardar una nomina sin conceptos", NotificationSeverity.Error); 
+        }
+        
+    }
+
+    async Task Eliminar()
+    {
+        ProyectoService.Delete(this.ProyectoId);
+        NavigationManager.NavigateTo("/");
+    }
+
+    bool ValidarProyecto()
+    {
+        return this.Nom.Concepto != null;
+    }
+
+    void Nuevo()
+    {
+        this.Nom=new Nomina();
+    }
+
+    void Validar()
+    {
+        if(Pro.ProyectoId!=null)
+        {
+            Guardar();
+            notify.ShowNotification("Se a agregado correctamente","Actualizacion de Registro", NotificationSeverity.Success);
+            Nuevo();
+        }
+        else
+        {
+            notify.ShowNotification("Nombre del proyecto invalido","Error de Registro", NotificationSeverity.Error);
+        }
+    }
+
+        async Task GuardarTitulo()
+    {
+        var result = await DialogService.OpenAsync("Nueva Nomina", ds =>
+        @<RadzenStack Gap="1.5rem">
+            <RadzenStack Orientation="Orientation.Horizontal" Gap="0.5rem" AlignItems="AlignItems.Center" JustifyContent="JustifyContent.SpaceBetween">
+                <RadzenTemplateForm TItem="Nomina" Data="@Nom" Submit="GuardarNomina">
+                    <div class="row">
+                        <div class="col-md-3 align-items-center d-flex">
+                            <RadzenLabel class="text-white"  Text="Descripcion" />
+                        </div>
+                        <div class="col-md-8">
+                            <RadzenTextBox style="width: 100%;" class="text-white" Name="Concepto" @bind-Value="Pro.Descripcion" />
+                            <RadzenRequiredValidator Component="Concepto" Text="Campo requerido" Popup="true" Style="position: absolute" />
+                        </div>
+                    </div>
+                    <div class="w3-margin align-content-center ">
+                        <RadzenButton Text="Agregar" ButtonType="ButtonType.Submit" ButtonStyle="ButtonStyle.Success" />
+                        <RadzenButton Text="Cancel" Click="() => ds.Close(false)" ButtonStyle="ButtonStyle.Light" />
+                    </div>
+                </RadzenTemplateForm>
+            </RadzenStack>
+        </RadzenStack>
+    );
+    }
+
+    async Task GuardarNomina()
+    {
+        await ProyectoService.Save(Pro);
+        NavigationManager.NavigateTo($"/");
+        NavigationManager.NavigateTo($"/proyecto/{ProyectoId}");
+    }
+
+    public async Task Filtro(string Contenido)
+    {
+        
+        switch (this.Fil)
+        {
+            case "Concepto":
+                this.ListaNomina = NominasCorrespondientes.Where(e => e.Concepto.Contains(Contenido) );
+                break;
+            case "Estado":
+                if(String.IsNullOrEmpty(Contenido))
+                {
+                    this.ListaNomina = NominasCorrespondientes.Where(e=>e.EstadoId.ToString().Contains(Contenido));
+                    break;
+                }
+                else if ((Estados[0].ToLower()).Contains((Contenido.ToLower())))
+                {
+                    this.ListaNomina = NominasCorrespondientes.Where(e => e.EstadoId.ToString().Contains("1") );
+                    break;
+                }
+                else if ((Estados[1].ToLower()).Contains((Contenido.ToLower())))
+                {
+                    this.ListaNomina = NominasCorrespondientes.Where(e => e.EstadoId.ToString().Contains("2") );
+                    break;
+                }
+                else if ((Estados[2].ToLower()).Contains((Contenido.ToLower())))
+                {
+                    this.ListaNomina = NominasCorrespondientes.Where(e => e.EstadoId.ToString().Contains("3") );
+                    break;
+                }
+                else
+                {
+                    this.ListaNomina = NominasCorrespondientes.Where(e=>e.EstadoId.ToString().Contains(Contenido));
+                    break;
+                }
+            default:
+                this.ListaNomina = new List<Nomina>();
+                break;
+        }
+    }
+    public void BuscarPorRango()
+    {
+        this.ListaNomina= ListaNomina.Where(o=>o.Fecha.Date<=FechaHasta.Date.AddDays(1).AddTicks(-1) && o.Fecha.Date>=FechaDesde.Date);
+    }
+    public void RestablecerLista()
+    {
+        this.ListaNomina =  NominasCorrespondientes;
+        this.FechaHasta= DateTime.Now.Date;
+        this.FechaDesde= DateTime.Now.Date;
+    }
+}

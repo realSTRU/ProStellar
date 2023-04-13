@@ -12,6 +12,8 @@ using ProStellar.Server.Services.TrabajoServices;
 using ProStellar.Server.Services.EstadoService;
 using ProStellar.Server.Services.PagoService;
 using ProStellar.Server.DAL;
+using ProStellar.Shared;
+using Microsoft.AspNetCore.Identity;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -53,6 +55,7 @@ builder.Services.AddRazorPages();
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 
+<<<<<<< HEAD
 
 
 
@@ -64,6 +67,8 @@ builder.Services.AddScoped<IProyectoService, ProyectoService>();
 builder.Services.AddScoped<ITipoPagoService, TipoPagoService>();
 builder.Services.AddScoped<IEstadoService, EstadoService>();
 
+=======
+>>>>>>> FrontEnd
 var app = builder.Build();
 app.UseSwaggerUI();
 

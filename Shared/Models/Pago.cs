@@ -12,10 +12,10 @@ namespace ProStellar.Shared.Models
     {
         [Key]
         public int PagoId { get; set; }
-        public DateTime Fecha { get; set; }
-        public int PersonaId { get; set; }
+        public string Concepto { get; set; }
+        public DateTime Fecha { get; set; } = DateTime.Now;
+        public int NominaId { get; set; }
         public double Monto { get; set; }
-        public double Total { get; set; }
 
         [ForeignKey("PagoId")]
         public List<PagoDetalle> Detalles { get; set; } = new List<PagoDetalle>();

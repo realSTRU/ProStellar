@@ -27,7 +27,7 @@ namespace ProStellar.Client.Services.EmpleadoServices
         public async Task<Empleado> Find(int Id)
         {
             var result = await _http.GetFromJsonAsync<ServiceResponse<Empleado>>($"api/Empleado/{Id}");
-
+            
             return result.Data;
 
         }

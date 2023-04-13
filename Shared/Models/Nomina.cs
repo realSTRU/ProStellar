@@ -12,11 +12,13 @@ namespace ProStellar.Shared.Models
     {
         [Key]
         public int NominaId { get; set; }
-        public DateTime Fecha { get; set; }
+        public DateTime Fecha { get; set; } = DateTime.Now;
+        public string? Concepto { get; set; }
         public int ProyectoId { get; set; }
         public int EstadoId { get; set; }
+        public double Balance { get; set; }
 
-        [ForeignKey ("NominaId")]
+        [ForeignKey("NominaId")]
         public List<NominaDetalle> Detalles { get; set; } = new List<NominaDetalle>();
     }
 
@@ -26,10 +28,13 @@ namespace ProStellar.Shared.Models
         public int NominaDetalleId { get; set; }
         public int NominaId { get; set; }
         public int PersonaId { get; set; }
+        public string NombrePersona { get; set; }
         public int TrabajoId { get; set; }
-        public DateTime Fecha { get; set; }
+        public DateTime Fecha { get; set; } = DateTime.Now;
         public int CantidadId { get; set; }
         public double Precio { get; set; }
         public double Balance { get; set; }
+
+
     }
 }

@@ -1,5 +1,9 @@
 <div id="header" align="center">
+<<<<<<< HEAD
  <img src="https://avatars.githubusercontent.com/u/91565711?v=4" width=115><br>[<sub>Kevin Duran</sub>]<br>| (https://github.com/SUNXOUL) |
+=======
+ <img src="https://avatars.githubusercontent.com/u/91565711?v=4" width=115><br>[<sub>Kevin Duran</sub>]<br>| (https://github.com/SUNXOUL)  |
+>>>>>>> FrontEnd
  <BR>
   <img src="https://avatars.githubusercontent.com/u/122837710?v=4" width=115><br>[<sub>Cesar Reynoso</sub>]<br>| (https://github.com/realSTRU) |
  
@@ -16,7 +20,7 @@ Pr@stellar1</h3>
       (Proyecto Final Programación Aplicada 1).
       Programadores:{(Kevin Duran Bruno)},{(Cesar José Reynoso Martinez)}
   </p>
-
+[AutoEvaluacion Excel](https://docs.google.com/spreadsheets/d/1CYYBsSv07sUm3MjtEhdjAxV_GDBezdN5/edit?usp=share_link&ouid=107038382458350173473&rtpof=true&sd=true)
 </div>
 
 
@@ -99,3 +103,7 @@ Pr@stellar1</h3>
 
 
 
+<<<<<<< HEAD
+=======
+
+>>>>>>> FrontEnd

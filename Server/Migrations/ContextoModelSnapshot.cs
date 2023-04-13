@@ -27,9 +27,26 @@ namespace ProStellar.Server.Migrations
                         .IsRequired()
                         .HasColumnType("TEXT");
 
+                    b.Property<double>("Valor")
+                        .HasColumnType("REAL");
+
                     b.HasKey("CantidadId");
 
                     b.ToTable("Cantidades");
+
+                    b.HasData(
+                        new
+                        {
+                            CantidadId = 1,
+                            Descripcion = "Día completo",
+                            Valor = 1.0
+                        },
+                        new
+                        {
+                            CantidadId = 2,
+                            Descripcion = "Medio Día",
+                            Valor = 0.5
+                        });
                 });
 
             modelBuilder.Entity("ProStellar.Shared.Models.Empleado", b =>
@@ -51,7 +68,6 @@ namespace ProStellar.Server.Migrations
                         .HasColumnType("TEXT");
 
                     b.Property<string>("SegundoNombre")
-                        .IsRequired()
                         .HasColumnType("TEXT");
 
                     b.Property<string>("Telefono")
@@ -69,8 +85,44 @@ namespace ProStellar.Server.Migrations
                             PrimerApellido = "Duran",
                             PrimerNombre = "Kevin",
                             SegundoApellido = "Bruno",
-                            SegundoNombre = "",
+                            SegundoNombre = "Javier",
                             Telefono = "809-396-8457"
+                        },
+                        new
+                        {
+                            EmpleadoId = 2,
+                            PrimerApellido = "Germosen",
+                            PrimerNombre = "Manuel",
+                            SegundoApellido = "Santos",
+                            SegundoNombre = "Ernesto",
+                            Telefono = "849-456-1153"
+                        },
+                        new
+                        {
+                            EmpleadoId = 3,
+                            PrimerApellido = "Perdomo",
+                            PrimerNombre = "Jose",
+                            SegundoApellido = "Escobar",
+                            SegundoNombre = "Matias",
+                            Telefono = "809-588-5555"
+                        },
+                        new
+                        {
+                            EmpleadoId = 4,
+                            PrimerApellido = "Del Orbe",
+                            PrimerNombre = "Samuel",
+                            SegundoApellido = "De Jesus",
+                            SegundoNombre = "Martin",
+                            Telefono = "829-876-2231"
+                        },
+                        new
+                        {
+                            EmpleadoId = 5,
+                            PrimerApellido = "Rodriguez",
+                            PrimerNombre = "Cesar",
+                            SegundoApellido = "Jimenez",
+                            SegundoNombre = "Enmanuel",
+                            Telefono = "849-456-5356"
                         });
                 });
 
@@ -87,6 +139,23 @@ namespace ProStellar.Server.Migrations
                     b.HasKey("EstadoId");
 
                     b.ToTable("Estados");
+
+                    b.HasData(
+                        new
+                        {
+                            EstadoId = 1,
+                            Descripcion = "Con deuda"
+                        },
+                        new
+                        {
+                            EstadoId = 2,
+                            Descripcion = "Paga"
+                        },
+                        new
+                        {
+                            EstadoId = 3,
+                            Descripcion = "Vacia"
+                        });
                 });
 
             modelBuilder.Entity("ProStellar.Shared.Models.Nomina", b =>
@@ -94,6 +163,12 @@ namespace ProStellar.Server.Migrations
                     b.Property<int>("NominaId")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("INTEGER");
+
+                    b.Property<double>("Balance")
+                        .HasColumnType("REAL");
+
+                    b.Property<string>("Concepto")
+                        .HasColumnType("TEXT");
 
                     b.Property<int>("EstadoId")
                         .HasColumnType("INTEGER");
@@ -124,6 +199,10 @@ namespace ProStellar.Server.Migrations
                     b.Property<DateTime>("Fecha")
                         .HasColumnType("TEXT");
 
+                    b.Property<string>("NombrePersona")
+                        .IsRequired()
+                        .HasColumnType("TEXT");
+
                     b.Property<int>("NominaId")
                         .HasColumnType("INTEGER");
 
@@ -149,17 +228,18 @@ namespace ProStellar.Server.Migrations
                         .ValueGeneratedOnAdd()
                         .HasColumnType("INTEGER");
 
+                    b.Property<string>("Concepto")
+                        .IsRequired()
+                        .HasColumnType("TEXT");
+
                     b.Property<DateTime>("Fecha")
                         .HasColumnType("TEXT");
 
                     b.Property<double>("Monto")
                         .HasColumnType("REAL");
 
-                    b.Property<int>("PersonaId")
+                    b.Property<int>("NominaId")
                         .HasColumnType("INTEGER");
-
-                    b.Property<double>("Total")
-                        .HasColumnType("REAL");
 
                     b.HasKey("PagoId");
 
@@ -204,6 +284,33 @@ namespace ProStellar.Server.Migrations
                     b.HasKey("ProyectoId");
 
                     b.ToTable("Proyectos");
+
+                    b.HasData(
+                        new
+                        {
+                            ProyectoId = 1,
+                            Descripcion = "Enel´s new house"
+                        },
+                        new
+                        {
+                            ProyectoId = 2,
+                            Descripcion = "DURE Interprise BUILD"
+                        },
+                        new
+                        {
+                            ProyectoId = 3,
+                            Descripcion = "Reconstrucción UCNE"
+                        },
+                        new
+                        {
+                            ProyectoId = 4,
+                            Descripcion = "circunvalación Oeste"
+                        },
+                        new
+                        {
+                            ProyectoId = 5,
+                            Descripcion = "La Javiela Bar Red Design"
+                        });
                 });
 
             modelBuilder.Entity("ProStellar.Shared.Models.TipoPago", b =>
@@ -219,6 +326,18 @@ namespace ProStellar.Server.Migrations
                     b.HasKey("TipoPagoId");
 
                     b.ToTable("TiposPagos");
+
+                    b.HasData(
+                        new
+                        {
+                            TipoPagoId = 1,
+                            Descripcion = "Pago común"
+                        },
+                        new
+                        {
+                            TipoPagoId = 2,
+                            Descripcion = "Adelanto"
+                        });
                 });
 
             modelBuilder.Entity("ProStellar.Shared.Models.Trabajo", b =>
@@ -228,7 +347,6 @@ namespace ProStellar.Server.Migrations
                         .HasColumnType("INTEGER");
 
                     b.Property<string>("Descripcion")
-                        .IsRequired()
                         .HasColumnType("TEXT");
 
                     b.Property<double>("Precio")
@@ -237,6 +355,38 @@ namespace ProStellar.Server.Migrations
                     b.HasKey("TrabajoId");
 
                     b.ToTable("Trabajos");
+
+                    b.HasData(
+                        new
+                        {
+                            TrabajoId = 1,
+                            Descripcion = "Maestro Constructor",
+                            Precio = 2000.0
+                        },
+                        new
+                        {
+                            TrabajoId = 2,
+                            Descripcion = "Peon de construcción",
+                            Precio = 700.0
+                        },
+                        new
+                        {
+                            TrabajoId = 3,
+                            Descripcion = "Carpintero",
+                            Precio = 1500.0
+                        },
+                        new
+                        {
+                            TrabajoId = 4,
+                            Descripcion = "Electricista",
+                            Precio = 7800.0
+                        },
+                        new
+                        {
+                            TrabajoId = 5,
+                            Descripcion = "Profesional de redes",
+                            Precio = 27000.0
+                        });
                 });
 
             modelBuilder.Entity("ProStellar.Shared.Models.NominaDetalle", b =>

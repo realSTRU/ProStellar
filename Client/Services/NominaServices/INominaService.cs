@@ -1,4 +1,4 @@
-﻿
+﻿using ProStellar.Shared;
 namespace ProStellar.Client.Services.NominaServices
 {
     public interface INominaService

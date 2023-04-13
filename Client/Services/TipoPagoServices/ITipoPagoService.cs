@@ -7,5 +7,7 @@ namespace ProStellar.Client.Services.TipoPagoServices
     {
 
         List<TipoPago> ListTipoPago { get; set; }
+
+        Task GetList();
     }
 }

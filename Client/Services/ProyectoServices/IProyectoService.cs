@@ -1,4 +1,5 @@
-﻿namespace ProStellar.Client.Services.ProyectoServices
+﻿using ProStellar.Shared;
+namespace ProStellar.Client.Services.ProyectoServices
 {
     public interface IProyectoService
     {

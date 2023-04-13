@@ -28,10 +28,6 @@ namespace ProStellar.Client.Services.TrabajoServices
                 Data
             = result
             };
-
-
-
-
         }
 
         public async Task<Trabajo> Find(int Id)
@@ -57,7 +53,6 @@ namespace ProStellar.Client.Services.TrabajoServices
             var result = await post.Content.ReadFromJsonAsync<Trabajo>();
             var response = new ServiceResponse<Trabajo>();
             response.Data = result;
-
             return response;
         }
     }
