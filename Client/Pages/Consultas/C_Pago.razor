@@ -96,6 +96,7 @@ catch (Exception e)
 @code {
     public List<string> Atributos { get; set; } = new List<string> { "ID", "Concepto", "Monto" };
     public IEnumerable<Pago> ListaPago {get; set;}
+    public IEnumerable<Pago> PagosCorrespondientes {get; set;}
     public string Fil { get; set; } = "";
     [Parameter]
     public int ProyectoId { get; set; }
@@ -116,7 +117,7 @@ catch (Exception e)
         await NominaService.GetList();
         var Encontrado = await ProyectoService.Find(ProyectoId);
 
-        ListaPago = PagoService.ListPago;
+        ListaPago = PagosCorrespondientes = PagoService.ListPago.Where(o=>o.NominaId==NominaId);
         if (Encontrado != null)
         {
             Pro = Encontrado;
@@ -171,13 +172,13 @@ catch (Exception e)
         switch (this.Fil)
         {
             case "ID":
-                this.ListaPago = this.ListaPago.Where(e => e.PagoId.ToString().Contains(Contenido));
+                this.ListaPago = PagosCorrespondientes.Where(e => e.PagoId.ToString().Contains(Contenido));
                 break;
             case "Monto":
-                this.ListaPago = this.ListaPago.Where(e => e.Monto.ToString().Contains(Contenido));
+                this.ListaPago = PagosCorrespondientes.Where(e => e.Monto.ToString().Contains(Contenido));
                 break;
             case "Concepto":
-                this.ListaPago = this.ListaPago.Where(e => e.Concepto.Contains(Contenido));
+                this.ListaPago = PagosCorrespondientes.Where(e => e.Concepto.Contains(Contenido));
                 break;
             default:
                 this.ListaPago = new List<Pago>();
@@ -202,11 +203,11 @@ catch (Exception e)
 
     public void BuscarPorRango()
     {
-        this.ListaPago = ListaPago.Where(o=>o.Fecha.Date<=FechaHasta.Date.AddDays(1).AddTicks(-1) && o.Fecha.Date>=FechaDesde.Date);
+        this.ListaPago = PagosCorrespondientes.Where(o=>o.Fecha.Date<=FechaHasta.Date.AddDays(1).AddTicks(-1) && o.Fecha.Date>=FechaDesde.Date);
     }
     public void RestablecerLista()
     {
-        this.ListaPago =  PagoService.ListPago;
+        this.ListaPago =  PagosCorrespondientes;
     }
 
 }

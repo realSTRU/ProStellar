@@ -87,7 +87,7 @@
                 <Template Context="Item">
                     @if(Item.EstadoId==1)
                     {
-                        <RadzenBadge BadgeStyle="BadgeStyle.Danger">Con Deuda</RadzenBadge>
+                        <RadzenBadge BadgeStyle="BadgeStyle.Danger">Deuda</RadzenBadge>
                     }
                     else if (Item.EstadoId==2)
                     {
@@ -122,13 +122,14 @@ catch (Exception e)
     public DateTime FechaHasta {get;set;} = DateTime.Now;
     public DateTime FechaDesde {get;set;} = DateTime.Now;
     public IEnumerable<Nomina> ListaNomina { get; set; }
+    public IEnumerable<Nomina> NominasCorrespondientes { get; set; }
     public string[] Estados = new string[] { "Deuda", "Paga", "Vacia","DEUDA","PAGA","VACIA" };
 
     protected override async Task  OnInitializedAsync()
     {
         await NominaService.GetList();
 
-        ListaNomina = NominaService.ListNomina;
+        ListaNomina = NominasCorrespondientes= NominaService.ListNomina.Where(o=>o.ProyectoId==ProyectoId);
 
 
 
@@ -274,27 +275,32 @@ catch (Exception e)
         switch (this.Fil)
         {
             case "Concepto":
-                this.ListaNomina = NominaService.ListNomina.Where(e => e.Concepto.Contains(Contenido));
+                this.ListaNomina = NominasCorrespondientes.Where(e => e.Concepto.Contains(Contenido) );
                 break;
             case "Estado":
-                if ((Estados[0].ToLower()).Contains((Contenido.ToLower())))
+                if(String.IsNullOrEmpty(Contenido))
                 {
-                    this.ListaNomina = NominaService.ListNomina.Where(e => e.EstadoId.ToString().Contains("1"));
+                    this.ListaNomina = NominasCorrespondientes.Where(e=>e.EstadoId.ToString().Contains(Contenido));
+                    break;
+                }
+                else if ((Estados[0].ToLower()).Contains((Contenido.ToLower())))
+                {
+                    this.ListaNomina = NominasCorrespondientes.Where(e => e.EstadoId.ToString().Contains("1") );
                     break;
                 }
                 else if ((Estados[1].ToLower()).Contains((Contenido.ToLower())))
                 {
-                    this.ListaNomina = NominaService.ListNomina.Where(e => e.EstadoId.ToString().Contains("2"));
+                    this.ListaNomina = NominasCorrespondientes.Where(e => e.EstadoId.ToString().Contains("2") );
                     break;
                 }
                 else if ((Estados[2].ToLower()).Contains((Contenido.ToLower())))
                 {
-                    this.ListaNomina = NominaService.ListNomina.Where(e => e.EstadoId.ToString().Contains("3"));
+                    this.ListaNomina = NominasCorrespondientes.Where(e => e.EstadoId.ToString().Contains("3") );
                     break;
                 }
                 else
                 {
-                    this.ListaNomina = new List<Nomina>();
+                    this.ListaNomina = NominasCorrespondientes.Where(e=>e.EstadoId.ToString().Contains(Contenido));
                     break;
                 }
             default:
@@ -308,7 +314,7 @@ catch (Exception e)
     }
     public void RestablecerLista()
     {
-        this.ListaNomina =  NominaService.ListNomina;
+        this.ListaNomina =  NominasCorrespondientes;
         this.FechaHasta= DateTime.Now.Date;
         this.FechaDesde= DateTime.Now.Date;
     }
