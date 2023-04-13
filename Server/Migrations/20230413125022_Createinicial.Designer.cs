@@ -11,12 +11,8 @@ using ProStellar.Server.DAL;
 namespace ProStellar.Server.Migrations
 {
     [DbContext(typeof(Contexto))]
-<<<<<<<< HEAD:Server/Migrations/20230408000412_Inicial.Designer.cs
-    [Migration("20230408000412_Inicial")]
-========
-    [Migration("20230412003628_Inicial")]
->>>>>>>> FrontEnd:Server/Migrations/20230412003628_Inicial.Designer.cs
-    partial class Inicial
+    [Migration("20230413125022_Createinicial")]
+    partial class Createinicial
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
